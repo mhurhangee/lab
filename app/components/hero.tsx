@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 
 import { app } from '@/lib/app'
 
-import { BotIcon, BookIcon } from 'lucide-react'
+import { BookIcon, BotIcon } from 'lucide-react'
 
 export const Hero = () => {
   return (
