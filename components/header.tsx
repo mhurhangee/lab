@@ -9,15 +9,15 @@ import { Button } from '@/components/ui/button'
 import { app } from '@/lib/app'
 import { navigationItems } from '@/lib/navigation'
 
-import { GithubIcon, Menu, X } from 'lucide-react'
+import { MailIcon, GithubIcon, Menu, X } from 'lucide-react'
 import { ThemeToggle } from './ui/theme-toggle'
 
 export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
-    <header className="w-full">
-      <div className="mx-auto flex w-full max-w-screen-xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+    <header className="w-full sticky top-0 z-50 bg-background/90 border-b backdrop-blur-sm">
+      <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2">
             <app.icon className="text-primary h-6 w-6" />
@@ -38,10 +38,14 @@ export const Header = () => {
           ))}
         </nav>
 
-        <div className="flex items-center gap-4">
-          {/* GitHub Button */}
-          <Button variant="ghost" size="icon" className="gap-1">
-            <Link href={app.github} className="flex items-center gap-1">
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon">
+            <Link href={`mailto:${app.email}`}>
+              <MailIcon className="h-4 w-4" />
+            </Link>
+          </Button>
+          <Button variant="ghost" size="icon">
+            <Link href={app.github}>
               <GithubIcon className="h-4 w-4" />
             </Link>
           </Button>

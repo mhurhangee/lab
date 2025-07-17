@@ -16,8 +16,8 @@ export default function Home() {
         <Hero />
         {/*<FeaturedProjects />*/}
         {/*<AIPlayground />*/}
-        <PostsSection />
-        <About />
+        {/*<PostsSection />*/}
+        {/*<About />*/}
       </main>
       <Footer />
     </PageContainer>

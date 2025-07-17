@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 
 import { app } from '@/lib/app'
 
-import { ArrowRight } from 'lucide-react'
+import { BotIcon, BookIcon } from 'lucide-react'
 
 export const Hero = () => {
   return (
@@ -18,13 +18,15 @@ export const Hero = () => {
         <h1 className="mb-6 text-4xl font-bold tracking-tight md:text-6xl">{app.title}</h1>
         <p className="text-muted-foreground mb-10 max-w-[600px] text-xl">{app.description}</p>
         <div className="flex flex-col gap-4 sm:flex-row">
-          <Button size="lg" className="gap-2" asChild>
-            <Link href="#projects">
-              Explore Projects <ArrowRight className="h-4 w-4" />
+          <Button className="gap-2" asChild>
+            <Link href="/experiments">
+              Play <BotIcon className="h-4 w-4" />
             </Link>
           </Button>
-          <Button variant="outline" size="lg" asChild>
-            <Link href="#playground">Try Playground</Link>
+          <Button variant="secondary" className="gap-2" asChild>
+            <Link href="/posts">
+              Read <BookIcon className="h-4 w-4" />
+            </Link>
           </Button>
         </div>
       </div>
