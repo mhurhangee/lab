@@ -1,0 +1,9 @@
+node_modules
+.next
+.vercel
+.env.local
+build
+public
+pnpm-lock.yaml
+pnpm-workspace.yaml
+lib/db/migrations
