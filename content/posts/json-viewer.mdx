@@ -1,0 +1,43 @@
+---
+title: 'json viewer'
+summary: 'Debug responses in Shadcn.'
+date: '2025-07-06'
+category: 'component'
+next: '/posts/linkedin-scraping'
+prev: '/posts/content-collections'
+---
+
+Often, I feel agentic AI is too much of a black box. Most platforms hide their “secret sauce,” but transparency is an overlooked part of AI. Showing users exactly what the AI is basing decisions on matters.
+
+One easy step is just letting users see the raw JSON behind the scenes—nicely formatted and readable. It’s a bit technical, but it’s a start. If a user sees the AI has called the wrong tool or missed a document, they know to just try again.
+
+To do this, I needed a clean, [visually pleasing JSON component](/json-viewer) to drop into my projects.
+
+If you’ve used something like [react-json-view](https://www.npmjs.com/package/react-json-view), you know it works, but it’s bulky and doesn’t fit well with modern UI.
+
+I built a lightweight JSON viewer that plays nicely with Shadcn UI and drops straight into any React app.
+
+### Aims
+
+- Toggle between a collapsible tree and raw JSON.
+- Copy the path to any node, or the whole output.
+- Handles invalid JSON.
+- No bloat and customisable.
+
+### Example
+
+Simply pass the JSON data you want to view.
+
+```tsx
+<JsonViewer data={apiResponse} defaultView="tree" showCopyPath maxHeight="400px" />
+```
+
+Copy out the JSON path you need in one click.
+
+```json
+data.users[0].profile.preferences.languages[1]
+```
+
+It’s a handy way to inspect API or AI responses while developing or displaying them in a user-friendly way.
+
+[repo](<https://github.com/mhurhangee/neucorner/tree/main/app/(experiments)/json-viewer>)

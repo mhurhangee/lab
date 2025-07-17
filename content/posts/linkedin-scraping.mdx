@@ -1,0 +1,148 @@
+---
+title: 'linkedin scraping'
+summary: 'Scraping jobs for an AI agent.'
+date: '2025-07-07'
+category: 'development'
+next: '/posts/beyond-chat'
+prev: '/posts/json-viewer'
+---
+
+For a recent project, I needed to scrape LinkedIn for job postings.
+
+LinkedIn is notoriously hard to scrape. Building a manual or custom solution was out of scope (and budget).
+
+I found [JobSpy](https://github.com/speedyapply/JobSpy), a Python library that works decently when running locally. But you’ll quickly hit rate limits and need proxies.
+
+So, I decided to try some scraping services I’ve used before with AI agents:
+
+- [Diffbot](https://diffbot.com)
+- [Firecrawl](https://firecrawl.dev)
+- [Exa](https://exa.ai)
+- [Tavily](https://tavily.com)
+
+### It's a struggle
+
+**Tavily** and **Firecrawl** both seem to block LinkedIn URLs entirely. My tests in their playgrounds were shut down.
+
+### Exa
+
+Exa gave a bit more. It can scrape LinkedIn, but the results for jobs miss the "about the job" section, though it grabs some info and finds similar jobs. It works a bit better on company pages.
+
+A nice feature with the Exa Crawling API is the context parameter, which outputs the scraped page as markdown—great for feeding directly into an LLM.
+
+#### Example code
+
+```tsx
+import { NextRequest, NextResponse } from 'next/server'
+
+import { Exa } from 'exa-js'
+
+export const runtime = 'edge'
+export const maxDuration = 30
+
+export async function POST(request: NextRequest) {
+  const { url } = await request.json()
+
+  const exa = new Exa(process.env.EXA_API_KEY)
+
+  const result = await exa.getContents([url], {
+    context: true,
+  })
+
+  if (result.statuses?.[0].status !== 'success') {
+    return NextResponse.json({
+      success: false,
+    })
+  }
+
+  return NextResponse.json({
+    success: true,
+    content: result.context,
+    url: result.results?.[0].url,
+    title: result.results?.[0].title,
+  })
+}
+```
+
+A new feature with the Exa Crawling API is the context parameter, which basically outputs the scraped page as markdown, ready for consumption by your LLM. Nice touch.
+
+### Diffbot
+
+The clear winner (in this very limited test) was Diffbot. It actually works. Is it perfect? No. Is the data usable? Yes.
+
+With the job API, you get a JSON object. In my case, I mostly used the text field—which is basically the "about the job" bit missing from Exa. Sometimes, Diffbot misses fields in its schema, even if the info is in the text, but overall, it delivers.
+
+#### Example code
+
+```tsx
+import { NextRequest, NextResponse } from 'next/server'
+
+export const runtime = 'edge'
+export const maxDuration = 30
+
+export async function POST(request: NextRequest) {
+  const { url } = await request.json()
+
+  const token = process.env.DIFFBOT_TOKEN
+
+  const apiUrl = new URL('https://api.diffbot.com/v3/job')
+  apiUrl.searchParams.append('token', token)
+  apiUrl.searchParams.append('url', url)
+
+  const response = await fetch(apiUrl.toString(), {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+    },
+  })
+
+  const data = await response.json()
+
+  return NextResponse.json({
+    success: true,
+    content: data.objects[0].text,
+  })
+}
+```
+
+### The solution
+
+To get something usable, I combined the content and text results from Exa and Diffbot, then ran my own extraction on top. This way, I can define my own schema.
+
+Using generateObject from [ai-sdk](https://ai-sdk.dev) makes this super easy.
+
+Using generateObject from the make it extremely easy.
+
+```tsx
+import { openai } from '@ai-sdk/openai'
+
+import { NextRequest, NextResponse } from 'next/server'
+
+import { generateObject } from 'ai'
+
+import { jobExtractionSchema } from './schemas'
+
+export const runtime = 'edge'
+export const maxDuration = 30
+
+export async function POST(request: NextRequest) {
+  const { diffBotUrlExtractionResult, exaUrlExtractionResult } = await request.json()
+
+  const jobInfo = await generateObject({
+    model: openai('gpt-4.1-mini'),
+    prompt:
+      'Extract job information from the following text and JSON object ' +
+      diffBotUrlExtractionResult.content +
+      '\n\n' +
+      exaUrlExtractionResult.content,
+    schema: jobExtractionSchema,
+  })
+
+  return NextResponse.json({
+    success: true,
+    aiExtractedJobInfo: jobInfo.object,
+  })
+}
+```
+
+By merging both sources and running a custom extraction, I got solid results.

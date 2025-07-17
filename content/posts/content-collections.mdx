@@ -1,0 +1,99 @@
+---
+title: 'content collections'
+summary: 'Markdown in Next.js.'
+date: '2025-07-05'
+category: 'development'
+next: '/posts/json-viewer'
+prev: '/posts/new-design'
+---
+
+A common pattern when building websites is to use markdown (or MDX) files for content—whether it’s for documentation, blogs, or anything in between. Markdown is easy to write, plays nicely with Git, and is especially useful in the age of AI and LLMs, where structured, readable content is key (e.g. RAG).
+
+When building sites in Next.js, I’ve bounced between a few libraries for handling MDX:
+
+- [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote)
+- [mdx-bundler](https://github.com/kentcdodds/mdx-bundler)
+- [contentlayer](https://github.com/contentlayerdev/contentlayer)
+- [fumadocs](https://github.com/fumadocs/fumadocs)
+
+For this [blog](/posts), I tried [Content Collections](https://www.content-collections.dev), and it just… clicks.
+
+### What I like
+
+You can define frontmatter as a Zod schema—type-safe, predictable, and editor-friendly. You write a transform function to shape each document however you like: generate slugs, compile MDX, pull in related content—it’s all up to you.
+
+Here’s the [code](https://github.com/mhurhangee/neucorner) powering this blog:
+
+```ts
+import { defineCollection, defineConfig } from '@content-collections/core'
+import { compileMDX } from '@content-collections/mdx'
+
+import { z } from 'zod'
+
+const posts = defineCollection({
+  name: 'posts',
+  directory: 'content/posts',
+  include: '*.mdx',
+  schema: z.object({
+    title: z.string(),
+    summary: z.string(),
+    date: z.string(),
+    category: z.string(),
+    next: z.string().optional(),
+    prev: z.string().optional(),
+  }),
+  transform: async (document, context) => {
+    const mdx = await compileMDX(context, document, {
+      rehypePlugins: [rehypeHighlight],
+    })
+    return {
+      ...document,
+      mdx,
+    }
+  },
+})
+
+export default defineConfig({
+  collections: [posts],
+})
+```
+
+Rendering it is just as easy:
+
+```tsx
+import { MDXContent } from '@content-collections/mdx/react'
+
+export const Post = ({ post }) => (
+  <>
+    <h1>{post.title}</h1>
+    <MDXContent code={post.mdx} />
+  </>
+)
+```
+
+And listing all posts?
+
+```tsx
+{allPosts
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  .map(post => (
+    <Link key={post._meta.path} href={`/posts/${post._meta.path}`}>
+      <article>
+          <span>{post.category}</span>
+          <h3>{post.title}</h3>
+          <p>{post.summary}</p>
+          <p>{post.date}</p>
+      </article>
+    </Link>
+  ))}`
+```
+
+Being able to sort and filter content like this, directly in your own logic, is a breath of fresh air. You're not locked into someone else’s abstraction or sorting API. You own the content, and you handle it however you like.
+
+### The right balance
+
+Compared to other libraries, Content Collections strikes a really solid middle ground. Modern, structured, type-safe, and easy to implement and customise without needless complexity or abstraction.
+
+You define what your content is, how it’s shaped, and how it’s rendered.
+
+It hits a sweet spot.
