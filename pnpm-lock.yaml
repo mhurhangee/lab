@@ -35,6 +35,9 @@ importers:
       drizzle-orm:
         specifier: ^0.44.3
         version: 0.44.3(@neondatabase/serverless@1.0.1)(@types/pg@8.15.4)
+      highlight.js:
+        specifier: ^11.11.1
+        version: 11.11.1
       lucide-react:
         specifier: ^0.525.0
         version: 0.525.0(react@19.1.0)
