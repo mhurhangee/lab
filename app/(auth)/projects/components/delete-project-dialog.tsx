@@ -26,9 +26,10 @@ import { deleteProjectAction } from '@/app/actions/projects/delete'
 
 interface DeleteProjectDialogProps {
   projectId: string
-  size: 'default' | 'icon'
+  size?: 'default' | 'icon'
   className?: string
   fullWidth?: boolean
+  variant?: 'button' | 'menu-item'
 }
 
 export function DeleteProjectDialog({
@@ -36,6 +37,7 @@ export function DeleteProjectDialog({
   size = 'default',
   className = '',
   fullWidth = false,
+  variant = 'button',
 }: DeleteProjectDialogProps) {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
@@ -71,10 +73,21 @@ export function DeleteProjectDialog({
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" size={size} className={`${className} ${fullWidth ? 'w-full' : ''}`}>
-          <Trash className="h-4 w-4" />
-          {size !== 'icon' ? 'Delete Project' : null}
-        </Button>
+        {variant === 'button' ? (
+          <Button
+            variant="ghost"
+            size={size}
+            className={`${className} ${fullWidth ? 'w-full' : ''}`}
+          >
+            <Trash className="h-4 w-4" />
+            {size !== 'icon' ? 'Delete Project' : null}
+          </Button>
+        ) : (
+          <div className="flex cursor-pointer items-center gap-2">
+            <Trash className="h-4 w-4" />
+            <span>Delete</span>
+          </div>
+        )}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

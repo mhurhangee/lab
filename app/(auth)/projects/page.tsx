@@ -1,19 +1,19 @@
 import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
+import { ErrorAlert } from '@/components/ui/error-alert'
 
 import { LabLayout } from '@/components/lab-layout'
-import { columns } from '@/app/(auth)/projects/components/columns'
-import { DataTable } from '@/app/(auth)/projects/components/data-table'
-import { ErrorAlert } from '@/components/ui/error-alert'
+
 import { FolderIcon, PlusIcon } from 'lucide-react'
 
+import { DataTable } from '@/app/(auth)/projects/components/data-table'
 import { listProjectsAction } from '@/app/actions/projects/list'
 
 export const dynamic = 'force-dynamic'
 
 export default async function ProjectsPage() {
-  const { projects = [], error } = await listProjectsAction()
+  const { projects, error } = await listProjectsAction()
 
   return (
     <LabLayout
@@ -38,11 +38,7 @@ export default async function ProjectsPage() {
         </p>
       </div>
       <div className="space-y-8 py-8">
-        {error ? (
-          <ErrorAlert error={error} />
-        ) : (
-          <DataTable columns={columns} data={projects} />
-        )}
+        {error ? <ErrorAlert error={error} /> : <DataTable data={projects || []} />}
       </div>
     </LabLayout>
   )

@@ -12,20 +12,7 @@ interface GetProjectActionProps {
   id: string
 }
 
-type Project = {
-  id: string
-  userId: string
-  title: string
-  description: string | null
-  createdAt: Date
-  updatedAt: Date
-}
-
-type GetProjectResult = { project: Project; error?: never } | { error: string; project?: never }
-
-export const getProjectAction = async ({
-  id,
-}: GetProjectActionProps): Promise<GetProjectResult> => {
+export const getProjectAction = async ({ id }: GetProjectActionProps) => {
   try {
     const userId = await getUserId()
 
@@ -40,6 +27,6 @@ export const getProjectAction = async ({
 
     return { project: result[0] }
   } catch (error) {
-    return handleErrorServer(error, 'Failed to get project') as { error: string }
+    return handleErrorServer(error, 'Failed to get project')
   }
 }

@@ -8,20 +8,7 @@ import { desc, eq } from 'drizzle-orm'
 
 import { projects } from '@/schema'
 
-type Project = {
-  id: string
-  userId: string
-  title: string
-  description: string | null
-  createdAt: Date
-  updatedAt: Date
-}
-
-type ListProjectsResult =
-  | { projects: Project[]; error?: never }
-  | { error: string; projects?: never }
-
-export const listProjectsAction = async (): Promise<ListProjectsResult> => {
+export const listProjectsAction = async () => {
   try {
     const userId = await getUserId()
 
@@ -33,6 +20,7 @@ export const listProjectsAction = async (): Promise<ListProjectsResult> => {
 
     return { projects: results }
   } catch (error) {
-    return handleErrorServer(error, 'Failed to list projects') as { error: string }
+    const { error: errorMessage } = handleErrorServer(error, 'Failed to list projects')
+    return { error: errorMessage }
   }
 }

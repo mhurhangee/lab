@@ -12,11 +12,7 @@ interface DeleteProjectActionProps {
   id: string
 }
 
-type DeleteProjectResult = { success: true; error?: never } | { error: string; success?: never }
-
-export const deleteProjectAction = async ({
-  id,
-}: DeleteProjectActionProps): Promise<DeleteProjectResult> => {
+export const deleteProjectAction = async ({ id }: DeleteProjectActionProps) => {
   try {
     const userId = await getUserId()
 
@@ -31,6 +27,6 @@ export const deleteProjectAction = async ({
 
     return { success: true }
   } catch (error) {
-    return handleErrorServer(error, 'Failed to delete project') as { error: string }
+    return handleErrorServer(error, 'Failed to delete project')
   }
 }

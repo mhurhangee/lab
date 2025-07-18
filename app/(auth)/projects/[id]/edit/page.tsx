@@ -1,12 +1,16 @@
 import { notFound } from 'next/navigation'
-import { LabLayout } from '@/components/lab-layout'
+
 import { BackToButton } from '@/components/ui/back-to-button'
-import { ProjectForm } from '@/app/(auth)/projects/components/project-form'
-import { getProjectAction } from '@/app/actions/projects/get'
+
+import { LabLayout } from '@/components/lab-layout'
+
 import { Edit } from 'lucide-react'
 
+import { ProjectForm } from '@/app/(auth)/projects/components/project-form'
+import { getProjectAction } from '@/app/actions/projects/get'
+
 interface EditProjectPageProps {
-  params: Promise<{id: string}>
+  params: Promise<{ id: string }>
 }
 
 export default async function EditProjectPage({ params }: EditProjectPageProps) {
@@ -23,7 +27,7 @@ export default async function EditProjectPage({ params }: EditProjectPageProps) 
       actions={<BackToButton href={`/projects/${(await params).id}`} label="Back to Project" />}
       description="Update project details"
     >
-      <div className="py-8 max-w-2xl">
+      <div className="max-w-2xl py-8">
         <ProjectForm project={project} isEdit={true} />
       </div>
     </LabLayout>

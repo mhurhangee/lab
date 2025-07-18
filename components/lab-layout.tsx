@@ -34,7 +34,7 @@ export function LabLayout({
       {/* Top Header with Sidebar Toggle and Breadcrumbs */}
       <div className="bg-background/50 border-muted-foreground/20 sticky top-0 z-50 flex items-center justify-between border-b px-4 pt-1 pb-2 shadow-sm backdrop-blur-xs transition-all">
         <div className="flex items-center justify-center gap-3 overflow-hidden">
-        {isMobile && <SidebarTrigger />}
+          {isMobile && <SidebarTrigger />}
           {icon && icon}
           {title && title}
           {description && !isMobile && (
