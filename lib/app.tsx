@@ -11,4 +11,5 @@ export const app = {
     link: './project',
     text: 'AI experiments and projects',
   },
+  iconBackground: 'bg-gradient-to-r from-green-500 to-emerald-500',
 }

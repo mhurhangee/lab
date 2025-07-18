@@ -1,10 +1,8 @@
 import Link from 'next/link'
 
-import { Footer } from '@/components/footer'
-import { Header } from '@/components/header'
-import { PageContainer } from '@/components/page-container'
+import { BackToButton } from '@/components/ui/back-to-button'
 
-import { app } from '@/lib/app'
+import { LabLayout } from '@/components/lab-layout'
 
 import {
   AwardIcon,
@@ -22,28 +20,19 @@ import {
 
 export default function AboutPage() {
   return (
-    <PageContainer>
-      <Header />
-      <main className="prose dark:prose-invert mx-auto min-h-screen w-full max-w-screen-lg px-4 py-20 sm:px-6 lg:px-8">
-        <h1 className="mt-2 flex items-center gap-2">
-          <app.icon className="h-8 w-8" /> About Superfier
-        </h1>
-        <p>
-          Superfier is my laboratory for AI experiments, learning, and insights. It&apos;s a place
-          where I explore new technologies, share my thoughts, and document my journey in the world
-          of AI and development.
-        </p>
-
+    <LabLayout
+      title="About"
+      icon={<UserIcon className="h-4 w-4" />}
+      actions={<BackToButton href="/" label="Home" />}
+      description="A little bit about me"
+    >
+      <main className="prose dark:prose-invert mx-auto">
         <h1 className="mt-24 flex items-center gap-2">
           <UserIcon className="h-8 w-8" /> About Me
         </h1>
         <p>
           I&apos;m Michael, a software engineer with a passion for AI and machine learning. I love
-          learning and making new things. This is my place to{' '}
-          <Link href="/experiments" className="hover:text-primary">
-            share them
-          </Link>
-          .
+          learning and making new things. This is my corner of the web to share them.
         </p>
         <ul className="grid grid-cols-1 gap-2 md:grid-cols-2">
           <li className="flex items-center">
@@ -133,7 +122,6 @@ export default function AboutPage() {
           </li>
         </ul>
       </main>
-      <Footer />
-    </PageContainer>
+    </LabLayout>
   )
 }

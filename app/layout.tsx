@@ -7,6 +7,8 @@ import { Metadata } from 'next'
 import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 
+import { Layout } from '@/components/layout'
+
 import { app } from '@/lib/app'
 import { mono, sans, serif } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
@@ -43,11 +45,13 @@ const RootLayout = ({ children }: RootLayoutProps) => (
         sans.variable,
         serif.variable,
         mono.variable,
-        'bg-background text-foreground antialiased font-sans'
+        'bg-background text-foreground font-sans antialiased'
       )}
     >
       <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
-        <TooltipProvider>{children}</TooltipProvider>
+        <TooltipProvider>
+          <Layout>{children}</Layout>
+        </TooltipProvider>
         <Toaster className="z-[99999999]" />
       </ThemeProvider>
       <Analytics />
