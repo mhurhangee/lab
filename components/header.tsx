@@ -17,7 +17,7 @@ export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
-    <header className="bg-background/90 sticky top-0 z-50 w-full border-b backdrop-blur-sm">
+    <header className="bg-background/90 sticky top-0 z-50 w-full backdrop-blur-sm">
       <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2">

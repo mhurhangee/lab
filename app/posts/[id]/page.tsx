@@ -43,7 +43,7 @@ export default async function PostPage({ params }: PostPageProps) {
             <span className="text-muted-foreground text-sm">{formatDate(post.date)}</span>
           </div>
 
-          <h1 className="mb-4 font-mono text-4xl font-extrabold md:text-8xl">{post.title}</h1>
+          <h1 className="mb-4 text-4xl font-extrabold md:text-8xl">{post.title}</h1>
           <p className="text-muted-foreground mb-8 text-xl">{post.summary}</p>
         </div>
 

@@ -20,12 +20,12 @@ export const Hero = () => {
         <div className="flex flex-col gap-4 sm:flex-row">
           <Button className="gap-2" asChild>
             <Link href="/experiments">
-              Play <BotIcon className="h-4 w-4" />
+            <BotIcon className="h-4 w-4" />Play 
             </Link>
           </Button>
           <Button variant="secondary" className="gap-2" asChild>
             <Link href="/posts">
-              Read <BookIcon className="h-4 w-4" />
+            <BookIcon className="h-4 w-4" />Read 
             </Link>
           </Button>
         </div>

@@ -31,7 +31,7 @@ export default function PostsPage() {
               >
                 <div className="p-6">
                   <div className="text-muted-foreground mb-2 text-xs">{formatDate(post.date)}</div>
-                  <h3 className="group-hover:text-primary mb-2 font-mono text-2xl font-extrabold transition-colors">
+                  <h3 className="group-hover:text-primary mb-2 text-2xl font-extrabold transition-colors">
                     <Link href={`/posts/${post._meta.path}`}>{post.title}</Link>
                   </h3>
                   <p className="text-muted-foreground mb-4">{post.summary}</p>
