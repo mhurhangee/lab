@@ -10,14 +10,14 @@ import { LabLayout } from '@/components/lab-layout'
 
 import { FAQ } from '@/lib/faq'
 
-import { PenBoxIcon } from 'lucide-react'
+import { MessageCircleQuestionMarkIcon } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 
 export default function FaqPage() {
   return (
     <LabLayout
       title="FAQ"
-      icon={<PenBoxIcon />}
+      icon={<MessageCircleQuestionMarkIcon />}
       actions={<BackToButton href="/" label="Home" />}
       description="Frequently Asked Questions"
     >

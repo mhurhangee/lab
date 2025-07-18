@@ -6,13 +6,13 @@ import {
   FileQuestion,
   Folders,
   Home,
-  Hourglass,
   InfoIcon,
   LayoutGrid,
   LogIn,
   MessageCircleQuestion,
   Pen,
   ScanText,
+  TimerIcon,
 } from 'lucide-react'
 
 export interface SidebarItem {
@@ -50,7 +50,7 @@ export const sidebarItems: SidebarItem[] = [
       {
         name: 'Waitlist',
         href: '/waitlist',
-        icon: <Hourglass className="h-4 w-4" />,
+        icon: <TimerIcon className="h-4 w-4" />,
         loggedIn: false,
       },
       {
