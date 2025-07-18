@@ -9,9 +9,10 @@ import { projects } from '@/schema'
 
 interface CreateProjectActionProps {
   title: string
+  description?: string
 }
 
-export const createProjectAction = async ({ title }: CreateProjectActionProps) => {
+export const createProjectAction = async ({ title, description }: CreateProjectActionProps) => {
   try {
     const userId = await getUserId()
 
@@ -20,6 +21,7 @@ export const createProjectAction = async ({ title }: CreateProjectActionProps) =
       .values({
         id: generateId(),
         title,
+        description,
         userId,
       })
       .returning({ id: projects.id })
@@ -30,6 +32,7 @@ export const createProjectAction = async ({ title }: CreateProjectActionProps) =
 
     return { id: project[0].id }
   } catch (error) {
-    return handleErrorServer(error, 'Failed to create project')
+    const errorMessage = handleErrorServer(error, 'Failed to create project')
+    return { error: errorMessage }
   }
 }

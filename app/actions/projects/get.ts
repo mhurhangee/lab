@@ -27,6 +27,7 @@ export const getProjectAction = async ({ id }: GetProjectActionProps) => {
 
     return { project: result[0] }
   } catch (error) {
-    return handleErrorServer(error, 'Failed to get project')
+    const errorMessage = handleErrorServer(error, 'Failed to get project')
+    return { error: errorMessage }
   }
 }

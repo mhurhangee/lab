@@ -27,6 +27,7 @@ export const deleteProjectAction = async ({ id }: DeleteProjectActionProps) => {
 
     return { success: true }
   } catch (error) {
-    return handleErrorServer(error, 'Failed to delete project')
+    const errorMessage = handleErrorServer(error, 'Failed to delete project')
+    return { error: errorMessage }
   }
 }

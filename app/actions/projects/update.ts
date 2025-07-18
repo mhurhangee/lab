@@ -54,6 +54,7 @@ export const updateProjectAction = async ({
 
     return { id: result[0].id }
   } catch (error) {
-    return handleErrorServer(error, 'Failed to update project') as { error: string }
+    const errorMessage = handleErrorServer(error, 'Failed to update project')
+    return { error: errorMessage }
   }
 }

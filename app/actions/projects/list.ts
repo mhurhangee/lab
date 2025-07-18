@@ -20,7 +20,7 @@ export const listProjectsAction = async () => {
 
     return { projects: results }
   } catch (error) {
-    const { error: errorMessage } = handleErrorServer(error, 'Failed to list projects')
+    const errorMessage = handleErrorServer(error, 'Failed to list projects')
     return { error: errorMessage }
   }
 }
