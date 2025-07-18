@@ -131,3 +131,14 @@
 .page-subtitle {
   @apply text-muted-foreground text-lg sm:text-base md:text-lg lg:text-xl;
 }
+
+/* Custom styles for selected rows */
+.data-[state='selected']:not(.dark *) {
+  background-color: hsl(var(--primary) / 0.15);
+  font-weight: 500;
+}
+
+.dark .data-[state='selected'] {
+  background-color: hsl(var(--primary) / 0.2);
+  font-weight: 500;
+}

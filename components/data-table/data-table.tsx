@@ -26,6 +26,9 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
   filterFunction?: (query: string, data: TData[]) => TData[]
   searchPlaceholder?: string
+  enableRowSelection?: boolean
+  selectedRow?: TData | null
+  onRowSelectionChange?: (row: TData | null) => void
 }
 
 export function DataTable<TData, TValue>({
@@ -33,6 +36,9 @@ export function DataTable<TData, TValue>({
   data,
   filterFunction,
   searchPlaceholder = 'Search...',
+  enableRowSelection = false,
+  selectedRow = null,
+  onRowSelectionChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [searchQuery, setSearchQuery] = useState('')
@@ -83,7 +89,19 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map(row => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                <TableRow
+                  key={row.id}
+                  data-state={selectedRow === row.original ? 'selected' : undefined}
+                  className={enableRowSelection ? 'hover:bg-muted/50 cursor-pointer' : ''}
+                  onClick={() => {
+                    if (enableRowSelection && onRowSelectionChange) {
+                      // Toggle selection: if already selected, deselect it; otherwise select it
+                      onRowSelectionChange(
+                        selectedRow === row.original ? null : (row.original as TData)
+                      )
+                    }
+                  }}
+                >
                   {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}

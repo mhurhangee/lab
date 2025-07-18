@@ -6,6 +6,8 @@ import { DataTable as BaseDataTable } from '@/components/data-table/data-table'
 
 import Fuse from 'fuse.js'
 
+import { useProject } from '@/providers/project'
+
 import { Project, columns } from './columns'
 
 interface ProjectDataTableProps {
@@ -13,6 +15,8 @@ interface ProjectDataTableProps {
 }
 
 export function DataTable({ data }: ProjectDataTableProps) {
+  const { selectedProject, setSelectedProject } = useProject()
+
   // Create Fuse instance once with its options
   const fuseInstance = useMemo(() => {
     const fuseOptions = {
@@ -35,6 +39,9 @@ export function DataTable({ data }: ProjectDataTableProps) {
       data={data}
       searchPlaceholder="Search projects..."
       filterFunction={filterProjects}
+      enableRowSelection
+      selectedRow={selectedProject}
+      onRowSelectionChange={setSelectedProject}
     />
   )
 }

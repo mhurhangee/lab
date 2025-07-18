@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils'
 
 import '@/styles/globals.css'
 
+import { ProjectProvider } from '@/providers/project'
 import { ThemeProvider } from '@/providers/theme'
 
 export const metadata: Metadata = {
@@ -75,7 +76,9 @@ const RootLayout = ({ children }: RootLayoutProps) => (
           enableSystem
         >
           <TooltipProvider>
-            <Layout>{children}</Layout>
+            <ProjectProvider>
+              <Layout>{children}</Layout>
+            </ProjectProvider>
           </TooltipProvider>
           <Toaster className="z-[99999999]" />
         </ThemeProvider>
