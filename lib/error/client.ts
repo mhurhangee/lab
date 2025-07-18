@@ -1,4 +1,3 @@
-// handleErrorClient.ts
 import { logger } from '@/lib/logger'
 
 import { toast } from 'sonner'

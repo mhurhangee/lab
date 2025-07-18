@@ -1,5 +1,7 @@
 'use client'
 
+import { useAuth } from '@clerk/nextjs'
+
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -20,8 +22,7 @@ import { ChevronDown } from 'lucide-react'
 
 export const SidebarContent = () => {
   const pathname = usePathname()
-  const isSignedIn = false
-  const isLoaded = true
+  const { isSignedIn, isLoaded } = useAuth()
 
   // Only render items that match the current authentication state
   const shouldShowGroup = (group: SidebarItem) => {

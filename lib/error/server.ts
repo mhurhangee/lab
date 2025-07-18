@@ -1,4 +1,3 @@
-// handleErrorServer.ts
 import { logger } from '@/lib/logger'
 
 import { parseError } from './parse'

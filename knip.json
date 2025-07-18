@@ -2,7 +2,6 @@
   "ignore": ["components/ui/**", "content/**", "content-collections.ts", "postcss.config.mjs"],
   "ignoreDependencies": [
     "@tailwindcss/typography",
-    "drizzle-orm",
     "highlight.js",
     "rehype-highlight",
     "eslint",

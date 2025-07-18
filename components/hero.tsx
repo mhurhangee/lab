@@ -36,9 +36,9 @@ export const Hero = () => {
           </SignedOut>
           <SignedIn>
             <Button variant="default" className="gap-2" asChild>
-              <Link href="/lab">
+              <Link href="/dashboard">
                 <LayoutGridIcon className="h-4 w-4" />
-                Lab
+                Go to Dashboard
               </Link>
             </Button>
           </SignedIn>

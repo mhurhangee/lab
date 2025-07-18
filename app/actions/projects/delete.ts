@@ -1,0 +1,36 @@
+'use server'
+
+import { getUserId } from '@/lib/auth'
+import { db } from '@/lib/db'
+import { handleErrorServer } from '@/lib/error/server'
+
+import { and, eq } from 'drizzle-orm'
+
+import { projects } from '@/schema'
+
+interface DeleteProjectActionProps {
+  id: string
+}
+
+type DeleteProjectResult = { success: true; error?: never } | { error: string; success?: never }
+
+export const deleteProjectAction = async ({
+  id,
+}: DeleteProjectActionProps): Promise<DeleteProjectResult> => {
+  try {
+    const userId = await getUserId()
+
+    const result = await db
+      .delete(projects)
+      .where(and(eq(projects.id, id), eq(projects.userId, userId)))
+      .returning({ id: projects.id })
+
+    if (!result?.length) {
+      throw new Error('Project not found or you do not have permission to delete it')
+    }
+
+    return { success: true }
+  } catch (error) {
+    return handleErrorServer(error, 'Failed to delete project') as { error: string }
+  }
+}

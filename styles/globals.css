@@ -123,3 +123,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+.page-title {
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold my-2;
+}
+
+.page-subtitle {
+    @apply text-lg sm:text-base md:text-lg lg:text-xl text-muted-foreground;
+}
+
+    

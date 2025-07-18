@@ -1,9 +1,4 @@
 import {
-  Bot,
-  FileBadge,
-  FileCode,
-  FileIcon,
-  FileQuestion,
   Folders,
   Home,
   InfoIcon,
@@ -11,7 +6,6 @@ import {
   LogIn,
   MessageCircleQuestion,
   Pen,
-  ScanText,
   TimerIcon,
 } from 'lucide-react'
 
@@ -39,7 +33,7 @@ export const sidebarItems: SidebarItem[] = [
         name: 'Home',
         href: '/',
         icon: <Home className="h-4 w-4" />,
-        loggedIn: false, // Show to everyone
+        loggedIn: false,
       },
       {
         name: 'Sign In',
@@ -65,58 +59,6 @@ export const sidebarItems: SidebarItem[] = [
         icon: <Folders className="h-4 w-4" />,
         loggedIn: true,
       },
-      {
-        name: 'Files',
-        href: '/files',
-        icon: <FileIcon className="h-4 w-4" />,
-        loggedIn: true,
-      },
-    ],
-  },
-  {
-    group: 'Chat UI',
-    collapsible: true,
-    defaultOpen: true,
-    loggedIn: true,
-    items: [
-      {
-        name: 'AI SDK Chat',
-        href: '/beta-chat',
-        icon: <Bot className="h-4 w-4" />,
-        loggedIn: true,
-      },
-      {
-        name: 'Pat Chat',
-        href: '/pat-chat',
-        icon: <FileBadge className="h-4 w-4" />,
-        loggedIn: true,
-      },
-      {
-        name: 'File QA',
-        href: '/file-qa',
-        icon: <FileQuestion className="h-4 w-4" />,
-        loggedIn: true,
-      },
-    ],
-  },
-  {
-    group: 'Tools',
-    collapsible: true,
-    defaultOpen: true,
-    loggedIn: true,
-    items: [
-      {
-        name: 'PDF Claim Extractor',
-        href: '/pdf-claim-extractor',
-        icon: <ScanText className="h-4 w-4" />,
-        loggedIn: true,
-      },
-      {
-        name: 'Parse PDF',
-        href: '/parse-pdf',
-        icon: <FileCode className="h-4 w-4" />,
-        loggedIn: true,
-      },
     ],
   },
   {
@@ -129,19 +71,19 @@ export const sidebarItems: SidebarItem[] = [
         name: 'Posts',
         href: '/posts',
         icon: <Pen className="h-4 w-4" />,
-        loggedIn: false,
+        loggedIn: null,
       },
       {
         name: 'FAQ',
         href: '/faq',
         icon: <MessageCircleQuestion className="h-4 w-4" />,
-        loggedIn: false,
+        loggedIn: null,
       },
       {
         name: 'About',
         href: '/about',
         icon: <InfoIcon className="h-4 w-4" />,
-        loggedIn: false,
+        loggedIn: null,
       },
     ],
   },
