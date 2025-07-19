@@ -5,40 +5,40 @@ import { ErrorAlert } from '@/components/ui/error-alert'
 
 import { LabLayout } from '@/components/lab-layout'
 
-import { FolderIcon, PlusIcon } from 'lucide-react'
+import { FileIcon, PlusIcon } from 'lucide-react'
 
 import { DataTable } from './components/data-table'
-import { listProjectsAction } from '@/app/actions/projects/list'
+import { listFilesAction } from '@/app/actions/files/list'
 
 export const dynamic = 'force-dynamic'
 
-export default async function ProjectsPage() {
-  const { projects, error } = await listProjectsAction()
+export default async function FilesPage() {
+  const { files, error } = await listFilesAction()
 
   return (
     <LabLayout
-      title="Projects"
-      icon={<FolderIcon />}
+      title="Files"
+      icon={<FileIcon />}
       actions={
         <div className="flex items-center gap-2">
-          <Link href="/projects/new">
+          <Link href="/files/new">
             <Button size="sm">
               <PlusIcon className="h-4 w-4" />
-              New Project
+              Upload File
             </Button>
           </Link>
         </div>
       }
-      description="Manage your projects"
+      description="Manage your files"
     >
       <div className="max-w-2xl py-8">
-        <h1 className="page-title">Projects</h1>
+        <h1 className="page-title">Files</h1>
         <p className="page-subtitle">
-          See and manage your projects. You can create as many projects as you need.
+          Upload and manage your files. All files are stored securely in the cloud.
         </p>
       </div>
       <div className="space-y-8 py-8">
-        {error ? <ErrorAlert error={error} /> : <DataTable data={projects || []} />}
+        {error ? <ErrorAlert error={error} /> : <DataTable data={files || []} />}
       </div>
     </LabLayout>
   )

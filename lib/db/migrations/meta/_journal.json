@@ -15,6 +15,20 @@
       "when": 1752838842511,
       "tag": "0001_late_microbe",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1752865051453,
+      "tag": "0002_plain_shen",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1752912995449,
+      "tag": "0003_lovely_maelstrom",
+      "breakpoints": true
     }
   ]
 }

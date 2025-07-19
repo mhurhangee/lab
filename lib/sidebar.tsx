@@ -7,6 +7,7 @@ import {
   MessageCircleQuestion,
   Pen,
   TimerIcon,
+  FileIcon,
 } from 'lucide-react'
 
 export interface SidebarItem {
@@ -57,6 +58,12 @@ export const sidebarItems: SidebarItem[] = [
         name: 'Projects',
         href: '/projects',
         icon: <Folders className="h-4 w-4" />,
+        loggedIn: true,
+      },
+      {
+        name: 'Files',
+        href: '/files',
+        icon: <FileIcon className="h-4 w-4" />,
         loggedIn: true,
       },
     ],
