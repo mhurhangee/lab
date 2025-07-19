@@ -8,10 +8,10 @@ import { Button } from '@/components/ui/button'
 
 import { Edit, Eye } from 'lucide-react'
 
-import { File } from './columns'
+import { FileRecord } from './columns'
 import { DeleteFileDialog } from './delete-file-dialog'
 
-export function ActionsCell({ row }: { row: Row<File> }) {
+export function ActionsCell({ row }: { row: Row<FileRecord> }) {
   const file = row.original
 
   return (
