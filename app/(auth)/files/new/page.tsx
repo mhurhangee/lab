@@ -6,11 +6,7 @@ import { UploadForm } from '../components/upload-form'
 
 export default function NewFilePage() {
   return (
-    <LabLayout
-      title="Upload File"
-      icon={<FileIcon />}
-      description="Upload a new file"
-    >
+    <LabLayout title="Upload File" icon={<FileIcon />} description="Upload a new file">
       <div className="max-w-2xl py-8">
         <h1 className="page-title">Upload File</h1>
         <p className="page-subtitle">

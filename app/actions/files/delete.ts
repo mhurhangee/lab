@@ -1,6 +1,7 @@
 'use server'
 
 import { del } from '@vercel/blob'
+
 import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
@@ -34,9 +35,7 @@ export const deleteFileAction = async ({ id }: DeleteFileActionProps) => {
     await del(file.url)
 
     // Delete from database
-    await db
-      .delete(files)
-      .where(and(eq(files.id, id), eq(files.userId, userId)))
+    await db.delete(files).where(and(eq(files.id, id), eq(files.userId, userId)))
 
     return { success: true }
   } catch (error) {

@@ -1,4 +1,5 @@
 import {
+  FileIcon,
   Folders,
   Home,
   InfoIcon,
@@ -7,7 +8,6 @@ import {
   MessageCircleQuestion,
   Pen,
   TimerIcon,
-  FileIcon,
 } from 'lucide-react'
 
 export interface SidebarItem {

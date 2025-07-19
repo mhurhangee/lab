@@ -1,4 +1,4 @@
-import { pgTable, timestamp, varchar, integer } from 'drizzle-orm/pg-core'
+import { integer, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core'
 
 export const projects = pgTable('projects', {
   id: varchar('id', { length: 12 }).primaryKey(),

@@ -7,8 +7,9 @@ import { LabLayout } from '@/components/lab-layout'
 
 import { FileIcon, PlusIcon } from 'lucide-react'
 
-import { DataTable } from './components/data-table'
 import { listFilesAction } from '@/app/actions/files/list'
+
+import { DataTable } from './components/data-table'
 
 export const dynamic = 'force-dynamic'
 

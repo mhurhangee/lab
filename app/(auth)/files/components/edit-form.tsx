@@ -1,16 +1,19 @@
 'use client'
 
 import { useState } from 'react'
+
 import { useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
+import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/components/ui/dropzone'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/components/ui/dropzone'
 
-import { updateFileAction } from '@/app/actions/files/update'
+import { handleErrorClient } from '@/lib/error/client'
 
 import { toast } from 'sonner'
+
+import { updateFileAction } from '@/app/actions/files/update'
 
 interface FileRecord {
   id: string
@@ -34,7 +37,7 @@ export function EditForm({ file }: EditFormProps) {
 
   const handleUpdate = async () => {
     if (!name.trim()) {
-      toast.error('Please enter a file name')
+      handleErrorClient('Please enter a file name', 'Please enter a file name')
       return
     }
 
@@ -48,14 +51,14 @@ export function EditForm({ file }: EditFormProps) {
       })
 
       if (result.error) {
-        toast.error(result.error)
+        handleErrorClient('Failed to update file', result.error, 'Unexpected error in EditForm')
         return
       }
 
       toast.success('File updated successfully!')
       router.push(`/files/${file.id}`)
     } catch (error) {
-      toast.error('Failed to update file')
+      handleErrorClient('Failed to update file', error, 'Unexpected error in EditForm')
     } finally {
       setIsUpdating(false)
     }
@@ -74,15 +77,15 @@ export function EditForm({ file }: EditFormProps) {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-lg border bg-card p-6">
-        <h2 className="text-lg font-semibold mb-4">File Details</h2>
+      <div className="bg-card rounded-lg border p-6">
+        <h2 className="mb-4 text-lg font-semibold">File Details</h2>
         <div className="space-y-4">
           <div>
             <Label htmlFor="name">File Name</Label>
             <Input
               id="name"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={e => setName(e.target.value)}
               placeholder="Enter file name"
             />
           </div>
@@ -91,20 +94,21 @@ export function EditForm({ file }: EditFormProps) {
               <span className="text-muted-foreground">Current Type:</span> {file.type}
             </div>
             <div>
-              <span className="text-muted-foreground">Current Size:</span> {formatFileSize(file.size)}
+              <span className="text-muted-foreground">Current Size:</span>{' '}
+              {formatFileSize(file.size)}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="rounded-lg border bg-card p-6">
-        <h2 className="text-lg font-semibold mb-4">Replace File (Optional)</h2>
-        <p className="text-sm text-muted-foreground mb-4">
+      <div className="bg-card rounded-lg border p-6">
+        <h2 className="mb-4 text-lg font-semibold">Replace File (Optional)</h2>
+        <p className="text-muted-foreground mb-4 text-sm">
           Upload a new file to replace the current one. Leave empty to keep the current file.
         </p>
         <Dropzone
           src={newFiles}
-          onDrop={(acceptedFiles) => setNewFiles(acceptedFiles)}
+          onDrop={acceptedFiles => setNewFiles(acceptedFiles)}
           maxFiles={1}
           maxSize={50 * 1024 * 1024} // 50MB
           className="min-h-[150px]"
@@ -112,7 +116,7 @@ export function EditForm({ file }: EditFormProps) {
           <DropzoneContent />
           <DropzoneEmptyState>
             <div className="flex flex-col items-center justify-center text-center">
-              <div className="bg-muted text-muted-foreground flex size-10 items-center justify-center rounded-md mb-3">
+              <div className="bg-muted text-muted-foreground mb-3 flex size-10 items-center justify-center rounded-md">
                 <svg
                   className="h-5 w-5"
                   fill="none"
@@ -128,7 +132,7 @@ export function EditForm({ file }: EditFormProps) {
                   />
                 </svg>
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Drag and drop a new file here, or click to browse
               </p>
             </div>
@@ -144,10 +148,7 @@ export function EditForm({ file }: EditFormProps) {
         >
           Cancel
         </Button>
-        <Button
-          onClick={handleUpdate}
-          disabled={isUpdating}
-        >
+        <Button onClick={handleUpdate} disabled={isUpdating}>
           {isUpdating ? 'Updating...' : 'Update File'}
         </Button>
       </div>

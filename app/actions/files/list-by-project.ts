@@ -4,7 +4,7 @@ import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 
-import { desc, eq, and } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 
 import { files } from '@/schema'
 

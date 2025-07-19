@@ -7,6 +7,7 @@ import { LabLayout } from '@/components/lab-layout'
 import { FileIcon } from 'lucide-react'
 
 import { getFileAction } from '@/app/actions/files/get'
+
 import { EditForm } from '../../components/edit-form'
 
 interface EditFilePageProps {
