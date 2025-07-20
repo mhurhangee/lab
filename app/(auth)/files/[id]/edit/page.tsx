@@ -7,6 +7,7 @@ import { LabLayout } from '@/components/lab-layout'
 import { FileIcon } from 'lucide-react'
 
 import { getFileAction } from '@/app/actions/files/get'
+import { listProjectsAction } from '@/app/actions/projects/list'
 
 import { EditForm } from '../../components/edit-form'
 
@@ -16,7 +17,10 @@ interface EditFilePageProps {
 
 export default async function EditFilePage({ params }: EditFilePageProps) {
   const { id } = await params
-  const { file, error } = await getFileAction({ id })
+  const [{ file, error }, { projects = [] }] = await Promise.all([
+    getFileAction({ id }),
+    listProjectsAction()
+  ])
 
   if (error) {
     return (
@@ -43,7 +47,7 @@ export default async function EditFilePage({ params }: EditFilePageProps) {
         </p>
       </div>
       <div className="space-y-8 py-8">
-        <EditForm file={file} />
+        <EditForm file={file} projects={projects} />
       </div>
     </LabLayout>
   )

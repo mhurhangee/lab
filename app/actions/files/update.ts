@@ -14,9 +14,10 @@ interface UpdateFileActionProps {
   id: string
   file?: File
   name?: string
+  projectId?: string | null
 }
 
-export const updateFileAction = async ({ id, file, name }: UpdateFileActionProps) => {
+export const updateFileAction = async ({ id, file, name, projectId }: UpdateFileActionProps) => {
   try {
     const userId = await getUserId()
 
@@ -58,6 +59,11 @@ export const updateFileAction = async ({ id, file, name }: UpdateFileActionProps
     // If only updating the name
     if (name && !file) {
       updateData.name = name
+    }
+
+    // If updating the project
+    if (projectId !== undefined) {
+      updateData.projectId = projectId
     }
 
     // Update database record

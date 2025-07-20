@@ -7,14 +7,14 @@ import { LabLayout } from '@/components/lab-layout'
 
 import { FolderIcon, PlusIcon } from 'lucide-react'
 
-import { listProjectsAction } from '@/app/actions/projects/list'
+import { listProjectsWithFileCountsAction } from '@/app/actions/projects/list-with-file-counts'
 
-import { DataTable } from './components/data-table'
+import { DataTableWithFileCounts } from './components/data-table-with-file-counts'
 
 export const dynamic = 'force-dynamic'
 
 export default async function ProjectsPage() {
-  const { projects, error } = await listProjectsAction()
+  const { projects, error } = await listProjectsWithFileCountsAction()
 
   return (
     <LabLayout
@@ -39,7 +39,7 @@ export default async function ProjectsPage() {
         </p>
       </div>
       <div className="space-y-8 py-8">
-        {error ? <ErrorAlert error={error} /> : <DataTable data={projects || []} />}
+        {error ? <ErrorAlert error={error} /> : <DataTableWithFileCounts data={projects || []} />}
       </div>
     </LabLayout>
   )

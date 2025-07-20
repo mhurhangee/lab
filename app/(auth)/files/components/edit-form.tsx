@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/components/ui/dropzone'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { ProjectSelector } from '@/components/project-selector'
 
 import { handleErrorClient } from '@/lib/error/client'
 
@@ -15,23 +16,18 @@ import { toast } from 'sonner'
 
 import { updateFileAction } from '@/app/actions/files/update'
 
-interface FileRecord {
-  id: string
-  name: string
-  type: string
-  size: number
-  url: string
-  createdAt: Date
-  updatedAt: Date
-}
+import type { FileRecord } from './columns'
+import type { Project } from '@/app/(auth)/projects/components/columns'
 
 interface EditFormProps {
   file: FileRecord
+  projects: Project[]
 }
 
-export function EditForm({ file }: EditFormProps) {
+export function EditForm({ file, projects }: EditFormProps) {
   const router = useRouter()
   const [name, setName] = useState(file.name)
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(file.projectId || null)
   const [newFiles, setNewFiles] = useState<File[]>([])
   const [isUpdating, setIsUpdating] = useState(false)
 
@@ -48,6 +44,7 @@ export function EditForm({ file }: EditFormProps) {
         id: file.id,
         name: name.trim(),
         file: newFiles.length > 0 ? newFiles[0] : undefined,
+        projectId: selectedProjectId,
       })
 
       if (result.error) {
@@ -77,6 +74,17 @@ export function EditForm({ file }: EditFormProps) {
 
   return (
     <div className="space-y-6">
+      <div className="bg-card rounded-lg border p-6">
+        <h2 className="mb-4 text-lg font-semibold">Project</h2>
+        <ProjectSelector
+          projects={projects}
+          selectedProjectId={selectedProjectId}
+          onProjectSelect={setSelectedProjectId}
+          placeholder="Select a project (optional)"
+          className="mb-6"
+        />
+      </div>
+
       <div className="bg-card rounded-lg border p-6">
         <h2 className="mb-4 text-lg font-semibold">File Details</h2>
         <div className="space-y-4">

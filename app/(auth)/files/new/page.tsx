@@ -3,8 +3,10 @@ import { LabLayout } from '@/components/lab-layout'
 import { FileIcon } from 'lucide-react'
 
 import { UploadForm } from '../components/upload-form'
+import { listProjectsAction } from '@/app/actions/projects/list'
 
-export default function NewFilePage() {
+export default async function NewFilePage() {
+  const { projects = [], error } = await listProjectsAction()
   return (
     <LabLayout title="Upload File" icon={<FileIcon />} description="Upload a new file">
       <div className="max-w-2xl py-8">
@@ -14,7 +16,7 @@ export default function NewFilePage() {
         </p>
       </div>
       <div className="space-y-8 py-8">
-        <UploadForm />
+        <UploadForm projects={projects} />
       </div>
     </LabLayout>
   )

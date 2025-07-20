@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/components/ui/dropzone'
+import { ProjectSelector } from '@/components/project-selector'
 
 import { handleErrorClient } from '@/lib/error/client'
 
@@ -13,9 +14,16 @@ import { toast } from 'sonner'
 
 import { createFileAction } from '@/app/actions/files/create'
 
-export function UploadForm() {
+import type { Project } from '@/app/(auth)/projects/components/columns'
+
+interface UploadFormProps {
+  projects: Project[]
+}
+
+export function UploadForm({ projects }: UploadFormProps) {
   const router = useRouter()
   const [files, setFiles] = useState<File[]>([])
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
 
   const handleUpload = async () => {
@@ -28,7 +36,10 @@ export function UploadForm() {
 
     try {
       const file = files[0]
-      const result = await createFileAction({ file })
+      const result = await createFileAction({ 
+        file, 
+        projectId: selectedProjectId || undefined 
+      })
 
       if (result.error) {
         handleErrorClient('Failed to upload file', result.error)
@@ -46,6 +57,17 @@ export function UploadForm() {
 
   return (
     <div className="space-y-6">
+      <div className="bg-card rounded-lg border p-6">
+        <h2 className="mb-4 text-lg font-semibold">Project</h2>
+        <ProjectSelector
+          projects={projects}
+          selectedProjectId={selectedProjectId}
+          onProjectSelect={setSelectedProjectId}
+          placeholder="Select a project (optional)"
+          className="mb-6"
+        />
+      </div>
+
       <div className="bg-card rounded-lg border p-6">
         <h2 className="mb-4 text-lg font-semibold">Select File</h2>
         <Dropzone
