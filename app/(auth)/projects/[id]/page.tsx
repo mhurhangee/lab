@@ -10,10 +10,10 @@ import { formatDate } from '@/lib/date'
 
 import { Edit, FolderIcon } from 'lucide-react'
 
-import { DeleteProjectDialog } from '@/app/(auth)/projects/components/delete-project-dialog'
-import { getProjectAction } from '@/app/actions/projects/get'
-import { listFilesByProjectAction } from '@/app/actions/files/list-by-project'
 import { DataTable } from '@/app/(auth)/files/components/data-table'
+import { DeleteProjectDialog } from '@/app/(auth)/projects/components/delete-project-dialog'
+import { listFilesByProjectAction } from '@/app/actions/files/list-by-project'
+import { getProjectAction } from '@/app/actions/projects/get'
 
 interface ProjectPageProps {
   params: Promise<{ id: string }>
@@ -23,7 +23,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const { id } = await params
   const [{ project, error }, { files = [] }] = await Promise.all([
     getProjectAction({ id }),
-    listFilesByProjectAction({ projectId: id })
+    listFilesByProjectAction({ projectId: id }),
   ])
 
   if (error || !project) {
@@ -92,9 +92,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium">Files ({files.length})</h3>
             <Link href="/files/new">
-              <Button>
-                Add File
-              </Button>
+              <Button>Add File</Button>
             </Link>
           </div>
           <div className="rounded-md border">

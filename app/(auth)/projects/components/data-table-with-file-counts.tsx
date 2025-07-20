@@ -22,7 +22,10 @@ export function DataTableWithFileCounts({ data }: ProjectDataTableWithFileCounts
     return new Fuse(data, fuseOptions)
   }, [data])
 
-  const filterProjects = (query: string, projects: ProjectWithFileCount[]): ProjectWithFileCount[] => {
+  const filterProjects = (
+    query: string,
+    projects: ProjectWithFileCount[]
+  ): ProjectWithFileCount[] => {
     if (!query) return projects
 
     const result = fuseInstance.search(query)

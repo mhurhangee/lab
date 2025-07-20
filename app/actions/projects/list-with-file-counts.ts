@@ -25,7 +25,14 @@ export const listProjectsWithFileCountsAction = async () => {
       .from(projects)
       .leftJoin(files, eq(projects.id, files.projectId))
       .where(eq(projects.userId, userId))
-      .groupBy(projects.id, projects.userId, projects.title, projects.description, projects.createdAt, projects.updatedAt)
+      .groupBy(
+        projects.id,
+        projects.userId,
+        projects.title,
+        projects.description,
+        projects.createdAt,
+        projects.updatedAt
+      )
       .orderBy(desc(projects.updatedAt))
 
     return { projects: results }

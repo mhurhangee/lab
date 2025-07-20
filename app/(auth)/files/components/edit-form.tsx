@@ -8,16 +8,17 @@ import { Button } from '@/components/ui/button'
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/components/ui/dropzone'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+
 import { ProjectSelector } from '@/components/project-selector'
 
 import { handleErrorClient } from '@/lib/error/client'
 
 import { toast } from 'sonner'
 
+import type { Project } from '@/app/(auth)/projects/components/columns'
 import { updateFileAction } from '@/app/actions/files/update'
 
 import type { FileRecord } from './columns'
-import type { Project } from '@/app/(auth)/projects/components/columns'
 
 interface EditFormProps {
   file: FileRecord

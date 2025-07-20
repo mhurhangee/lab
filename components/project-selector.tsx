@@ -12,11 +12,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { useProject } from '@/providers/project'
-
 import { ChevronDownIcon, FolderIcon } from 'lucide-react'
 
 import type { Project } from '@/app/(auth)/projects/components/columns'
+import { useProject } from '@/providers/project'
 
 interface ProjectSelectorProps {
   projects: Project[]
@@ -34,7 +33,7 @@ export function ProjectSelector({
   className,
 }: ProjectSelectorProps) {
   const { selectedProject } = useProject()
-  
+
   // Use the selected project from context as default if no selectedProjectId is provided
   const defaultProjectId = selectedProjectId ?? selectedProject?.id ?? null
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(defaultProjectId)
@@ -49,10 +48,7 @@ export function ProjectSelector({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className={`w-full justify-between ${className}`}
-        >
+        <Button variant="outline" className={`w-full justify-between ${className}`}>
           <div className="flex items-center gap-2">
             <FolderIcon className="h-4 w-4" />
             {selectedProject_ ? selectedProject_.title : placeholder}
@@ -63,7 +59,7 @@ export function ProjectSelector({
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>Select Project</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        
+
         <DropdownMenuItem
           onClick={() => handleProjectSelect(null)}
           className={currentProjectId === null ? 'bg-accent' : ''}
@@ -73,8 +69,8 @@ export function ProjectSelector({
             No project
           </div>
         </DropdownMenuItem>
-        
-        {projects.map((project) => (
+
+        {projects.map(project => (
           <DropdownMenuItem
             key={project.id}
             onClick={() => handleProjectSelect(project.id)}
@@ -85,7 +81,7 @@ export function ProjectSelector({
               <div className="flex flex-col">
                 <span className="font-medium">{project.title}</span>
                 {project.description && (
-                  <span className="text-xs text-muted-foreground truncate">
+                  <span className="text-muted-foreground truncate text-xs">
                     {project.description}
                   </span>
                 )}

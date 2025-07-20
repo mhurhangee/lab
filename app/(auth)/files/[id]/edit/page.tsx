@@ -19,7 +19,7 @@ export default async function EditFilePage({ params }: EditFilePageProps) {
   const { id } = await params
   const [{ file, error }, { projects = [] }] = await Promise.all([
     getFileAction({ id }),
-    listProjectsAction()
+    listProjectsAction(),
   ])
 
   if (error) {

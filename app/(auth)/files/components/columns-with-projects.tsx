@@ -26,7 +26,11 @@ export type FileRecordWithProject = {
 }
 
 // Helper function for case-insensitive sorting of string values
-const caseInsensitiveSort = (rowA: Row<FileRecordWithProject>, rowB: Row<FileRecordWithProject>, columnId: string) => {
+const caseInsensitiveSort = (
+  rowA: Row<FileRecordWithProject>,
+  rowB: Row<FileRecordWithProject>,
+  columnId: string
+) => {
   const valueA = String(rowA.getValue(columnId) || '').toLowerCase()
   const valueB = String(rowB.getValue(columnId) || '').toLowerCase()
   return valueA.localeCompare(valueB)

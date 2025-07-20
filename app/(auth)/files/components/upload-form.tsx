@@ -6,15 +6,15 @@ import { useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/components/ui/dropzone'
+
 import { ProjectSelector } from '@/components/project-selector'
 
 import { handleErrorClient } from '@/lib/error/client'
 
 import { toast } from 'sonner'
 
-import { createFileAction } from '@/app/actions/files/create'
-
 import type { Project } from '@/app/(auth)/projects/components/columns'
+import { createFileAction } from '@/app/actions/files/create'
 
 interface UploadFormProps {
   projects: Project[]
@@ -36,9 +36,9 @@ export function UploadForm({ projects }: UploadFormProps) {
 
     try {
       const file = files[0]
-      const result = await createFileAction({ 
-        file, 
-        projectId: selectedProjectId || undefined 
+      const result = await createFileAction({
+        file,
+        projectId: selectedProjectId || undefined,
       })
 
       if (result.error) {
