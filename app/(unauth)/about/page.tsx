@@ -6,7 +6,6 @@ import { LabLayout } from '@/components/lab-layout'
 
 import { app } from '@/lib/app'
 
-import { MailIcon } from 'lucide-react'
 import {
   AwardIcon,
   BookmarkIcon,
@@ -14,6 +13,7 @@ import {
   CpuIcon,
   DogIcon,
   GraduationCapIcon,
+  MailIcon,
   MicroscopeIcon,
   ScaleIcon,
   SparkleIcon,

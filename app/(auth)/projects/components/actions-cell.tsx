@@ -6,13 +6,13 @@ import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
 
+import { ProjectDB } from '@/types/database'
+
 import { Edit, Eye } from 'lucide-react'
 
 import { DeleteProjectDialog } from '@/app/(auth)/projects/components/delete-project-dialog'
 
-import { Project } from './columns'
-
-export function ActionsCell({ row }: { row: Row<Project> }) {
+export function ActionsCell({ row }: { row: Row<ProjectDB> }) {
   const project = row.original
 
   return (

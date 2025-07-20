@@ -10,7 +10,7 @@ import { formatDate } from '@/lib/date'
 
 import { Edit } from 'lucide-react'
 
-import { DataTable } from '@/app/(auth)/files/components/data-table'
+import { FilesDataTable } from '@/app/(auth)/files/components/data-table'
 import { DeleteProjectDialog } from '@/app/(auth)/projects/components/delete-project-dialog'
 import { listFilesByProjectAction } from '@/app/actions/files/list-by-project'
 import { getProjectAction } from '@/app/actions/projects/get'
@@ -80,7 +80,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             <Button>Add File</Button>
           </Link>
         </div>
-        <DataTable data={files} />
+        <FilesDataTable data={files} hideProject />
       </div>
     </LabLayout>
   )

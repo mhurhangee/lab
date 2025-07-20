@@ -9,7 +9,7 @@ import { PlusIcon } from 'lucide-react'
 
 import { listProjectsWithFileCountsAction } from '@/app/actions/projects/list-with-file-counts'
 
-import { DataTableWithFileCounts } from './components/data-table-with-file-counts'
+import { ProjectsDataTable } from './components/data-table'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,7 +33,7 @@ export default async function ProjectsPage() {
       }
       description="Manage, view, and create new projects to help organize your workflows and files."
     >
-      {error ? <ErrorAlert error={error} /> : <DataTableWithFileCounts data={projects || []} />}
+      {error ? <ErrorAlert error={error} /> : <ProjectsDataTable data={projects || []} />}
     </LabLayout>
   )
 }

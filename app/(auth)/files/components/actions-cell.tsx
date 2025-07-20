@@ -6,12 +6,13 @@ import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
 
+import { FileDB } from '@/types/database'
+
 import { Edit, Eye } from 'lucide-react'
 
-import { FileRecord } from './columns'
 import { DeleteFileDialog } from './delete-file-dialog'
 
-export function ActionsCell({ row }: { row: Row<FileRecord> }) {
+export function ActionsCell({ row }: { row: Row<FileDB> }) {
   const file = row.original
 
   return (

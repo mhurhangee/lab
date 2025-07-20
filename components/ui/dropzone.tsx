@@ -5,6 +5,7 @@ import { createContext, useContext } from 'react'
 
 import { Button } from '@/components/ui/button'
 
+import { formatFileSize } from '@/lib/file-size'
 import { cn } from '@/lib/utils'
 
 import { UploadIcon } from 'lucide-react'
@@ -17,17 +18,6 @@ type DropzoneContextType = {
   maxSize?: DropzoneOptions['maxSize']
   minSize?: DropzoneOptions['minSize']
   maxFiles?: DropzoneOptions['maxFiles']
-}
-
-const renderBytes = (bytes: number) => {
-  const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
-  let size = bytes
-  let unitIndex = 0
-  while (size >= 1024 && unitIndex < units.length - 1) {
-    size /= 1024
-    unitIndex++
-  }
-  return `${size.toFixed(2)}${units[unitIndex]}`
 }
 
 const DropzoneContext = createContext<DropzoneContextType | undefined>(undefined)
@@ -146,11 +136,11 @@ export const DropzoneEmptyState = ({ children, className }: DropzoneEmptyStatePr
     caption += new Intl.ListFormat('en').format(Object.keys(accept))
   }
   if (minSize && maxSize) {
-    caption += ` between ${renderBytes(minSize)} and ${renderBytes(maxSize)}`
+    caption += ` between ${formatFileSize(minSize)} and ${formatFileSize(maxSize)}`
   } else if (minSize) {
-    caption += ` at least ${renderBytes(minSize)}`
+    caption += ` at least ${formatFileSize(minSize)}`
   } else if (maxSize) {
-    caption += ` less than ${renderBytes(maxSize)}`
+    caption += ` less than ${formatFileSize(maxSize)}`
   }
   return (
     <div className={cn('flex flex-col items-center justify-center', className)}>

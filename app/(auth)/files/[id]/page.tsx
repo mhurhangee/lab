@@ -8,6 +8,7 @@ import { ErrorAlert } from '@/components/ui/error-alert'
 import { LabLayout } from '@/components/lab-layout'
 
 import { formatDate } from '@/lib/date'
+import { formatFileSize } from '@/lib/file-size'
 
 import { DownloadIcon, EditIcon } from 'lucide-react'
 
@@ -33,17 +34,6 @@ export default async function FilePage({ params }: FilePageProps) {
 
   if (!file) {
     notFound()
-  }
-
-  const formatFileSize = (bytes: number) => {
-    const units = ['B', 'KB', 'MB', 'GB']
-    let size = bytes
-    let unitIndex = 0
-    while (size >= 1024 && unitIndex < units.length - 1) {
-      size /= 1024
-      unitIndex++
-    }
-    return `${size.toFixed(2)} ${units[unitIndex]}`
   }
 
   const isImage = file.type.startsWith('image/')

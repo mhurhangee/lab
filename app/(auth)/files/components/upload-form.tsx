@@ -11,13 +11,14 @@ import { ProjectSelector } from '@/components/project-selector'
 
 import { handleErrorClient } from '@/lib/error/client'
 
+import type { ProjectDB } from '@/types/database'
+
 import { toast } from 'sonner'
 
-import type { Project } from '@/app/(auth)/projects/components/columns'
 import { createFileAction } from '@/app/actions/files/create'
 
 interface UploadFormProps {
-  projects: Project[]
+  projects: ProjectDB[]
 }
 
 export function UploadForm({ projects }: UploadFormProps) {
@@ -110,7 +111,7 @@ export function UploadForm({ projects }: UploadFormProps) {
         <Button variant="outline" onClick={() => router.push('/files')} disabled={isUploading}>
           Cancel
         </Button>
-        <Button onClick={handleUpload} disabled={!files.length || isUploading}>
+        <Button onClick={() => void handleUpload()} disabled={!files.length || isUploading}>
           {isUploading ? 'Uploading...' : 'Upload File'}
         </Button>
       </div>

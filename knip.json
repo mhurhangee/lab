@@ -4,10 +4,11 @@
     "@tailwindcss/typography",
     "highlight.js",
     "rehype-highlight",
-    "eslint",
     "eslint-config-next",
     "tailwindcss",
     "tw-animate-css",
-    "zod"
+    "zod",
+    "eslint-plugin-import",
+    "@typescript-eslint/eslint-plugin"
   ]
 }

@@ -28,6 +28,7 @@ interface DataTableProps<TData, TValue> {
   searchPlaceholder?: string
   enableRowSelection?: boolean
   selectedRow?: TData | null
+  columnVisibility?: Record<string, boolean>
   onRowSelectionChange?: (row: TData | null) => void
 }
 
@@ -38,6 +39,7 @@ export function DataTable<TData, TValue>({
   searchPlaceholder = 'Search...',
   enableRowSelection = false,
   selectedRow = null,
+  columnVisibility = {},
   onRowSelectionChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
@@ -56,6 +58,7 @@ export function DataTable<TData, TValue>({
     onSortingChange: setSorting,
     state: {
       sorting,
+      columnVisibility,
     },
   })
 
@@ -96,9 +99,7 @@ export function DataTable<TData, TValue>({
                   onClick={() => {
                     if (enableRowSelection && onRowSelectionChange) {
                       // Toggle selection: if already selected, deselect it; otherwise select it
-                      onRowSelectionChange(
-                        selectedRow === row.original ? null : (row.original as TData)
-                      )
+                      onRowSelectionChange(selectedRow === row.original ? null : row.original)
                     }
                   }}
                 >

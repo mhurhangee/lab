@@ -102,7 +102,7 @@ export function DeleteProjectDialog({
           <AlertDialogAction
             onClick={e => {
               e.preventDefault()
-              handleDelete()
+              void handleDelete()
             }}
             disabled={isDeleting}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
