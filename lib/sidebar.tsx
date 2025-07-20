@@ -20,6 +20,7 @@ export interface SidebarItem {
     href: string
     icon: React.ReactNode
     loggedIn: boolean | null
+    newButton?: string
   }[]
 }
 
@@ -59,12 +60,14 @@ export const sidebarItems: SidebarItem[] = [
         href: '/projects',
         icon: <Folders className="h-4 w-4" />,
         loggedIn: true,
+        newButton: '/projects/new',
       },
       {
         name: 'Files',
         href: '/files',
         icon: <FileIcon className="h-4 w-4" />,
         loggedIn: true,
+        newButton: '/files/new',
       },
     ],
   },

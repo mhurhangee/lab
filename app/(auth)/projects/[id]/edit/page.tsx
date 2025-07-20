@@ -1,10 +1,6 @@
 import { notFound } from 'next/navigation'
 
-import { BackToButton } from '@/components/ui/back-to-button'
-
 import { LabLayout } from '@/components/lab-layout'
-
-import { Edit } from 'lucide-react'
 
 import { ProjectForm } from '@/app/(auth)/projects/components/project-form'
 import { getProjectAction } from '@/app/actions/projects/get'
@@ -23,8 +19,14 @@ export default async function EditProjectPage({ params }: EditProjectPageProps) 
   return (
     <LabLayout
       title={`Edit ${project.title}`}
-      icon={<Edit />}
-      actions={<BackToButton href={`/projects/${(await params).id}`} label="Back to Project" />}
+      icon={"folder-edit"}
+      backToHref={`/projects/${(await params).id}`}
+      backToLabel={`Back to ${project.title}`}
+      breadcrumb={[
+        { href: '/projects', label: 'Projects' },
+        { href: `/projects/${project.id}`, label: project.title },
+        { href: `/projects/${project.id}/edit`, label: 'Edit' },
+      ]}
       description="Update project details"
     >
       <div className="max-w-2xl py-8">

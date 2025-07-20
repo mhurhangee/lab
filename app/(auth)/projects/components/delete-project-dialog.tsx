@@ -77,7 +77,7 @@ export function DeleteProjectDialog({
           <Button
             variant="ghost"
             size={size}
-            className={`${className} ${fullWidth ? 'w-full' : ''}`}
+            className={`${className} ${fullWidth ? 'w-full justify-start' : ''}`}
           >
             <Trash className="h-4 w-4" />
             {size !== 'icon' ? 'Delete Project' : null}

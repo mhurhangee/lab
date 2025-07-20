@@ -14,11 +14,12 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuAction,
 } from '@/components/ui/sidebar'
 
 import { type SidebarItem, sidebarItems } from '@/lib/sidebar'
 
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, PlusIcon } from 'lucide-react'
 
 export const SidebarContent = () => {
   const pathname = usePathname()
@@ -63,13 +64,23 @@ export const SidebarContent = () => {
                         <SidebarMenuButton
                           asChild
                           tooltip={item.name}
-                          isActive={pathname === item.href}
+                          isActive={pathname.startsWith(item.href)}
                         >
                           <Link href={item.href} className="flex items-center">
                             {item.icon}
                             <span className="ml-2">{item.name}</span>
                           </Link>
+
                         </SidebarMenuButton>
+                        {item.newButton && (
+                          <SidebarMenuAction
+                            asChild
+                          >
+                            <Link href={item.newButton} className="flex items-center">
+                              <PlusIcon className="h-4 w-4" />
+                            </Link>
+                          </SidebarMenuAction>
+                        )}
                       </SidebarMenuItem>
                     ))}
                   </SidebarMenu>

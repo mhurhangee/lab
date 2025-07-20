@@ -9,19 +9,17 @@ import { ProjectForm } from '@/app/(auth)/projects/components/project-form'
 export default function NewProjectPage() {
   return (
     <LabLayout
-      title="New Project"
-      icon={<PlusIcon />}
-      actions={<BackToButton href="/projects" label="Projects" />}
-      description="Create a new project"
+      title="Create a new project"
+      icon={"folder-plus"}
+      backToHref="/projects"
+      backToLabel="Projects"
+      breadcrumb={[
+        { href: '/projects', label: 'Projects' },
+        { href: '/projects/new', label: 'New' },
+      ]}
+      description="Projects are used to group related tasks and manage your workflow. You can create as many projects as you need."
     >
-      <div className="max-w-2xl py-8">
-        <h2 className="mb-4 text-2xl font-bold">New Project</h2>
-        <p className="text-muted-foreground mb-4">
-          Projects are used to group related tasks and manage your workflow. You can create as many
-          projects as you need.
-        </p>
-        <ProjectForm />
-      </div>
+      <ProjectForm />
     </LabLayout>
   )
 }

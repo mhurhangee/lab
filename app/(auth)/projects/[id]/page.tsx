@@ -8,12 +8,13 @@ import { LabLayout } from '@/components/lab-layout'
 
 import { formatDate } from '@/lib/date'
 
-import { Edit, FolderIcon } from 'lucide-react'
+import { Edit, FolderIcon, FileText, Trash, CalendarIcon } from 'lucide-react'
 
 import { DataTable } from '@/app/(auth)/files/components/data-table'
 import { DeleteProjectDialog } from '@/app/(auth)/projects/components/delete-project-dialog'
 import { listFilesByProjectAction } from '@/app/actions/files/list-by-project'
 import { getProjectAction } from '@/app/actions/projects/get'
+import { EntityCard } from '@/components/ui/entity-card'
 
 interface ProjectPageProps {
   params: Promise<{ id: string }>
@@ -30,75 +31,52 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound()
   }
 
+
+
   return (
     <LabLayout
-      title={project.title}
-      icon={<FolderIcon />}
-      actions={
-        <div className="flex items-center gap-2">
-          <BackToButton href="/projects" label="Projects" />
-        </div>
-      }
-      description={`Created on ${formatDate(project.createdAt.toString())}`}
+      breadcrumb={[
+        { href: '/projects', label: 'Projects' },
+        { href: `/projects/${project.id}`, label: project.title },
+      ]}
+      backToHref="/projects"
+      backToLabel="All Projects"
     >
-      <div className="space-y-8 py-8">
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <h3 className="text-lg font-medium">Details</h3>
-              <div className="space-y-4 rounded-md border p-4">
-                <div>
-                  <p className="text-muted-foreground text-sm">Title</p>
-                  <p className="font-medium">{project.title}</p>
-                </div>
+      <EntityCard
+        title={project.title}
+        description={project.description || "No description"}
+        icon={"folder-dot"}
+        attributes={[
+          { id: 'id', label: 'ID', value: project.id, icon: "file-text" },
+          { id: 'createdAt', label: 'Created at', value: formatDate(project.createdAt), icon: "calendar" },
+          { id: 'updatedAt', label: 'Updated at', value: formatDate(project.updatedAt), icon: "calendar" },
+          { id: 'filesCount', label: 'Files', value: files.length, icon: "file-text" },
+        ]}
+        badges={[
+          { label: 'Active', variant: 'default' }
+        ]}
+        tags={[
+          { label: 'Project' },
+          { label: 'Files' },
+        ]}
+        actionButtons={<>
+          <Link href={`/projects/${project.id}/edit`}>
+            <Button size="icon" variant="ghost">
+              <Edit className="h-4 w-4" />
+            </Button>
+          </Link>
+          <DeleteProjectDialog projectId={project.id} size="icon" />
+        </>}
+      />
 
-                <div>
-                  <p className="text-muted-foreground text-sm">Description</p>
-                  <p>{project.description || 'No description provided'}</p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-muted-foreground text-sm">Created</p>
-                    <p>{formatDate(project.createdAt.toString())}</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground text-sm">Last Updated</p>
-                    <p>{formatDate(project.updatedAt.toString())}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <h3 className="text-lg font-medium">Actions</h3>
-              <div className="space-y-4 rounded-md border p-4">
-                <div className="flex flex-col gap-3">
-                  <Link href={`/projects/${project.id}/edit`}>
-                    <Button className="w-full" variant="outline">
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit Project
-                    </Button>
-                  </Link>
-
-                  <DeleteProjectDialog projectId={project.id} size="default" fullWidth />
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium">Files ({files.length})</h3>
+          <Link href="/files/new">
+            <Button>Add File</Button>
+          </Link>
         </div>
-
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium">Files ({files.length})</h3>
-            <Link href="/files/new">
-              <Button>Add File</Button>
-            </Link>
-          </div>
-          <div className="rounded-md border">
-            <DataTable data={files} />
-          </div>
-        </div>
+        <DataTable data={files} />
       </div>
     </LabLayout>
   )
