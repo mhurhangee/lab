@@ -12,13 +12,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
+import type { ProjectDB } from '@/types/database'
+
 import { ChevronDownIcon, FolderIcon } from 'lucide-react'
 
-import type { Project } from '@/app/(auth)/projects/components/columns'
 import { useProject } from '@/providers/project'
 
 interface ProjectSelectorProps {
-  projects: Project[]
+  projects: ProjectDB[]
   selectedProjectId?: string | null
   onProjectSelect: (projectId: string | null) => void
   placeholder?: string

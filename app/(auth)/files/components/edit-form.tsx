@@ -12,17 +12,17 @@ import { Label } from '@/components/ui/label'
 import { ProjectSelector } from '@/components/project-selector'
 
 import { handleErrorClient } from '@/lib/error/client'
+import { formatFileSize } from '@/lib/file-size'
+
+import type { FileDB, ProjectDB } from '@/types/database'
 
 import { toast } from 'sonner'
 
-import type { Project } from '@/app/(auth)/projects/components/columns'
 import { updateFileAction } from '@/app/actions/files/update'
 
-import type { FileRecord } from './columns'
-
 interface EditFormProps {
-  file: FileRecord
-  projects: Project[]
+  file: FileDB
+  projects: ProjectDB[]
 }
 
 export function EditForm({ file, projects }: EditFormProps) {
@@ -60,17 +60,6 @@ export function EditForm({ file, projects }: EditFormProps) {
     } finally {
       setIsUpdating(false)
     }
-  }
-
-  const formatFileSize = (bytes: number) => {
-    const units = ['B', 'KB', 'MB', 'GB']
-    let size = bytes
-    let unitIndex = 0
-    while (size >= 1024 && unitIndex < units.length - 1) {
-      size /= 1024
-      unitIndex++
-    }
-    return `${size.toFixed(2)} ${units[unitIndex]}`
   }
 
   return (
@@ -157,7 +146,7 @@ export function EditForm({ file, projects }: EditFormProps) {
         >
           Cancel
         </Button>
-        <Button onClick={handleUpdate} disabled={isUpdating}>
+        <Button onClick={() => void handleUpdate()} disabled={isUpdating}>
           {isUpdating ? 'Updating...' : 'Update File'}
         </Button>
       </div>

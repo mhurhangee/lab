@@ -4,21 +4,21 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { BackToButton } from '@/components/ui/back-to-button'
 
 import { LabLayout } from '@/components/lab-layout'
 
 import { FAQ } from '@/lib/faq'
 
-import { MessageCircleQuestionMarkIcon } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 
 export default function FaqPage() {
   return (
     <LabLayout
       title="FAQ"
-      icon={<MessageCircleQuestionMarkIcon />}
-      actions={<BackToButton href="/" label="Home" />}
+      icon="message-circle-question-mark"
+      backToHref="/"
+      backToLabel="Home"
+      breadcrumb={[{ href: '/faq', label: 'FAQ' }]}
       description="Frequently Asked Questions"
     >
       <section>

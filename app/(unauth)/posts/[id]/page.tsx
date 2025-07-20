@@ -3,15 +3,12 @@ import { MDXContent } from '@content-collections/mdx/react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { BackToButton } from '@/components/ui/back-to-button'
-
 import { LabLayout } from '@/components/lab-layout'
 
 import { formatDate } from '@/lib/date'
 
 import { allPosts } from 'content'
 import { ArrowLeft } from 'lucide-react'
-import { PenBoxIcon } from 'lucide-react'
 
 interface PostPageProps {
   params: Promise<{ id: string }>
@@ -27,10 +24,13 @@ export default async function PostPage({ params }: PostPageProps) {
 
   return (
     <LabLayout
-      title={post.title}
-      icon={<PenBoxIcon />}
-      actions={<BackToButton href="/posts" label="All posts" />}
-      description={post.summary}
+      icon="pen-box"
+      backToHref="/posts"
+      backToLabel="All posts"
+      breadcrumb={[
+        { href: '/posts', label: 'Posts' },
+        { href: `/posts/${post._meta.path}`, label: post.title },
+      ]}
     >
       <div className="my-12">
         <div className="mb-4 flex items-center gap-4">
@@ -43,7 +43,7 @@ export default async function PostPage({ params }: PostPageProps) {
         <p className="text-muted-foreground mb-8 text-xl">{post.summary}</p>
       </div>
 
-      <article className="prose prose-lg dark:prose-invert max-w-none">
+      <article className="prose prose-lg dark:prose-invert max-w-[60ch]">
         <MDXContent code={post.mdx || ''} />
       </article>
 

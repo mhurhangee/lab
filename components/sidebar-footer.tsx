@@ -1,3 +1,5 @@
+import { UserButton } from '@clerk/nextjs'
+
 import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
@@ -23,6 +25,7 @@ export const SidebarFooter = () => {
           </Link>
         </Button>
         <ThemeToggle />
+        <UserButton />
       </div>
     </SidebarFooterComponent>
   )

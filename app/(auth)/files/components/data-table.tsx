@@ -4,25 +4,28 @@ import { useMemo } from 'react'
 
 import { DataTable as BaseDataTable } from '@/components/data-table/data-table'
 
+import type { FileDB } from '@/types/database'
+
 import Fuse from 'fuse.js'
 
-import { type FileRecord, columns } from './columns'
+import { columnsFiles } from './columns'
 
 interface FileDataTableProps {
-  data: FileRecord[]
+  data: FileDB[]
+  hideProject?: boolean
 }
 
-export function DataTable({ data }: FileDataTableProps) {
+export function FilesDataTable({ data, hideProject }: FileDataTableProps) {
   // Create Fuse instance once with its options
   const fuseInstance = useMemo(() => {
     const fuseOptions = {
-      keys: ['name'],
+      keys: ['name', 'type'],
       threshold: 0.3,
     }
     return new Fuse(data, fuseOptions)
   }, [data])
 
-  const filterFiles = (query: string, files: FileRecord[]): FileRecord[] => {
+  const filterFiles = (query: string, files: FileDB[]): FileDB[] => {
     if (!query) return files
 
     const result = fuseInstance.search(query)
@@ -31,10 +34,14 @@ export function DataTable({ data }: FileDataTableProps) {
 
   return (
     <BaseDataTable
-      columns={columns}
+      columns={columnsFiles}
       data={data}
-      searchPlaceholder="Search files..."
       filterFunction={filterFiles}
+      searchPlaceholder="Search files ..."
+      columnVisibility={{
+        actions: !hideProject,
+        projectTitle: !hideProject,
+      }}
     />
   )
 }

@@ -4,19 +4,17 @@ import { useMemo } from 'react'
 
 import { DataTable as BaseDataTable } from '@/components/data-table/data-table'
 
+import type { ProjectDB } from '@/types/database'
+
 import Fuse from 'fuse.js'
 
-import { useProject } from '@/providers/project'
-
-import { Project, columns } from './columns'
+import { columnsProjects } from './columns'
 
 interface ProjectDataTableProps {
-  data: Project[]
+  data: ProjectDB[]
 }
 
-export function DataTable({ data }: ProjectDataTableProps) {
-  const { selectedProject, setSelectedProject } = useProject()
-
+export function ProjectsDataTable({ data }: ProjectDataTableProps) {
   // Create Fuse instance once with its options
   const fuseInstance = useMemo(() => {
     const fuseOptions = {
@@ -26,7 +24,7 @@ export function DataTable({ data }: ProjectDataTableProps) {
     return new Fuse(data, fuseOptions)
   }, [data])
 
-  const filterProjects = (query: string, projects: Project[]): Project[] => {
+  const filterProjects = (query: string, projects: ProjectDB[]): ProjectDB[] => {
     if (!query) return projects
 
     const result = fuseInstance.search(query)
@@ -35,13 +33,10 @@ export function DataTable({ data }: ProjectDataTableProps) {
 
   return (
     <BaseDataTable
-      columns={columns}
+      columns={columnsProjects}
       data={data}
-      searchPlaceholder="Search projects..."
       filterFunction={filterProjects}
-      enableRowSelection
-      selectedRow={selectedProject}
-      onRowSelectionChange={setSelectedProject}
+      searchPlaceholder="Search projects..."
     />
   )
 }

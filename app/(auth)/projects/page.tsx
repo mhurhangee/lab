@@ -5,11 +5,11 @@ import { ErrorAlert } from '@/components/ui/error-alert'
 
 import { LabLayout } from '@/components/lab-layout'
 
-import { FolderIcon, PlusIcon } from 'lucide-react'
+import { PlusIcon } from 'lucide-react'
 
 import { listProjectsWithFileCountsAction } from '@/app/actions/projects/list-with-file-counts'
 
-import { DataTableWithFileCounts } from './components/data-table-with-file-counts'
+import { ProjectsDataTable } from './components/data-table'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,28 +19,21 @@ export default async function ProjectsPage() {
   return (
     <LabLayout
       title="Projects"
-      icon={<FolderIcon />}
+      icon="folder"
+      breadcrumb={[{ href: '/projects', label: 'Projects' }]}
+      backToHref="/dashboard"
+      backToLabel="Dashboard"
       actions={
-        <div className="flex items-center gap-2">
-          <Link href="/projects/new">
-            <Button size="sm">
-              <PlusIcon className="h-4 w-4" />
-              New Project
-            </Button>
-          </Link>
-        </div>
+        <Link href="/projects/new">
+          <Button size="sm">
+            <PlusIcon className="h-4 w-4" />
+            New Project
+          </Button>
+        </Link>
       }
-      description="Manage your projects"
+      description="Manage, view, and create new projects to help organize your workflows and files."
     >
-      <div className="max-w-2xl py-8">
-        <h1 className="page-title">Projects</h1>
-        <p className="page-subtitle">
-          See and manage your projects. You can create as many projects as you need.
-        </p>
-      </div>
-      <div className="space-y-8 py-8">
-        {error ? <ErrorAlert error={error} /> : <DataTableWithFileCounts data={projects || []} />}
-      </div>
+      {error ? <ErrorAlert error={error} /> : <ProjectsDataTable data={projects || []} />}
     </LabLayout>
   )
 }

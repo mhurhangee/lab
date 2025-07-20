@@ -124,14 +124,6 @@
   }
 }
 
-.page-title {
-  @apply my-2 text-2xl font-bold sm:text-3xl md:text-4xl lg:text-6xl;
-}
-
-.page-subtitle {
-  @apply text-muted-foreground text-lg sm:text-base md:text-lg lg:text-xl;
-}
-
 /* Custom styles for selected rows */
 .data-[state='selected']:not(.dark *) {
   background-color: hsl(var(--primary) / 0.15);
@@ -141,4 +133,20 @@
 .dark .data-[state='selected'] {
   background-color: hsl(var(--primary) / 0.2);
   font-weight: 500;
+}
+
+.shadcn-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) var(--color-background);
+}
+.shadcn-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  background: var(--color-background);
+}
+.shadcn-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-background);
+  border-radius: var(--radius-md);
+}
+.shadcn-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-background);
 }

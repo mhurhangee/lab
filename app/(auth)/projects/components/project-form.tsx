@@ -9,17 +9,15 @@ import { Input } from '@/components/ui/input'
 
 import { handleErrorClient } from '@/lib/error/client'
 
+import { ProjectDB } from '@/types/database'
+
 import { toast } from 'sonner'
 
 import { createProjectAction } from '@/app/actions/projects/create'
 import { updateProjectAction } from '@/app/actions/projects/update'
 
 interface ProjectFormProps {
-  project?: {
-    id: string
-    title: string
-    description: string | null
-  }
+  project?: ProjectDB
   isEdit?: boolean
 }
 
@@ -80,7 +78,7 @@ export function ProjectForm({ project, isEdit = false }: ProjectFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={e => void handleSubmit(e)} className="space-y-6">
       <div className="space-y-2">
         <label htmlFor="title" className="text-sm font-medium">
           Title <span className="text-destructive">*</span>

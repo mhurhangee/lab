@@ -2,11 +2,11 @@
 
 import { type ReactNode, createContext, useContext, useState } from 'react'
 
-import type { Project } from '@/app/(auth)/projects/components/columns'
+import type { ProjectDB } from '@/types/database'
 
 type ProjectContextType = {
-  selectedProject: Project | null
-  setSelectedProject: (project: Project | null) => void
+  selectedProject: ProjectDB | null
+  setSelectedProject: (project: ProjectDB | null) => void
   // Add additional project-related state or actions here as needed
 }
 
@@ -23,7 +23,7 @@ export const useProject = () => {
 }
 
 export const ProjectProvider = ({ children }: { children: ReactNode }) => {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+  const [selectedProject, setSelectedProject] = useState<ProjectDB | null>(null)
 
   return (
     <ProjectContext.Provider value={{ selectedProject, setSelectedProject }}>
