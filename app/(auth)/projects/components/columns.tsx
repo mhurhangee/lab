@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import Link from 'next/link'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 
 import { caseInsensitiveSort } from '@/lib/column-sort'
@@ -11,7 +12,7 @@ import { formatDate } from '@/lib/date'
 
 import type { ProjectDB } from '@/types/database'
 
-import { ArrowUpDown } from 'lucide-react'
+import { ArrowUpDown, FileIcon } from 'lucide-react'
 
 import { ActionsCell } from './actions-cell'
 
@@ -21,14 +22,16 @@ export const columnsProjects: ColumnDef<ProjectDB>[] = [
     sortingFn: caseInsensitiveSort,
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="p-0 font-medium hover:bg-transparent"
-        >
+        <div className="flex items-center gap-1">
           Title
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            size="icon"
+          >
+            <ArrowUpDown />
+          </Button>
+        </div>
       )
     },
     cell: ({ row }) => {
@@ -48,7 +51,7 @@ export const columnsProjects: ColumnDef<ProjectDB>[] = [
       const description = row.getValue('description')
       return (
         <div className="max-w-[300px] truncate">
-          <Link href={`/projects/${row.original.id}`}>{description as string || '-'}</Link>
+          <Link href={`/projects/${row.original.id}`}>{(description as string) || '-'}</Link>
         </div>
       )
     },
@@ -57,26 +60,27 @@ export const columnsProjects: ColumnDef<ProjectDB>[] = [
     accessorKey: 'fileCount',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="p-0 font-medium hover:bg-transparent"
-        >
+        <div className="flex items-center gap-1">
           Files
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            size="icon"
+          >
+            <ArrowUpDown />
+          </Button>
+        </div>
       )
     },
     cell: ({ row }) => {
       const fileCount = row.getValue('fileCount')
       return (
-        <div className="text-center">
-          <Link href={`/projects/${row.original.id}`}>
-            <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-              {fileCount as number} {fileCount === 1 ? 'file' : 'files'}
-            </span>
-          </Link>
-        </div>
+        <Link href={`/projects/${row.original.id}`}>
+          <Badge>
+            <FileIcon />
+            {fileCount as number} {fileCount === 1 ? 'file' : 'files'}
+          </Badge>
+        </Link>
       )
     },
   },
@@ -84,29 +88,29 @@ export const columnsProjects: ColumnDef<ProjectDB>[] = [
     accessorKey: 'updatedAt',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="p-0 font-medium hover:bg-transparent"
-        >
+        <div className="flex items-center gap-1">
           Last Updated
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            size="icon"
+          >
+            <ArrowUpDown />
+          </Button>
+        </div>
       )
     },
     cell: ({ row }) => {
       const updatedAt = row.getValue('updatedAt')
       const formatted = formatDate(updatedAt as string | Date) || '-'
-      return (
-        <div>
-          <Link href={`/projects/${row.original.id}`}>{formatted}</Link>
-        </div>
-      )
+      return <Link href={`/projects/${row.original.id}`}>{formatted}</Link>
     },
   },
   {
     id: 'actions',
-    header: 'Actions',
+    header: () => {
+      return <div className="text-right">Actions</div>
+    },
     cell: ({ row }) => <ActionsCell row={row} />,
   },
 ]

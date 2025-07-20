@@ -33,9 +33,7 @@ export default async function FilesPage() {
       }
       description="Upload and manage your files. All files are stored securely in the cloud."
     >
-      <div className="space-y-8 py-8">
-        {error ? <ErrorAlert error={error} /> : <FilesDataTable data={files || []} />}
-      </div>
+      {error ? <ErrorAlert error={error} /> : <FilesDataTable data={files || []} />}
     </LabLayout>
   )
 }

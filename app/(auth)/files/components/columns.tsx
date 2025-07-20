@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import Link from 'next/link'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 
 import { caseInsensitiveSort } from '@/lib/column-sort'
@@ -11,7 +12,7 @@ import { formatDate } from '@/lib/date'
 
 import type { FileDB } from '@/types/database'
 
-import { ArrowUpDown } from 'lucide-react'
+import { ArrowUpDown , FolderIcon } from 'lucide-react'
 
 import { ActionsCell } from './actions-cell'
 
@@ -21,14 +22,16 @@ export const columnsFiles: ColumnDef<FileDB>[] = [
     sortingFn: caseInsensitiveSort,
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="p-0 font-medium hover:bg-transparent"
-        >
+        <div className="flex items-center gap-1">
           Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            <ArrowUpDown />
+          </Button>
+        </div>
       )
     },
     cell: ({ row }) => {
@@ -45,14 +48,16 @@ export const columnsFiles: ColumnDef<FileDB>[] = [
     sortingFn: caseInsensitiveSort,
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="p-0 font-medium hover:bg-transparent"
-        >
+        <div className="flex items-center gap-1">
           Project
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            <ArrowUpDown />
+          </Button>
+        </div>
       )
     },
     cell: ({ row }) => {
@@ -61,8 +66,11 @@ export const columnsFiles: ColumnDef<FileDB>[] = [
       return (
         <div className="max-w-[200px] truncate">
           {projectTitle && projectId ? (
-            <Link href={`/projects/${projectId}`} className="text-blue-600 hover:underline">
-              {projectTitle as string}
+            <Link href={`/projects/${projectId}`}>
+              <Badge>
+                <FolderIcon />
+                {projectTitle as string}
+              </Badge>
             </Link>
           ) : (
             <span className="text-muted-foreground">No project</span>
@@ -79,7 +87,7 @@ export const columnsFiles: ColumnDef<FileDB>[] = [
       const type = row.getValue('type')
       return (
         <div className="max-w-[300px] truncate">
-          <Link href={`/files/${row.original.id}`}>{type as string || '-'}</Link>
+          <Link href={`/files/${row.original.id}`}>{(type as string) || '-'}</Link>
         </div>
       )
     },
@@ -88,14 +96,16 @@ export const columnsFiles: ColumnDef<FileDB>[] = [
     accessorKey: 'updatedAt',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="p-0 font-medium hover:bg-transparent"
-        >
+        <div className="flex items-center gap-1">
           Last Updated
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            <ArrowUpDown />
+          </Button>
+        </div>
       )
     },
     cell: ({ row }) => {
@@ -110,7 +120,9 @@ export const columnsFiles: ColumnDef<FileDB>[] = [
   },
   {
     id: 'actions',
-    header: 'Actions',
+    header: () => {
+      return <div className="text-right">Actions</div>
+    },
     cell: ({ row }) => <ActionsCell row={row} />,
   },
 ]

@@ -39,7 +39,7 @@ export function FilesDataTable({ data, hideProject }: FileDataTableProps) {
       filterFunction={filterFiles}
       searchPlaceholder="Search files ..."
       columnVisibility={{
-        actions: false,
+        actions: !hideProject,
         projectTitle: !hideProject,
       }}
     />
