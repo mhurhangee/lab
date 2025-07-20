@@ -5,7 +5,7 @@ import { ErrorAlert } from '@/components/ui/error-alert'
 
 import { LabLayout } from '@/components/lab-layout'
 
-import { FileIcon, PlusIcon } from 'lucide-react'
+import { PlusIcon } from 'lucide-react'
 
 import { listFilesWithProjectsAction } from '@/app/actions/files/list-with-projects'
 
@@ -19,25 +19,20 @@ export default async function FilesPage() {
   return (
     <LabLayout
       title="Files"
-      icon={<FileIcon />}
+      icon="file"
+      backToHref="/dashboard"
+      backToLabel="Dashboard"
+      breadcrumb={[{ href: '/files', label: 'Files' }]}
       actions={
-        <div className="flex items-center gap-2">
-          <Link href="/files/new">
-            <Button size="sm">
-              <PlusIcon className="h-4 w-4" />
-              Upload File
-            </Button>
-          </Link>
-        </div>
+        <Link href="/files/new">
+          <Button size="sm">
+            <PlusIcon className="h-4 w-4" />
+            Upload File
+          </Button>
+        </Link>
       }
-      description="Manage your files"
+      description="Upload and manage your files. All files are stored securely in the cloud."
     >
-      <div className="max-w-2xl py-8">
-        <h1 className="page-title">Files</h1>
-        <p className="page-subtitle">
-          Upload and manage your files. All files are stored securely in the cloud.
-        </p>
-      </div>
       <div className="space-y-8 py-8">
         {error ? <ErrorAlert error={error} /> : <DataTableWithProjects data={files || []} />}
       </div>

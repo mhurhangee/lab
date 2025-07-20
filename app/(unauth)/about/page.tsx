@@ -1,9 +1,12 @@
 import Link from 'next/link'
 
-import { BackToButton } from '@/components/ui/back-to-button'
+import { Button } from '@/components/ui/button'
 
 import { LabLayout } from '@/components/lab-layout'
 
+import { app } from '@/lib/app'
+
+import { MailIcon } from 'lucide-react'
 import {
   AwardIcon,
   BookmarkIcon,
@@ -15,24 +18,33 @@ import {
   ScaleIcon,
   SparkleIcon,
   TreesIcon,
-  UserIcon,
 } from 'lucide-react'
 
 export default function AboutPage() {
   return (
     <LabLayout
       title="About"
-      icon={<UserIcon className="h-4 w-4" />}
-      actions={<BackToButton href="/" label="Home" />}
-      description="A little bit about me"
+      icon="user"
+      backToHref="/"
+      backToLabel="Home"
+      breadcrumb={[{ href: '/about', label: 'About' }]}
+      actions={
+        <Link
+          href={`mailto:${app.email}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2"
+        >
+          <Button>
+            <MailIcon className="h-4 w-4" /> Contact
+          </Button>
+        </Link>
+      }
     >
-      <main className="prose dark:prose-invert mx-auto">
-        <h1 className="mt-24 flex items-center gap-2">
-          <UserIcon className="h-8 w-8" /> About Me
-        </h1>
+      <main className="prose dark:prose-invert">
         <p>
-          I&apos;m Michael, a software engineer with a passion for AI and machine learning. I love
-          learning and making new things. This is my corner of the web to share them.
+          I&apos;m Michael, a software engineer with a passion for AI and machine learning. <br />I
+          love learning and making new things. This is my corner of the web to share them.
         </p>
         <ul className="grid grid-cols-1 gap-2 md:grid-cols-2">
           <li className="flex items-center">

@@ -15,7 +15,7 @@ interface LabLayoutProps {
 export const Layout = ({ children }: LabLayoutProps) => {
   return (
     <SidebarProvider defaultOpen={true}>
-      <Sidebar collapsible="icon" variant='inset'>
+      <Sidebar collapsible="icon" variant="inset">
         <SidebarHeader />
         <SidebarContent />
         <SidebarFooter />

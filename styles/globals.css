@@ -134,3 +134,19 @@
   background-color: hsl(var(--primary) / 0.2);
   font-weight: 500;
 }
+
+.shadcn-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) var(--color-background);
+}
+.shadcn-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  background: var(--color-background);
+}
+.shadcn-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-background);
+  border-radius: var(--radius-md);
+}
+.shadcn-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-background);
+}

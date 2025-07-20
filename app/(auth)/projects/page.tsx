@@ -21,23 +21,19 @@ export default async function ProjectsPage() {
       title="Projects"
       icon="folder"
       breadcrumb={[{ href: '/projects', label: 'Projects' }]}
-      backToHref="/"
+      backToHref="/dashboard"
       backToLabel="Dashboard"
       actions={
-        <div className="flex items-center gap-2">
-          <Link href="/projects/new">
-            <Button size="sm">
-              <PlusIcon className="h-4 w-4" />
-              New Project
-            </Button>
-          </Link>
-        </div>
+        <Link href="/projects/new">
+          <Button size="sm">
+            <PlusIcon className="h-4 w-4" />
+            New Project
+          </Button>
+        </Link>
       }
       description="Manage, view, and create new projects to help organize your workflows and files."
     >
-      <div className="space-y-8 py-8">
-        {error ? <ErrorAlert error={error} /> : <DataTableWithFileCounts data={projects || []} />}
-      </div>
+      {error ? <ErrorAlert error={error} /> : <DataTableWithFileCounts data={projects || []} />}
     </LabLayout>
   )
 }

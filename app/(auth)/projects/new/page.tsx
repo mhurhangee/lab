@@ -1,8 +1,4 @@
-import { BackToButton } from '@/components/ui/back-to-button'
-
 import { LabLayout } from '@/components/lab-layout'
-
-import { PlusIcon } from 'lucide-react'
 
 import { ProjectForm } from '@/app/(auth)/projects/components/project-form'
 
@@ -10,7 +6,7 @@ export default function NewProjectPage() {
   return (
     <LabLayout
       title="Create a new project"
-      icon={"folder-plus"}
+      icon={'folder-plus'}
       backToHref="/projects"
       backToLabel="Projects"
       breadcrumb={[

@@ -12,9 +12,9 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuAction,
 } from '@/components/ui/sidebar'
 
 import { type SidebarItem, sidebarItems } from '@/lib/sidebar'
@@ -70,12 +70,9 @@ export const SidebarContent = () => {
                             {item.icon}
                             <span className="ml-2">{item.name}</span>
                           </Link>
-
                         </SidebarMenuButton>
                         {item.newButton && (
-                          <SidebarMenuAction
-                            asChild
-                          >
+                          <SidebarMenuAction asChild>
                             <Link href={item.newButton} className="flex items-center">
                               <PlusIcon className="h-4 w-4" />
                             </Link>

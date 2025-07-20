@@ -4,8 +4,6 @@ import { ErrorAlert } from '@/components/ui/error-alert'
 
 import { LabLayout } from '@/components/lab-layout'
 
-import { FileIcon } from 'lucide-react'
-
 import { getFileAction } from '@/app/actions/files/get'
 import { listProjectsAction } from '@/app/actions/projects/list'
 
@@ -24,7 +22,7 @@ export default async function EditFilePage({ params }: EditFilePageProps) {
 
   if (error) {
     return (
-      <LabLayout title="Edit File" icon={<FileIcon />}>
+      <LabLayout title="Edit File" icon="file" breadcrumb={[{ href: '/files', label: 'Files' }]}>
         <ErrorAlert error={error} />
       </LabLayout>
     )
@@ -37,18 +35,17 @@ export default async function EditFilePage({ params }: EditFilePageProps) {
   return (
     <LabLayout
       title={`Edit ${file.name}`}
-      icon={<FileIcon />}
-      description="Update file details or replace file"
+      icon="file"
+      backToHref={`/files/${file.id}`}
+      backToLabel={file.name}
+      breadcrumb={[
+        { href: '/files', label: 'Files' },
+        { href: `/files/${file.id}`, label: file.name },
+        { href: `/files/${file.id}/edit`, label: 'Edit' },
+      ]}
+      description="Update the file name or replace the file with a new version."
     >
-      <div className="max-w-2xl py-8">
-        <h1 className="page-title">Edit File</h1>
-        <p className="page-subtitle">
-          Update the file name or replace the file with a new version.
-        </p>
-      </div>
-      <div className="space-y-8 py-8">
-        <EditForm file={file} projects={projects} />
-      </div>
+      <EditForm file={file} projects={projects} />
     </LabLayout>
   )
 }

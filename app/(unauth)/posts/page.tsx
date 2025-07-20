@@ -1,20 +1,20 @@
 import Link from 'next/link'
 
-import { BackToButton } from '@/components/ui/back-to-button'
-
 import { LabLayout } from '@/components/lab-layout'
 
 import { formatDate } from '@/lib/date'
 
 import { allPosts } from 'content'
-import { ArrowRight, PenBoxIcon } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 
 export default function PostsPage() {
   return (
     <LabLayout
       title="Posts"
-      icon={<PenBoxIcon />}
-      actions={<BackToButton href="/" label="Home" />}
+      icon="pen-box"
+      backToHref="/"
+      backToLabel="Home"
+      breadcrumb={[{ href: '/posts', label: 'Posts' }]}
       description="Thoughts, insights, and ramblings"
     >
       <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2">
