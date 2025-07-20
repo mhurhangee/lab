@@ -6,7 +6,7 @@ import { handleErrorServer } from '@/lib/error/server'
 
 import { and, eq } from 'drizzle-orm'
 
-import { projects } from '@/schema'
+import { files, projects } from '@/schema'
 
 interface DeleteProjectActionProps {
   id: string
@@ -16,6 +16,13 @@ export const deleteProjectAction = async ({ id }: DeleteProjectActionProps) => {
   try {
     const userId = await getUserId()
 
+    // First, clear the projectId from all files associated with this project
+    await db
+      .update(files)
+      .set({ projectId: null })
+      .where(and(eq(files.projectId, id), eq(files.userId, userId)))
+
+    // Then delete the project
     const result = await db
       .delete(projects)
       .where(and(eq(projects.id, id), eq(projects.userId, userId)))

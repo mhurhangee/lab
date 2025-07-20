@@ -10,22 +10,22 @@ import { formatDate } from '@/lib/date'
 
 import { ArrowUpDown } from 'lucide-react'
 
-import { projects } from '@/schema'
+import { files } from '@/schema'
 
 import { ActionsCell } from './actions-cell'
 
-export type Project = typeof projects.$inferSelect
+export type FileRecord = typeof files.$inferSelect
 
 // Helper function for case-insensitive sorting of string values
-const caseInsensitiveSort = (rowA: Row<Project>, rowB: Row<Project>, columnId: string) => {
+const caseInsensitiveSort = (rowA: Row<FileRecord>, rowB: Row<FileRecord>, columnId: string) => {
   const valueA = String(rowA.getValue(columnId) || '').toLowerCase()
   const valueB = String(rowB.getValue(columnId) || '').toLowerCase()
   return valueA.localeCompare(valueB)
 }
 
-export const columns: ColumnDef<Project>[] = [
+export const columns: ColumnDef<FileRecord>[] = [
   {
-    accessorKey: 'title',
+    accessorKey: 'name',
     sortingFn: caseInsensitiveSort,
     header: ({ column }) => {
       return (
@@ -34,29 +34,29 @@ export const columns: ColumnDef<Project>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className="p-0 font-medium hover:bg-transparent"
         >
-          Title
+          Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
     cell: ({ row }) => {
-      const title = row.getValue('title') as string
+      const name = row.getValue('name') as string
       return (
         <div className="font-medium">
-          <Link href={`/projects/${row.original.id}`}>{title}</Link>
+          <Link href={`/files/${row.original.id}`}>{name}</Link>
         </div>
       )
     },
   },
   {
-    accessorKey: 'description',
+    accessorKey: 'type',
     sortingFn: caseInsensitiveSort,
-    header: 'Description',
+    header: 'Type',
     cell: ({ row }) => {
-      const description = row.getValue('description') as string
+      const type = row.getValue('type') as string
       return (
         <div className="max-w-[300px] truncate">
-          <Link href={`/projects/${row.original.id}`}>{description || '-'}</Link>
+          <Link href={`/files/${row.original.id}`}>{type || '-'}</Link>
         </div>
       )
     },
@@ -80,7 +80,7 @@ export const columns: ColumnDef<Project>[] = [
       const formatted = formatDate(updatedAt.toString()) || '-'
       return (
         <div>
-          <Link href={`/projects/${row.original.id}`}>{formatted}</Link>
+          <Link href={`/files/${row.original.id}`}>{formatted}</Link>
         </div>
       )
     },

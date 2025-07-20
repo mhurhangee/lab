@@ -10,22 +10,35 @@ import { formatDate } from '@/lib/date'
 
 import { ArrowUpDown } from 'lucide-react'
 
-import { projects } from '@/schema'
-
 import { ActionsCell } from './actions-cell'
 
-export type Project = typeof projects.$inferSelect
+export type FileRecordWithProject = {
+  id: string
+  userId: string
+  name: string
+  url: string
+  size: number
+  type: string
+  projectId: string | null
+  createdAt: Date
+  updatedAt: Date
+  projectTitle: string | null
+}
 
 // Helper function for case-insensitive sorting of string values
-const caseInsensitiveSort = (rowA: Row<Project>, rowB: Row<Project>, columnId: string) => {
+const caseInsensitiveSort = (
+  rowA: Row<FileRecordWithProject>,
+  rowB: Row<FileRecordWithProject>,
+  columnId: string
+) => {
   const valueA = String(rowA.getValue(columnId) || '').toLowerCase()
   const valueB = String(rowB.getValue(columnId) || '').toLowerCase()
   return valueA.localeCompare(valueB)
 }
 
-export const columns: ColumnDef<Project>[] = [
+export const columnsWithProjects: ColumnDef<FileRecordWithProject>[] = [
   {
-    accessorKey: 'title',
+    accessorKey: 'name',
     sortingFn: caseInsensitiveSort,
     header: ({ column }) => {
       return (
@@ -34,29 +47,60 @@ export const columns: ColumnDef<Project>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className="p-0 font-medium hover:bg-transparent"
         >
-          Title
+          Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
     cell: ({ row }) => {
-      const title = row.getValue('title') as string
+      const name = row.getValue('name') as string
       return (
         <div className="font-medium">
-          <Link href={`/projects/${row.original.id}`}>{title}</Link>
+          <Link href={`/files/${row.original.id}`}>{name}</Link>
         </div>
       )
     },
   },
   {
-    accessorKey: 'description',
+    accessorKey: 'projectTitle',
     sortingFn: caseInsensitiveSort,
-    header: 'Description',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className="p-0 font-medium hover:bg-transparent"
+        >
+          Project
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
     cell: ({ row }) => {
-      const description = row.getValue('description') as string
+      const projectTitle = row.getValue('projectTitle') as string | null
+      const projectId = row.original.projectId
+      return (
+        <div className="max-w-[200px] truncate">
+          {projectTitle && projectId ? (
+            <Link href={`/projects/${projectId}`} className="text-blue-600 hover:underline">
+              {projectTitle}
+            </Link>
+          ) : (
+            <span className="text-muted-foreground">No project</span>
+          )}
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'type',
+    sortingFn: caseInsensitiveSort,
+    header: 'Type',
+    cell: ({ row }) => {
+      const type = row.getValue('type') as string
       return (
         <div className="max-w-[300px] truncate">
-          <Link href={`/projects/${row.original.id}`}>{description || '-'}</Link>
+          <Link href={`/files/${row.original.id}`}>{type || '-'}</Link>
         </div>
       )
     },
@@ -80,7 +124,7 @@ export const columns: ColumnDef<Project>[] = [
       const formatted = formatDate(updatedAt.toString()) || '-'
       return (
         <div>
-          <Link href={`/projects/${row.original.id}`}>{formatted}</Link>
+          <Link href={`/files/${row.original.id}`}>{formatted}</Link>
         </div>
       )
     },

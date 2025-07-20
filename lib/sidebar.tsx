@@ -1,4 +1,5 @@
 import {
+  FileIcon,
   Folders,
   Home,
   InfoIcon,
@@ -57,6 +58,12 @@ export const sidebarItems: SidebarItem[] = [
         name: 'Projects',
         href: '/projects',
         icon: <Folders className="h-4 w-4" />,
+        loggedIn: true,
+      },
+      {
+        name: 'Files',
+        href: '/files',
+        icon: <FileIcon className="h-4 w-4" />,
         loggedIn: true,
       },
     ],
