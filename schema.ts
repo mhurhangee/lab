@@ -1,4 +1,4 @@
-import { integer, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core'
+import { integer, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core'
 
 export const projects = pgTable('projects', {
   id: varchar('id', { length: 12 }).primaryKey(),
@@ -17,6 +17,7 @@ export const files = pgTable('files', {
   size: integer('size').notNull(),
   type: varchar('type', { length: 255 }).notNull(),
   projectId: varchar('project_id', { length: 12 }),
+  parsedMarkdown: text('parsed_markdown'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 })

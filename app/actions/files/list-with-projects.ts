@@ -21,6 +21,7 @@ export const listFilesWithProjectsAction = async () => {
         size: files.size,
         type: files.type,
         projectId: files.projectId,
+        parsedMarkdown: files.parsedMarkdown,
         createdAt: files.createdAt,
         updatedAt: files.updatedAt,
         projectTitle: projects.title,

@@ -12,7 +12,7 @@ import { formatDate } from '@/lib/date'
 
 import type { FileDB } from '@/types/database'
 
-import { ArrowUpDown , FolderIcon } from 'lucide-react'
+import { ArrowUpDown, CheckCircleIcon, FolderIcon } from 'lucide-react'
 
 import { ActionsCell } from './actions-cell'
 
@@ -114,6 +114,24 @@ export const columnsFiles: ColumnDef<FileDB>[] = [
       return (
         <div>
           <Link href={`/files/${row.original.id}`}>{formatted}</Link>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'parsedMarkdown',
+    header: 'Parsed',
+    cell: ({ row }) => {
+      const parsed = row.getValue('parsedMarkdown')
+      return (
+        <div className="flex max-w-[50px] items-center justify-center truncate">
+          {parsed ? (
+            <Link href={`/files/${row.original.id}`}>
+              <CheckCircleIcon className="h-4 w-4 text-green-600" />
+            </Link>
+          ) : (
+            <span className="text-muted-foreground">-</span>
+          )}
         </div>
       )
     },

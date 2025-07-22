@@ -1,5 +1,6 @@
 import {
   FileIcon,
+  FileTextIcon,
   Folders,
   Home,
   InfoIcon,
@@ -68,6 +69,12 @@ export const sidebarItems: SidebarItem[] = [
         icon: <FileIcon className="h-4 w-4" />,
         loggedIn: true,
         newButton: '/files/new',
+      },
+      {
+        name: 'Parse',
+        href: '/parse',
+        icon: <FileTextIcon className="h-4 w-4" />,
+        loggedIn: true,
       },
     ],
   },
