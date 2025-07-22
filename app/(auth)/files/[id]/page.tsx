@@ -10,9 +10,10 @@ import { LabLayout } from '@/components/lab-layout'
 import { formatDate } from '@/lib/date'
 import { formatFileSize } from '@/lib/file-size'
 
-import { DownloadIcon, EditIcon } from 'lucide-react'
+import { CheckCircleIcon, DownloadIcon, EditIcon, FileTextIcon } from 'lucide-react'
 
 import { getFileAction } from '@/app/actions/files/get'
+import { getParseStatusAction } from '@/app/actions/files/parse'
 
 import { DeleteFileDialog } from '../components/delete-file-dialog'
 
@@ -23,6 +24,9 @@ interface FilePageProps {
 export default async function FilePage({ params }: FilePageProps) {
   const { id } = await params
   const { file, error } = await getFileAction({ id })
+
+  // Get parse status
+  const parseStatus = file ? await getParseStatusAction({ fileId: file.id }) : null
 
   if (error) {
     return (
@@ -77,10 +81,78 @@ export default async function FilePage({ params }: FilePageProps) {
                 <DownloadIcon className="h-4 w-4" />
               </Button>
             </Link>
+            <Link href={`/parse?fileId=${file.id}`}>
+              <Button
+                size="icon"
+                variant="ghost"
+                title={
+                  parseStatus?.success && parseStatus.isParsed
+                    ? 'View parsed content'
+                    : 'Parse file'
+                }
+              >
+                {parseStatus?.success && parseStatus.isParsed ? (
+                  <CheckCircleIcon className="h-4 w-4 text-green-600" />
+                ) : (
+                  <FileTextIcon className="h-4 w-4" />
+                )}
+              </Button>
+            </Link>
             <DeleteFileDialog fileId={file.id} size="icon" />
           </>
         }
       />
+
+      {/* Parse Status Section */}
+      <div className="bg-card rounded-lg border p-6">
+        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
+          <FileTextIcon className="h-5 w-5" />
+          Parse Status
+        </h2>
+        {parseStatus?.success ? (
+          parseStatus.isParsed ? (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-green-600">
+                <CheckCircleIcon className="h-4 w-4" />
+                <span className="text-sm font-medium">File has been parsed</span>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Parsed Content:</span>
+                  <Link href={`/parse?fileId=${file.id}`}>
+                    <Button variant="outline" size="sm">
+                      View/Edit Parse
+                    </Button>
+                  </Link>
+                </div>
+                <div className="bg-muted max-h-48 overflow-y-auto rounded-md p-3">
+                  <pre className="text-xs whitespace-pre-wrap">
+                    {parseStatus.markdown
+                      ? parseStatus.markdown.substring(0, 500) +
+                        (parseStatus.markdown.length > 500 ? '...' : '')
+                      : 'No content available'}
+                  </pre>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="text-muted-foreground flex items-center gap-2">
+                <FileTextIcon className="h-4 w-4" />
+                <span className="text-sm">File has not been parsed yet</span>
+              </div>
+              <Link href={`/parse?fileId=${file.id}`}>
+                <Button className="w-full">
+                  <FileTextIcon className="mr-2 h-4 w-4" />
+                  Parse File with Llama Cloud
+                </Button>
+              </Link>
+            </div>
+          )
+        ) : (
+          <div className="text-muted-foreground text-sm">Unable to check parse status</div>
+        )}
+      </div>
 
       {isImage && (
         <div className="bg-card rounded-lg border p-6">

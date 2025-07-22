@@ -71,9 +71,12 @@ export function LabLayout({
               {breadcrumb?.map((item, index) => {
                 if (index === breadcrumb.length - 1) {
                   return (
-                    <BreadcrumbItem key={index}>
-                      <BreadcrumbPage>{item.label}</BreadcrumbPage>
-                    </BreadcrumbItem>
+                    <React.Fragment key={index}>
+                      <BreadcrumbSeparator />
+                      <BreadcrumbItem key={index}>
+                        <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                      </BreadcrumbItem>
+                    </React.Fragment>
                   )
                 }
                 return (

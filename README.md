@@ -1,3 +1,8 @@
 # Superfier-lab
 
-A collection of AI experiments, projects, and insights exploring the frontiers of artificial intelligence.
+A laboratory and portfolio of AI experiments, learning, and insights
+
+## Todo
+
+- [ ] Check parsing of files
+- [ ] Chat UI
