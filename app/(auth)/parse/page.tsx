@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
@@ -32,7 +32,7 @@ interface FileOption {
   isParsed: boolean
 }
 
-export default function ParsePage() {
+function ParsePageContent() {
   const searchParams = useSearchParams()
   const preselectedFileId = searchParams.get('fileId')
 
@@ -231,5 +231,13 @@ export default function ParsePage() {
         )}
       </div>
     </LabLayout>
+  )
+}
+
+export default function ParsePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ParsePageContent />
+    </Suspense>
   )
 }
