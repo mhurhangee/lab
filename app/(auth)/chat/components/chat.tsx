@@ -12,6 +12,9 @@ import { Loader } from '@/components/ui/loader'
 import { Markdown } from '@/components/ui/markdown'
 import { Textarea } from '@/components/ui/textarea'
 import { Thinking } from '@/components/ui/thinking'
+import { Toggle } from '@/components/ui/toggle'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { models } from '@/lib/models'
 
 import { cn } from '@/lib/utils'
 
@@ -22,6 +25,9 @@ import { ArrowUp, Bot, GlobeIcon, PlusIcon, User } from 'lucide-react'
 import { useStickToBottom } from 'use-stick-to-bottom'
 
 export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
+  const [toolWeb, setToolWeb] = useState(false)
+  const [model, setModel] = useState(models[0].label)
+
   const { scrollRef, contentRef } = useStickToBottom()
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
@@ -37,7 +43,7 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (input.trim()) {
-      void sendMessage({ text: input })
+      void sendMessage({ text: input }, { body: { toolWeb, model } })
       setInput('')
     }
   }
@@ -54,7 +60,7 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
             </div>
           ) : (
             messages.map((message, index) => (
-              <React.Fragment key={message.id}>
+              <React.Fragment key={index}>
                 <div
                   className={cn(
                     'mb-4 flex w-full last:mb-0',
@@ -129,15 +135,31 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
         />
         <div className="flex items-center justify-between p-2">
           <div className="flex items-center justify-start gap-2 p-2">
-            <ButtonTT size="icon" variant="outline" tooltip="New chat">
+            <ButtonTT size="icon" variant="ghost" tooltip="New chat">
               <Link href="/chat/new">
                 <PlusIcon />
               </Link>
             </ButtonTT>
 
-            <ButtonTT size="icon" variant="ghost" tooltip="Web search">
-              <GlobeIcon />
-            </ButtonTT>
+            <Select
+              value={model}
+              onValueChange={setModel}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a model" />
+              </SelectTrigger>
+              <SelectContent>
+                {models.map((model, index) => (
+                  <SelectItem key={index} value={model.label}>
+                    {model.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Toggle pressed={toolWeb} onPressedChange={setToolWeb} className="z-10 rounded-full">
+              <GlobeIcon className="h-4 w-4" />
+            </Toggle>
+
           </div>
           <div className="flex flex-1 items-center justify-end gap-2 p-2">
             <span className="text-muted-foreground text-xs">

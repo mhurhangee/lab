@@ -15,6 +15,8 @@ import { ArrowUpDown } from 'lucide-react'
 
 import { ActionsCell } from './actions-cell'
 
+import { UIMessage } from 'ai'
+
 export const columnsChats: ColumnDef<ChatDB>[] = [
   {
     accessorKey: 'title',
@@ -38,6 +40,18 @@ export const columnsChats: ColumnDef<ChatDB>[] = [
       return (
         <div className="font-medium">
           <Link href={`/chat/${row.original.id}`}>{title as string}</Link>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'messages',
+    header: 'Messages',
+    cell: ({ row }) => {
+      const messages = row.getValue('messages') as UIMessage[]
+      return (
+        <div className="font-medium flex max-w-[50px] justify-end truncate">
+          <Link href={`/chat/${row.original.id}`}>{messages.length}</Link>
         </div>
       )
     },
