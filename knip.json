@@ -7,7 +7,6 @@
     "eslint-config-next",
     "tailwindcss",
     "tw-animate-css",
-    "zod",
     "eslint-plugin-import",
     "@typescript-eslint/eslint-plugin"
   ]

@@ -1,4 +1,5 @@
 import {
+  Bot,
   FileIcon,
   FileTextIcon,
   Folders,
@@ -75,6 +76,21 @@ export const sidebarItems: SidebarItem[] = [
         href: '/parse',
         icon: <FileTextIcon className="h-4 w-4" />,
         loggedIn: true,
+      },
+    ],
+  },
+  {
+    group: 'AI',
+    collapsible: true,
+    defaultOpen: true,
+    loggedIn: true,
+    items: [
+      {
+        name: 'Chat',
+        href: '/chat',
+        icon: <Bot className="h-4 w-4" />,
+        loggedIn: true,
+        newButton: '/chat/new',
       },
     ],
   },
