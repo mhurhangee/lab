@@ -11,7 +11,7 @@ import { formatDate } from '@/lib/date'
 
 import type { ChatDB } from '@/types/database'
 
-import { ArrowUpDown} from 'lucide-react'
+import { ArrowUpDown } from 'lucide-react'
 
 import { ActionsCell } from './actions-cell'
 
@@ -37,7 +37,7 @@ export const columnsChats: ColumnDef<ChatDB>[] = [
       const title = row.getValue('title')
       return (
         <div className="font-medium">
-          <Link href={`/projects/${row.original.id}`}>{title as string}</Link>
+          <Link href={`/chat/${row.original.id}`}>{title as string}</Link>
         </div>
       )
     },

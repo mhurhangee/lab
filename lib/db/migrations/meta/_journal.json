@@ -43,6 +43,13 @@
       "when": 1753256946152,
       "tag": "0005_brief_red_ghost",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1753274662101,
+      "tag": "0006_magenta_the_liberteens",
+      "breakpoints": true
     }
   ]
 }

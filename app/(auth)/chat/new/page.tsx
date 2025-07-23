@@ -1,15 +1,18 @@
-import { redirect } from "next/navigation";
-import { createChatAction } from "@/app/actions/chats/create";
-import { handleErrorClient } from "@/lib/error/client";
+import { redirect } from 'next/navigation'
+
+import { createChatAction } from '@/app/actions/chats/create'
+import { handleErrorServer } from '@/lib/error/server'
+
+// Force dynamic rendering since we use server actions and redirect
+export const dynamic = 'force-dynamic'
 
 export default async function NewChatPage() {
+  const result = await createChatAction({ title: 'Untitled Chat' })
 
-    const result = await createChatAction({ title: "New Chat" });
+  if ('error' in result) {
+    handleErrorServer('Failed to create chat', result.error)
+    throw new Error(result.error)
+  }
 
-    if ('error' in result) {
-      handleErrorClient('Failed to create chat', result.error)
-      return
-    }
-
-    redirect(`/chat/${result.id}`);
+  redirect(`/chat/${result.id}`)
 }

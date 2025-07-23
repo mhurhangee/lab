@@ -1,11 +1,10 @@
 import { notFound } from 'next/navigation'
 
-import { ErrorAlert } from '@/components/ui/error-alert'
-
 import { LabLayout } from '@/components/lab-layout'
 
 import { getChatAction } from '@/app/actions/chats/get'
 
+import { Chat } from '../components/chat'
 
 interface ChatPageProps {
   params: Promise<{ id: string }>
@@ -29,7 +28,7 @@ export default async function ChatPage({ params }: ChatPageProps) {
       backToHref="/chat"
       backToLabel="All chats"
     >
-        Test
+      <Chat savedChat={chat} />
     </LabLayout>
   )
 }

@@ -59,11 +59,7 @@ export function DeleteChatDialog({
       router.push('/chat')
       router.refresh()
     } catch (error) {
-      handleErrorClient(
-        'Failed to delete prchat',
-        error,
-        'Unexpected error in DeleteChatDialog'
-      )
+      handleErrorClient('Failed to delete prchat', error, 'Unexpected error in DeleteChatDialog')
     } finally {
       setIsDeleting(false)
       setIsOpen(false)

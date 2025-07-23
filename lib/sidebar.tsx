@@ -90,6 +90,7 @@ export const sidebarItems: SidebarItem[] = [
         href: '/chat',
         icon: <Bot className="h-4 w-4" />,
         loggedIn: true,
+        newButton: '/chat/new',
       },
     ],
   },
