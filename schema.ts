@@ -1,4 +1,4 @@
-import { integer, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core'
+import { integer, pgTable, text, timestamp, varchar, jsonb } from 'drizzle-orm/pg-core'
 
 export const projects = pgTable('projects', {
   id: varchar('id', { length: 12 }).primaryKey(),
@@ -18,6 +18,17 @@ export const files = pgTable('files', {
   type: varchar('type', { length: 255 }).notNull(),
   projectId: varchar('project_id', { length: 12 }),
   parsedMarkdown: text('parsed_markdown'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
+
+export const chats = pgTable('chats', {
+  id: varchar('id', { length: 12 }).primaryKey(),
+  userId: varchar('user_id', { length: 255 }).notNull(),
+  title: varchar('title', { length: 255 }).notNull().default('New Chat'),
+  messages: jsonb('messages').notNull().default([]),
+  projectId: varchar('project_id', { length: 12 }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 })
