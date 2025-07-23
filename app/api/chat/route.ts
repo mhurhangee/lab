@@ -17,10 +17,6 @@ interface Body {
 export async function POST(req: NextRequest) {
   const { messages, chatId, toolWeb, model }: Body = (await req.json()) as Body
 
-  console.log("toolWeb", toolWeb)
-  console.log("model", model)
-  
-
   const result = streamText({
     model: models.find((m) => m.label === model)?.model || models[0].model,
     system: system,

@@ -21,7 +21,7 @@ import { cn } from '@/lib/utils'
 import { ChatDB } from '@/types/database'
 
 import { DefaultChatTransport, UIMessage } from 'ai'
-import { ArrowUp, Bot, GlobeIcon, PlusIcon, User } from 'lucide-react'
+import { ArrowUp, Bot, GlobeIcon, PlusIcon, Send, Square, User } from 'lucide-react'
 import { useStickToBottom } from 'use-stick-to-bottom'
 
 export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
@@ -29,7 +29,7 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
   const [model, setModel] = useState(models[0].label)
 
   const { scrollRef, contentRef } = useStickToBottom()
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status, stop } = useChat({
     transport: new DefaultChatTransport({
       api: '/api/chat',
       body: {
@@ -63,49 +63,29 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
               <React.Fragment key={index}>
                 <div
                   className={cn(
-                    'mb-4 flex w-full last:mb-0',
-                    message.role === 'user' ? 'justify-end' : 'justify-start'
+                    'mb-4 flex w-full last:mb-0 justify-start'
                   )}
                 >
-                  {message.role === 'user' ? (
-                    // User message: content on left, avatar on right
-                    <>
-                      <div className="max-w-[80%] text-right">
-                        {message.parts.map((part, partIndex) =>
-                          part.type === 'text' ? (
-                            <Markdown key={partIndex}>{part.text}</Markdown>
-                          ) : null
-                        )}
-                      </div>
-                      <div className="ml-3 flex-shrink-0">
-                        <User className="mt-1 h-4 w-4" />
-                      </div>
-                    </>
-                  ) : (
-                    // Assistant message: avatar on left, content on right
-                    <>
                       <div className="mr-3 flex-shrink-0">
-                        <Bot className="mt-1 h-4 w-4" />
+                        {message.role === 'user' ? <User className="mt-1 h-4 w-4 text-muted-foreground" /> : <Bot className="mt-1 h-4 w-4 text-primary" />}
                       </div>
                       <div className="max-w-[80%] text-left">
                         {message.parts.map((part, partIndex) =>
                           part.type === 'text' ? (
-                            <Markdown key={partIndex}>{part.text}</Markdown>
+                            <Markdown key={partIndex} className={cn('text-left', message.role === 'user' ? 'text-muted-foreground' : 'text-primary')}>{part.text}</Markdown>
                           ) : null
                         )}
                         {status === 'streaming' &&
                           message.role === 'assistant' &&
                           index === messages.length - 1 && <Thinking />}
                       </div>
-                    </>
-                  )}
                 </div>
                 {status === 'submitted' &&
                   message.role === 'user' &&
                   index === messages.length - 1 && (
                     <div className={cn('mb-4 flex w-full justify-start last:mb-0')}>
                       <div className="mr-3 flex-shrink-0">
-                        <Bot className="mt-1 h-4 w-4" />
+                        <Bot className="mt-1 h-4 w-4 text-primary" />
                       </div>
                       <div className="max-w-[80%] text-left">
                         <Loader />
@@ -167,9 +147,26 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
             </span>
           </div>
           <div className="flex items-center justify-end p-2">
-            <Button type="submit" size="icon" disabled={disabled}>
-              <ArrowUp />
-            </Button>
+            {status === 'streaming' || status === 'submitted' ? (
+              <Button
+                variant="ghost"
+                size="icon"
+                disabled={status !== 'streaming'}
+                onClick={() => stop()}
+                className="h-8 w-8 rounded-full text-destructive"
+              >
+                <Square className="h-4 w-4" />
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                size="icon"
+                disabled={status !== 'ready' || !input.trim()}
+                className="h-8 w-8 rounded-full"
+              >
+                <Send className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
       </form>

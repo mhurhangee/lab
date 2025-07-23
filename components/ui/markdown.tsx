@@ -2,9 +2,9 @@ import { cn } from '@/lib/utils'
 
 import ReactMarkdown from 'react-markdown'
 
-export const Markdown = ({ children }: { children: string }) => {
+export const Markdown = ({ className, children }: { className?: string; children: string }) => {
   return (
-    <div className={cn('prose prose-sm dark:prose-invert')}>
+    <div className={cn('prose prose-sm dark:prose-invert', className)}>
       <ReactMarkdown>{children}</ReactMarkdown>
     </div>
   )
