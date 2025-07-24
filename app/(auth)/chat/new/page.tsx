@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation'
 
-import { createChatAction } from '@/app/actions/chats/create'
 import { handleErrorServer } from '@/lib/error/server'
+
+import { createChatAction } from '@/app/actions/chats/create'
 
 // Force dynamic rendering since we use server actions and redirect
 export const dynamic = 'force-dynamic'

@@ -11,6 +11,7 @@ import { formatDate } from '@/lib/date'
 
 import type { ChatDB } from '@/types/database'
 
+import { UIMessage } from 'ai'
 import { ArrowUpDown } from 'lucide-react'
 
 import { ActionsCell } from './actions-cell'
@@ -38,6 +39,18 @@ export const columnsChats: ColumnDef<ChatDB>[] = [
       return (
         <div className="font-medium">
           <Link href={`/chat/${row.original.id}`}>{title as string}</Link>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'messages',
+    header: 'Messages',
+    cell: ({ row }) => {
+      const messages: UIMessage[] = row.getValue('messages')
+      return (
+        <div className="flex max-w-[50px] justify-end truncate font-medium">
+          <Link href={`/chat/${row.original.id}`}>{messages.length}</Link>
         </div>
       )
     },
