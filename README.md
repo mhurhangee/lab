@@ -4,13 +4,26 @@ A laboratory and portfolio of AI experiments, learning, and insights
 
 ## Todo
 
+### Checking
+
 - [ ] Check parsing of files
-- [ ] Improve prompt
+
+### New features
+
 - [ ] Prompt library/builder
-- [ ] Files
 - [ ] Quick add to prompt
-- [ ] URL scraping
-- [ ] URL attaching to chat
+
+- [ ] Files as context
+
+- [ ] URL scraper
+- [ ] URL scrapes as context
+
+- [ ] General reader
+- [ ] General transcriber
+
+- [ ] Chat reader
+- [ ] Chat transcriber
+
+- [ ] Prompt copilot?
+
 - [ ] Knowledge bases
-- [ ] Read aloud
-- [ ] Transcribe
