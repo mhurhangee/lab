@@ -1,6 +1,7 @@
 import { UIMessage, generateObject } from 'ai'
 import { z } from 'zod'
 
+import { messagesToString } from './messages-to-string'
 import { models } from './models'
 
 const schema = z.object({
@@ -19,6 +20,8 @@ const schema = z.object({
 export async function generatePostResponseData(
   messages: UIMessage[]
 ): Promise<z.infer<typeof schema>> {
+  const messagesString = messagesToString(messages)
+
   const prompt = `\
   # Context
   You will be given recent messages of a conversation between a user and an AI assistant. 
@@ -49,15 +52,7 @@ export async function generatePostResponseData(
   
   # Messages
   Here are the messages of the conversation:
-  ${messages
-    .map(message => {
-      const textContent = message.parts
-        .filter(item => item.type === 'text')
-        .map(item => item.text)
-        .join(' ')
-      return `${message.role}: ${textContent}\n`
-    })
-    .join('')}
+  ${messagesString}
   `
 
   const result = await generateObject({
@@ -65,8 +60,6 @@ export async function generatePostResponseData(
     prompt,
     schema,
   })
-
-  console.log(result.object)
 
   return result.object
 }

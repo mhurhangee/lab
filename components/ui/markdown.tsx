@@ -1,8 +1,8 @@
 import { cn } from '@/lib/utils'
 
+import 'highlight.js/styles/github-dark.css'
 import ReactMarkdown from 'react-markdown'
 import rehypeHighlight from 'rehype-highlight'
-import 'highlight.js/styles/github-dark.css'
 
 export const Markdown = ({ className, children }: { className?: string; children: string }) => {
   return (

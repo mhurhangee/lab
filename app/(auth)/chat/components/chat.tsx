@@ -40,6 +40,7 @@ import {
   PlusIcon,
   RefreshCw,
   Send,
+  SparklesIcon,
   Square,
   Trash,
   User,
@@ -48,7 +49,6 @@ import { toast } from 'sonner'
 import { useStickToBottom } from 'use-stick-to-bottom'
 
 import { updateChatAction } from '@/app/actions/chats/update'
-
 import { useChatTitle } from '@/providers/chat-title'
 
 export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
@@ -60,6 +60,8 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
   const [model, setModel] = useState(models[0].label) // Uses the first model by default (4.1-mini)
 
   const [suggestions, setSuggestions] = useState<{ text: string; short: string }[]>([])
+
+  const [improving, setImproving] = useState(false)
 
   // Hooks
   const { setTitle } = useChatTitle()
@@ -113,6 +115,27 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
     } else {
       toast.success('Message deleted')
       setMessages(newMessages)
+    }
+  }
+
+  const handleImprove = async () => {
+    setImproving(true)
+    try {
+      const result = await fetch('/api/improve', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          input,
+        }),
+      })
+
+      setInput((await result.json()).improved)
+      setImproving(false)
+    } catch (error) {
+      setError(handleErrorClient('Error improving message', error))
+      setImproving(false)
     }
   }
 
@@ -300,15 +323,25 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
               </Toggle>
             </div>
 
-            {/* Input length */}
-            <div className="flex flex-1 items-center justify-end gap-2 p-2">
+            {/* Right bottom buttons  */}
+            <div className="flex items-center justify-end gap-2 p-2">
+              {/* Input length */}
               <span className="text-muted-foreground text-xs">
                 {input.length > 0 ? `${input.length} characters` : ''}
               </span>
-            </div>
-
-            {/* Send button */}
-            <div className="flex items-center justify-end p-2">
+              <ButtonTT
+                variant="ghost"
+                size="icon"
+                disabled={input.length === 0}
+                tooltip="Improve"
+                onClick={e => {
+                  void handleImprove()
+                  e.preventDefault()
+                }}
+              >
+                {improving ? <Loader /> : <SparklesIcon />}
+              </ButtonTT>
+              {/* Send button */}
               {status === 'streaming' || status === 'submitted' ? (
                 <Button
                   variant="ghost"

@@ -2,8 +2,6 @@
   "ignore": ["components/ui/**", "content/**", "content-collections.ts", "postcss.config.mjs"],
   "ignoreDependencies": [
     "@tailwindcss/typography",
-    "highlight.js",
-    "rehype-highlight",
     "eslint-config-next",
     "tailwindcss",
     "tw-animate-css",
