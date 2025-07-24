@@ -18,10 +18,8 @@ A laboratory and portfolio of AI experiments, learning, and insights
 - [ ] URL scraper
 - [ ] URL scrapes as context
 
-- [ ] General reader
 - [ ] General transcriber
 
-- [ ] Chat reader
 - [ ] Chat transcriber
 
 - [ ] Prompt copilot?

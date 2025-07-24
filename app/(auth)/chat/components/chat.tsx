@@ -26,6 +26,7 @@ import { Toggle } from '@/components/ui/toggle'
 import { copyToClipboard } from '@/lib/copy-to-clipboard'
 import { handleErrorClient } from '@/lib/error/client'
 import { models } from '@/lib/models'
+import { RecordingState, SpeechToTextRecorder, TranscriptResult } from '@/lib/speech-to-text'
 import { SimpleTTSPlayer } from '@/lib/text-to-speech'
 import { cn } from '@/lib/utils'
 
@@ -38,6 +39,7 @@ import {
   Copy,
   Edit,
   GlobeIcon,
+  MicIcon,
   PlusIcon,
   RefreshCw,
   Send,
@@ -70,6 +72,15 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
   const [playingMessageId, setPlayingMessageId] = useState<string | null>(null)
   const ttsPlayerRef = useRef<SimpleTTSPlayer | null>(null)
 
+  // STT state
+  const sttRecorderRef = useRef<SpeechToTextRecorder | null>(null)
+  const [recordingState, setRecordingState] = useState<RecordingState>({
+    isRecording: false,
+    isPaused: false,
+    recordingTime: 0,
+    isTranscribing: false,
+  })
+
   // Hooks
   const { setTitle } = useChatTitle()
 
@@ -93,6 +104,31 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
     }
   }, [])
 
+  // Initialize STT recorder
+  useEffect(() => {
+    sttRecorderRef.current = new SpeechToTextRecorder({
+      onStateChange: setRecordingState,
+      onError: error => {
+        toast.error(error)
+      },
+      onTranscriptReady: (transcript: TranscriptResult) => {
+        // Add transcribed text to input
+        const newText = transcript.text.trim()
+        if (newText) {
+          setInput(prev => {
+            const separator = prev.trim() ? ' ' : ''
+            return prev + separator + newText
+          })
+          toast.success('Speech transcribed successfully!')
+        }
+      },
+    })
+
+    return () => {
+      sttRecorderRef.current?.cleanup()
+    }
+  }, [])
+
   const handleReadAloud = async (messageText: string, messageId: string) => {
     try {
       if (playingMessageId === messageId) {
@@ -109,6 +145,20 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
       console.error('TTS error:', error)
       toast.error('Failed to play audio')
       setPlayingMessageId(null)
+    }
+  }
+
+  const handleSpeechToText = async () => {
+    if (!sttRecorderRef.current) return
+
+    const state = sttRecorderRef.current.getState()
+
+    if (state.isRecording) {
+      // Stop recording
+      sttRecorderRef.current.stopRecording()
+    } else {
+      // Start recording
+      await sttRecorderRef.current.startRecording()
     }
   }
 
@@ -393,6 +443,29 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
                 }}
               >
                 {improving ? <Loader /> : <SparklesIcon />}
+              </ButtonTT>
+              <ButtonTT
+                tooltip={
+                  recordingState.isRecording
+                    ? `Recording... ${sttRecorderRef.current?.formatTime(recordingState.recordingTime) || '0:00'}`
+                    : recordingState.isTranscribing
+                      ? 'Transcribing...'
+                      : 'Speech to text'
+                }
+                onClick={handleSpeechToText}
+                disabled={recordingState.isTranscribing}
+                variant={recordingState.isRecording ? 'destructive' : 'ghost'}
+              >
+                {recordingState.isTranscribing ? (
+                  <Loader />
+                ) : recordingState.isRecording ? (
+                  <div className="flex items-center gap-1">
+                    <div className="h-2 w-2 animate-pulse rounded-full bg-white" />
+                    <MicIcon className="h-4 w-4" />
+                  </div>
+                ) : (
+                  <MicIcon className="h-4 w-4" />
+                )}
               </ButtonTT>
               {/* Send button */}
               {status === 'streaming' || status === 'submitted' ? (
