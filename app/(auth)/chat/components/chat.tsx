@@ -2,7 +2,7 @@
 
 import { useChat } from '@ai-sdk/react'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import Link from 'next/link'
 
@@ -26,6 +26,7 @@ import { Toggle } from '@/components/ui/toggle'
 import { copyToClipboard } from '@/lib/copy-to-clipboard'
 import { handleErrorClient } from '@/lib/error/client'
 import { models } from '@/lib/models'
+import { SimpleTTSPlayer } from '@/lib/text-to-speech'
 import { cn } from '@/lib/utils'
 
 import { TransientUIMessage } from '@/types/ai'
@@ -44,6 +45,8 @@ import {
   Square,
   Trash,
   User,
+  Volume2,
+  VolumeX,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useStickToBottom } from 'use-stick-to-bottom'
@@ -63,6 +66,10 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
 
   const [improving, setImproving] = useState(false)
 
+  // TTS State
+  const [playingMessageId, setPlayingMessageId] = useState<string | null>(null)
+  const ttsPlayerRef = useRef<SimpleTTSPlayer | null>(null)
+
   // Hooks
   const { setTitle } = useChatTitle()
 
@@ -72,6 +79,38 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
       setTitle(savedChat.title)
     }
   }, [savedChat.title, setTitle])
+
+  // Initialize TTS player
+  useEffect(() => {
+    ttsPlayerRef.current = new SimpleTTSPlayer(isPlaying => {
+      if (!isPlaying) {
+        setPlayingMessageId(null)
+      }
+    })
+
+    return () => {
+      ttsPlayerRef.current?.destroy()
+    }
+  }, [])
+
+  const handleReadAloud = async (messageText: string, messageId: string) => {
+    try {
+      if (playingMessageId === messageId) {
+        // Stop if already playing this message
+        ttsPlayerRef.current?.stop()
+        setPlayingMessageId(null)
+      } else {
+        // Stop any current playback and start new one
+        ttsPlayerRef.current?.stop()
+        setPlayingMessageId(messageId)
+        await ttsPlayerRef.current?.playText(messageText, 'chat')
+      }
+    } catch (error) {
+      console.error('TTS error:', error)
+      toast.error('Failed to play audio')
+      setPlayingMessageId(null)
+    }
+  }
 
   const { scrollRef, contentRef } = useStickToBottom()
 
@@ -204,6 +243,20 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
                               }}
                             >
                               <Copy className="text-muted-foreground size-3" />
+                            </ButtonTT>
+                            <ButtonTT
+                              size="tiny"
+                              variant="ghost"
+                              tooltip={playingMessageId === message.id ? 'Stop' : 'Read Aloud'}
+                              onClick={() => {
+                                handleReadAloud(messageText, message.id)
+                              }}
+                            >
+                              {playingMessageId === message.id ? (
+                                <VolumeX className="text-muted-foreground size-3" />
+                              ) : (
+                                <Volume2 className="text-muted-foreground size-3" />
+                              )}
                             </ButtonTT>
                           </div>
                         )}

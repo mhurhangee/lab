@@ -10,7 +10,7 @@ import { LabLayout } from '@/components/lab-layout'
 import { formatDate } from '@/lib/date'
 import { formatFileSize } from '@/lib/file-size'
 
-import { CheckCircleIcon, DownloadIcon, EditIcon, FileTextIcon } from 'lucide-react'
+import { CheckCircleIcon, DownloadIcon, EditIcon, FileTextIcon, Volume2Icon } from 'lucide-react'
 
 import { getFileAction } from '@/app/actions/files/get'
 import { getParseStatusAction } from '@/app/actions/files/parse'
@@ -98,6 +98,13 @@ export default async function FilePage({ params }: FilePageProps) {
                 )}
               </Button>
             </Link>
+            {parseStatus?.success && parseStatus.isParsed && (
+              <Link href={`/text-to-speech?fileId=${file.id}`}>
+                <Button size="icon" variant="ghost" title="Convert to speech">
+                  <Volume2Icon className="h-4 w-4" />
+                </Button>
+              </Link>
+            )}
             <DeleteFileDialog fileId={file.id} size="icon" />
           </>
         }
@@ -119,11 +126,19 @@ export default async function FilePage({ params }: FilePageProps) {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Parsed Content:</span>
-                  <Link href={`/parse?fileId=${file.id}`}>
-                    <Button variant="outline" size="sm">
-                      View/Edit Parse
-                    </Button>
-                  </Link>
+                  <div className="flex gap-2">
+                    <Link href={`/text-to-speech?fileId=${file.id}`}>
+                      <Button variant="outline" size="sm">
+                        <Volume2Icon className="mr-2 h-4 w-4" />
+                        Listen
+                      </Button>
+                    </Link>
+                    <Link href={`/parse?fileId=${file.id}`}>
+                      <Button variant="outline" size="sm">
+                        View/Edit Parse
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
                 <div className="bg-muted max-h-48 overflow-y-auto rounded-md p-3">
                   <pre className="text-xs whitespace-pre-wrap">
