@@ -32,7 +32,18 @@ import { TransientUIMessage } from '@/types/ai'
 import { ChatDB } from '@/types/database'
 
 import { DefaultChatTransport } from 'ai'
-import { Bot, Copy, GlobeIcon, PlusIcon, RefreshCw, Send, Square, Trash, User } from 'lucide-react'
+import {
+  Bot,
+  Copy,
+  Edit,
+  GlobeIcon,
+  PlusIcon,
+  RefreshCw,
+  Send,
+  Square,
+  Trash,
+  User,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { useStickToBottom } from 'use-stick-to-bottom'
 
@@ -137,7 +148,7 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
                           </Markdown>
                         ) : null
                       )}
-                      {/* Regenerate button */}
+                      {/* Assistant action buttons (regenerate, copy) */}
                       {message.role === 'assistant' &&
                         (message.id !== messages[messages.length - 1].id || status === 'ready') && (
                           <div className="flex items-center justify-start gap-2 py-2">
@@ -161,8 +172,20 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
                             </ButtonTT>
                           </div>
                         )}
+                      {/* User action buttons (delete) */}
                       {message.role === 'user' && (
                         <div className="flex items-center justify-start py-2">
+                          <ButtonTT
+                            size="tiny"
+                            variant="ghost"
+                            tooltip="Edit"
+                            onClick={() => {
+                              setInput(messageText)
+                              deleteMessage(message.id)
+                            }}
+                          >
+                            <Edit className="text-muted-foreground size-3" />
+                          </ButtonTT>
                           <ButtonTT
                             size="tiny"
                             variant="ghost"

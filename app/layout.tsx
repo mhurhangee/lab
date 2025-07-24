@@ -80,7 +80,7 @@ const RootLayout = ({ children }: RootLayoutProps) => (
               <Layout>{children}</Layout>
             </ProjectProvider>
           </TooltipProvider>
-          <Toaster className="z-[99999999]" />
+          <Toaster position="top-center" />
         </ThemeProvider>
         <Analytics />
       </body>
