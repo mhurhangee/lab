@@ -26,7 +26,7 @@ interface LabPageProps {
   title?: ReactNode
   description?: ReactNode
   icon?: IconName
-  breadcrumb?: { href: string; label: string }[]
+  breadcrumb?: { href: string; label: ReactNode | string }[]
   actions?: ReactNode
   children?: ReactNode
   backToHref?: string

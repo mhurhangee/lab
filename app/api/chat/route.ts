@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server'
 
 import { models } from '@/lib/models'
+import { generatePostResponseData } from '@/lib/post-response-data'
 import { system } from '@/lib/prompts'
-import { generateSuggestions } from '@/lib/suggestions'
 import { web_search_preview } from '@/lib/tools'
 
 import {
@@ -46,24 +46,26 @@ export async function POST(req: NextRequest) {
         result.toUIMessageStream({
           originalMessages: messages,
           onFinish: async ({ messages }) => {
-            void updateChatAction({ id: chatId, messages })
-
+            let title: string | null = null
             // Generate and stream suggestions
             try {
-              const suggestions = await generateSuggestions(messages)
+              const postResponseData = await generatePostResponseData(messages)
 
               writer.write({
-                type: 'data-suggestions',
-                id: 'suggestions',
+                type: 'data-post',
+                id: 'post',
                 data: {
-                  suggestions: suggestions,
+                  ...postResponseData,
                   status: 'ready',
                 },
                 transient: true,
               })
+              title = postResponseData.title
             } catch (error) {
-              console.error('Failed to generate suggestions:', error)
+              console.error('Failed to generate post response data:', error)
             }
+
+            void updateChatAction({ id: chatId, messages, title: title || undefined })
           },
         })
       )

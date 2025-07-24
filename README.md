@@ -7,7 +7,6 @@ A laboratory and portfolio of AI experiments, learning, and insights
 - [ ] Check parsing of files
 - [ ] Improve prompt
 - [ ] Prompt library/builder
-- [ ] Title
 - [ ] Files
 - [ ] Quick add to prompt
 - [ ] URL scraping
@@ -15,3 +14,4 @@ A laboratory and portfolio of AI experiments, learning, and insights
 - [ ] Knowledge bases
 - [ ] Read aloud
 - [ ] Transcribe
+- [ ] Syntax highlighting

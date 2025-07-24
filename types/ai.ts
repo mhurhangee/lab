@@ -4,8 +4,9 @@ import { UIMessage } from 'ai'
 export type TransientUIMessage = UIMessage<
   never, // metadata type
   {
-    suggestions: {
+    post: {
       suggestions: { text: string; short: string }[]
+      title: string
     }
   }
 >

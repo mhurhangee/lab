@@ -2,7 +2,7 @@
 
 import { useChat } from '@ai-sdk/react'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Link from 'next/link'
 
@@ -48,6 +48,7 @@ import { toast } from 'sonner'
 import { useStickToBottom } from 'use-stick-to-bottom'
 
 import { updateChatAction } from '@/app/actions/chats/update'
+import { useChatTitle } from '@/providers/chat-title'
 
 export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
   // State
@@ -60,6 +61,15 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
   const [suggestions, setSuggestions] = useState<{ text: string; short: string }[]>([])
 
   // Hooks
+  const { setTitle } = useChatTitle()
+
+  // Set initial title when component mounts
+  useEffect(() => {
+    if (savedChat.title) {
+      setTitle(savedChat.title)
+    }
+  }, [savedChat.title, setTitle])
+
   const { scrollRef, contentRef } = useStickToBottom()
 
   const { messages, regenerate, sendMessage, setMessages, status, stop } = useChat({
@@ -71,8 +81,10 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
     }),
     messages: savedChat.messages as TransientUIMessage[],
     onData: dataPart => {
-      if (dataPart.type === 'data-suggestions') {
+      if (dataPart.type === 'data-post') {
+        console.log(dataPart.data)
         setSuggestions(dataPart.data.suggestions)
+        setTitle(dataPart.data.title)
       }
     },
     onError: error => {
