@@ -10,6 +10,7 @@ import {
   MessageCircleQuestion,
   Pen,
   TimerIcon,
+  Volume2Icon,
 } from 'lucide-react'
 
 export interface SidebarItem {
@@ -75,6 +76,12 @@ export const sidebarItems: SidebarItem[] = [
         name: 'Parse',
         href: '/parse',
         icon: <FileTextIcon className="h-4 w-4" />,
+        loggedIn: true,
+      },
+      {
+        name: 'Text-to-Speech',
+        href: '/text-to-speech',
+        icon: <Volume2Icon className="h-4 w-4" />,
         loggedIn: true,
       },
     ],
