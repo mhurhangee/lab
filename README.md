@@ -14,4 +14,3 @@ A laboratory and portfolio of AI experiments, learning, and insights
 - [ ] Knowledge bases
 - [ ] Read aloud
 - [ ] Transcribe
-- [ ] Syntax highlighting

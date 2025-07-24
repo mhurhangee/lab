@@ -48,6 +48,7 @@ import { toast } from 'sonner'
 import { useStickToBottom } from 'use-stick-to-bottom'
 
 import { updateChatAction } from '@/app/actions/chats/update'
+
 import { useChatTitle } from '@/providers/chat-title'
 
 export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
@@ -82,7 +83,6 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
     messages: savedChat.messages as TransientUIMessage[],
     onData: dataPart => {
       if (dataPart.type === 'data-post') {
-        console.log(dataPart.data)
         setSuggestions(dataPart.data.suggestions)
         setTitle(dataPart.data.title)
       }
