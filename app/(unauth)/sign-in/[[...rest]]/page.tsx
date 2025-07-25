@@ -14,7 +14,7 @@ export default function SignInPage() {
       breadcrumb={[{ href: '/sign-in', label: 'Sign In' }]}
       description="Sign in to your account"
     >
-      <div className="mt-12 flex h-full items-center justify-center">
+      <div className="flex items-center justify-center">
         <SignIn fallback={<Loader />} />
       </div>
     </LabLayout>

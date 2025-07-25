@@ -64,7 +64,7 @@ export const SidebarContent = () => {
                         <SidebarMenuButton
                           asChild
                           tooltip={item.name}
-                          isActive={pathname.startsWith(item.href)}
+                          isActive={(pathname.startsWith(item.href) && item.href !== '/') || pathname === item.href}
                         >
                           <Link href={item.href} className="flex items-center">
                             {item.icon}
