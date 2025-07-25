@@ -39,7 +39,7 @@ export const SidebarContent = () => {
   }
 
   return (
-    <SidebarContentComponent>
+    <SidebarContentComponent className="shadcn-scrollbar">
       {isLoaded &&
         sidebarItems.filter(shouldShowGroup).map(group => (
           <Collapsible
