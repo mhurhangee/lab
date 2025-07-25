@@ -7,7 +7,7 @@ export const FAQ = [
   {
     question: 'Where can I find the source code?',
     answer:
-      'The source code is available on GitHub at [https://github.com/mhurhangee/superfier-lab](https://github.com/mhurhangee/superfier-lab).',
+      'The source code is available on GitHub at [https://github.com/mhurhangee/lab](https://github.com/mhurhangee/lab).',
   },
   {
     question: 'Who is behind Superfier?',

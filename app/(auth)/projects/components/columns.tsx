@@ -61,7 +61,7 @@ export const columnsProjects: ColumnDef<ProjectDB>[] = [
     header: ({ column }) => {
       return (
         <div className="flex items-center gap-1">
-          Files
+          Contexts
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
@@ -78,7 +78,7 @@ export const columnsProjects: ColumnDef<ProjectDB>[] = [
         <Link href={`/projects/${row.original.id}`}>
           <Badge>
             <FileIcon />
-            {fileCount as number} {fileCount === 1 ? 'file' : 'files'}
+            {fileCount as number} {fileCount === 1 ? 'context' : 'contexts'}
           </Badge>
         </Link>
       )

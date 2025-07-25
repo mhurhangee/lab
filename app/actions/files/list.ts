@@ -6,7 +6,7 @@ import { handleErrorServer } from '@/lib/error/server'
 
 import { desc, eq } from 'drizzle-orm'
 
-import { files } from '@/schema'
+import { contexts } from '@/schema'
 
 export const listFilesAction = async () => {
   try {
@@ -14,9 +14,9 @@ export const listFilesAction = async () => {
 
     const results = await db
       .select()
-      .from(files)
-      .where(eq(files.userId, userId))
-      .orderBy(desc(files.updatedAt))
+      .from(contexts)
+      .where(eq(contexts.userId, userId))
+      .orderBy(desc(contexts.updatedAt))
 
     return { files: results }
   } catch (error) {

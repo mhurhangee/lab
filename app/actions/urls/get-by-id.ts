@@ -4,15 +4,15 @@ import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 
-import { and, desc, eq, not } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 
 import { contexts, projects } from '@/schema'
 
-export const listFilesWithProjectsAction = async () => {
+export const getUrlByIdAction = async (id: string) => {
   try {
     const userId = await getUserId()
 
-    const results = await db
+    const result = await db
       .select({
         id: contexts.id,
         userId: contexts.userId,
@@ -28,12 +28,16 @@ export const listFilesWithProjectsAction = async () => {
       })
       .from(contexts)
       .leftJoin(projects, eq(contexts.projectId, projects.id))
-      .where(and(eq(contexts.userId, userId), not(eq(contexts.type, 'url'))))
-      .orderBy(desc(contexts.updatedAt))
+      .where(and(eq(contexts.id, id), eq(contexts.userId, userId), eq(contexts.type, 'url')))
+      .limit(1)
 
-    return { files: results }
+    if (result.length === 0) {
+      throw new Error('URL not found')
+    }
+
+    return { url: result[0] }
   } catch (error) {
-    const errorMessage = handleErrorServer(error, 'Failed to list files with projects')
+    const errorMessage = handleErrorServer(error, 'Failed to get URL')
     return { error: errorMessage }
   }
 }

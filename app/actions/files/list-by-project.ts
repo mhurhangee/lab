@@ -6,7 +6,7 @@ import { handleErrorServer } from '@/lib/error/server'
 
 import { and, desc, eq } from 'drizzle-orm'
 
-import { files } from '@/schema'
+import { contexts } from '@/schema'
 
 interface ListFilesByProjectActionProps {
   projectId: string
@@ -18,9 +18,9 @@ export const listFilesByProjectAction = async ({ projectId }: ListFilesByProject
 
     const results = await db
       .select()
-      .from(files)
-      .where(and(eq(files.userId, userId), eq(files.projectId, projectId)))
-      .orderBy(desc(files.updatedAt))
+      .from(contexts)
+      .where(and(eq(contexts.userId, userId), eq(contexts.projectId, projectId)))
+      .orderBy(desc(contexts.updatedAt))
 
     return { files: results }
   } catch (error) {

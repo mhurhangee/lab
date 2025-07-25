@@ -9,7 +9,7 @@ export const projects = pgTable('projects', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 })
 
-export const files = pgTable('files', {
+export const contexts = pgTable('contexts', {
   id: varchar('id', { length: 12 }).primaryKey(),
   userId: varchar('user_id', { length: 255 }).notNull(),
   name: varchar('name', { length: 255 }).notNull(),

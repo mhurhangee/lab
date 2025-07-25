@@ -7,7 +7,7 @@ import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 import { generateId } from '@/lib/id'
 
-import { files } from '@/schema'
+import { contexts } from '@/schema'
 
 interface CreateFileActionProps {
   file: File
@@ -25,7 +25,7 @@ export const createFileAction = async ({ file, projectId }: CreateFileActionProp
 
     // Save file metadata to database
     const fileRecord = await db
-      .insert(files)
+      .insert(contexts)
       .values({
         id: generateId(),
         userId,
@@ -35,7 +35,7 @@ export const createFileAction = async ({ file, projectId }: CreateFileActionProp
         type: file.type,
         projectId,
       })
-      .returning({ id: files.id })
+      .returning({ id: contexts.id })
 
     if (!fileRecord?.length) {
       throw new Error('Failed to create file record')

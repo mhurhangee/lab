@@ -6,7 +6,7 @@ import { handleErrorServer } from '@/lib/error/server'
 
 import { eq } from 'drizzle-orm'
 
-import { files } from '@/schema'
+import { contexts } from '@/schema'
 
 const LLAMA_API_BASE = 'https://api.cloud.llamaindex.ai/api/v1/parsing'
 
@@ -130,7 +130,7 @@ export const parseFileAction = async ({ fileId }: ParseFileActionProps) => {
     const userId = await getUserId()
 
     // Get the file from database
-    const fileRecord = await db.select().from(files).where(eq(files.id, fileId)).limit(1)
+    const fileRecord = await db.select().from(contexts).where(eq(contexts.id, fileId)).limit(1)
 
     if (!fileRecord?.length) {
       throw new Error('File not found')
@@ -167,12 +167,12 @@ export const parseFileAction = async ({ fileId }: ParseFileActionProps) => {
 
     // Update the file record with parsed markdown
     await db
-      .update(files)
+      .update(contexts)
       .set({
         parsedMarkdown: markdown,
         updatedAt: new Date(),
       })
-      .where(eq(files.id, fileId))
+      .where(eq(contexts.id, fileId))
 
     return { success: true, message: 'File parsed successfully', markdown }
   } catch (error) {
@@ -187,13 +187,13 @@ export const getParseStatusAction = async ({ fileId }: { fileId: string }) => {
 
     const fileRecord = await db
       .select({
-        id: files.id,
-        name: files.name,
-        parsedMarkdown: files.parsedMarkdown,
-        userId: files.userId,
+        id: contexts.id,
+        name: contexts.name,
+        parsedMarkdown: contexts.parsedMarkdown,
+        userId: contexts.userId,
       })
-      .from(files)
-      .where(eq(files.id, fileId))
+      .from(contexts)
+      .where(eq(contexts.id, fileId))
       .limit(1)
 
     if (!fileRecord?.length) {

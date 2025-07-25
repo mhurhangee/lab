@@ -8,7 +8,7 @@ import { handleErrorServer } from '@/lib/error/server'
 
 import { and, eq } from 'drizzle-orm'
 
-import { files } from '@/schema'
+import { contexts } from '@/schema'
 
 interface UpdateFileActionProps {
   id: string
@@ -24,8 +24,8 @@ export const updateFileAction = async ({ id, file, name, projectId }: UpdateFile
     // Get existing file
     const existingFileResult = await db
       .select()
-      .from(files)
-      .where(and(eq(files.id, id), eq(files.userId, userId)))
+      .from(contexts)
+      .where(and(eq(contexts.id, id), eq(contexts.userId, userId)))
       .limit(1)
 
     if (!existingFileResult?.length) {
@@ -33,7 +33,7 @@ export const updateFileAction = async ({ id, file, name, projectId }: UpdateFile
     }
 
     const existingFile = existingFileResult[0]
-    let updateData: Partial<typeof files.$inferInsert> = {
+    let updateData: Partial<typeof contexts.$inferInsert> = {
       updatedAt: new Date(),
     }
 
@@ -68,9 +68,9 @@ export const updateFileAction = async ({ id, file, name, projectId }: UpdateFile
 
     // Update database record
     const updatedFile = await db
-      .update(files)
+      .update(contexts)
       .set(updateData)
-      .where(and(eq(files.id, id), eq(files.userId, userId)))
+      .where(and(eq(contexts.id, id), eq(contexts.userId, userId)))
       .returning()
 
     if (!updatedFile?.length) {

@@ -14,7 +14,7 @@ export default function WaitlistPage() {
       breadcrumb={[{ href: '/waitlist', label: 'Waitlist' }]}
       description="Sign up for the waitlist"
     >
-      <div className="mt-12 flex h-full items-center justify-center">
+      <div className="flex items-center justify-center">
         <Waitlist fallback={<Loader />} />
       </div>
     </LabLayout>

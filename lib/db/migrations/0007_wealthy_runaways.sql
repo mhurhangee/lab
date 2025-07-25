@@ -1,0 +1,1 @@
+ALTER TABLE "files" RENAME TO "contexts";

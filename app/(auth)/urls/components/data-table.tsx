@@ -8,25 +8,25 @@ import type { ContextDB } from '@/types/database'
 
 import Fuse from 'fuse.js'
 
-import { columnsFiles } from './columns'
+import { columnsUrls } from './columns'
 
-interface FileDataTableProps {
+interface UrlsDataTableProps {
   data: ContextDB[]
   hideProject?: boolean
 }
 
-export function FilesDataTable({ data, hideProject }: FileDataTableProps) {
+export function UrlsDataTable({ data, hideProject }: UrlsDataTableProps) {
   // Create Fuse instance once with its options
   const fuseInstance = useMemo(() => {
     const fuseOptions = {
-      keys: ['name', 'type'],
+      keys: ['name', 'url'],
       threshold: 0.3,
     }
     return new Fuse(data, fuseOptions)
   }, [data])
 
-  const filterFiles = (query: string, files: ContextDB[]): ContextDB[] => {
-    if (!query) return files
+  const filterUrls = (query: string, urls: ContextDB[]): ContextDB[] => {
+    if (!query) return urls
 
     const result = fuseInstance.search(query)
     return result.map(item => item.item)
@@ -34,10 +34,10 @@ export function FilesDataTable({ data, hideProject }: FileDataTableProps) {
 
   return (
     <BaseDataTable
-      columns={columnsFiles}
+      columns={columnsUrls}
       data={data}
-      filterFunction={filterFiles}
-      searchPlaceholder="Search files ..."
+      filterFunction={filterUrls}
+      searchPlaceholder="Search URLs ..."
       columnVisibility={{
         actions: !hideProject,
         projectTitle: !hideProject,

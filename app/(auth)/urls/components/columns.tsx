@@ -12,11 +12,11 @@ import { formatDate } from '@/lib/date'
 
 import type { ContextDB } from '@/types/database'
 
-import { ArrowUpDown, CheckCircleIcon, FolderIcon } from 'lucide-react'
+import { ArrowUpDown, CheckCircleIcon, ExternalLinkIcon, FolderIcon } from 'lucide-react'
 
 import { ActionsCell } from './actions-cell'
 
-export const columnsFiles: ColumnDef<ContextDB>[] = [
+export const columnsUrls: ColumnDef<ContextDB>[] = [
   {
     accessorKey: 'name',
     sortingFn: caseInsensitiveSort,
@@ -36,14 +36,43 @@ export const columnsFiles: ColumnDef<ContextDB>[] = [
     },
     cell: ({ row }) => {
       const name = row.getValue('name')
-      const type = row.getValue('type')
       return (
         <div className="font-medium">
-          {type === 'url' ? (
-            <Link href={`/urls/${row.original.id}`}>{name as string}</Link>
-          ) : (
-            <Link href={`/files/${row.original.id}`}>{name as string}</Link>
-          )}
+          <Link href={`/urls/${row.original.id}`}>{name as string}</Link>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'url',
+    sortingFn: caseInsensitiveSort,
+    header: ({ column }) => {
+      return (
+        <div className="flex items-center gap-1">
+          URL
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            <ArrowUpDown />
+          </Button>
+        </div>
+      )
+    },
+    cell: ({ row }) => {
+      const url = row.getValue('url')
+      return (
+        <div className="flex max-w-[300px] items-center gap-2">
+          <span className="text-muted-foreground truncate text-sm">{url as string}</span>
+          <a
+            href={url as string}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <ExternalLinkIcon className="h-3 w-3" />
+          </a>
         </div>
       )
     },
@@ -68,40 +97,17 @@ export const columnsFiles: ColumnDef<ContextDB>[] = [
     cell: ({ row }) => {
       const projectTitle = row.getValue('projectTitle')
       const projectId = row.original.projectId
-      const type = row.getValue('type')
       return (
         <div className="max-w-[200px] truncate">
-          {type === 'url' ? (
-            <Link href={`/urls/${row.original.id}`}>
-              <Badge>
-                <FolderIcon />
-                {projectTitle as string}
-              </Badge>
-            </Link>
-          ) : (
+          {projectTitle && projectId ? (
             <Link href={`/projects/${projectId}`}>
               <Badge>
                 <FolderIcon />
                 {projectTitle as string}
               </Badge>
             </Link>
-          )}
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'type',
-    sortingFn: caseInsensitiveSort,
-    header: 'Type',
-    cell: ({ row }) => {
-      const type = row.getValue('type')
-      return (
-        <div className="max-w-[300px] truncate">
-          {type === 'url' ? (
-            <Link href={`/urls/${row.original.id}`}>{(type as string) || '-'}</Link>
           ) : (
-            <Link href={`/files/${row.original.id}`}>{(type as string) || '-'}</Link>
+            <span className="text-muted-foreground">No project</span>
           )}
         </div>
       )
@@ -109,10 +115,11 @@ export const columnsFiles: ColumnDef<ContextDB>[] = [
   },
   {
     accessorKey: 'updatedAt',
+    sortingFn: caseInsensitiveSort,
     header: ({ column }) => {
       return (
         <div className="flex items-center gap-1">
-          Last Updated
+          Updated
           <Button
             variant="ghost"
             size="icon"
@@ -125,27 +132,20 @@ export const columnsFiles: ColumnDef<ContextDB>[] = [
     },
     cell: ({ row }) => {
       const updatedAt = row.getValue('updatedAt')
-      const formatted = formatDate(updatedAt as string | Date) || '-'
-      return (
-        <div>
-          <Link href={`/files/${row.original.id}`}>{formatted}</Link>
-        </div>
-      )
+      return <div className="text-muted-foreground text-sm">{formatDate(updatedAt as Date)}</div>
     },
   },
   {
     accessorKey: 'parsedMarkdown',
-    header: 'Parsed',
+    header: 'Scraped',
     cell: ({ row }) => {
-      const parsed = row.getValue('parsedMarkdown')
+      const parsedMarkdown = row.getValue('parsedMarkdown')
       return (
-        <div className="flex max-w-[50px] items-center justify-center truncate">
-          {parsed ? (
-            <Link href={`/files/${row.original.id}`}>
-              <CheckCircleIcon className="h-4 w-4 text-green-600" />
-            </Link>
+        <div className="flex items-center">
+          {parsedMarkdown ? (
+            <CheckCircleIcon className="h-4 w-4 text-green-600" />
           ) : (
-            <span className="text-muted-foreground">-</span>
+            <div className="border-muted h-4 w-4 rounded-full border-2" />
           )}
         </div>
       )

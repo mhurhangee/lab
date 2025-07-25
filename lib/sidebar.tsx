@@ -6,6 +6,7 @@ import {
   Home,
   InfoIcon,
   LayoutGrid,
+  LinkIcon,
   LogIn,
   MessageCircleQuestion,
   MicIcon,
@@ -66,18 +67,20 @@ export const sidebarItems: SidebarItem[] = [
         loggedIn: true,
         newButton: '/projects/new',
       },
+    ],
+  },
+  {
+    group: 'AI',
+    collapsible: true,
+    defaultOpen: true,
+    loggedIn: true,
+    items: [
       {
-        name: 'Files',
-        href: '/files',
-        icon: <FileIcon className="h-4 w-4" />,
+        name: 'Chat',
+        href: '/chat',
+        icon: <Bot className="h-4 w-4" />,
         loggedIn: true,
-        newButton: '/files/new',
-      },
-      {
-        name: 'Parse',
-        href: '/parse',
-        icon: <FileTextIcon className="h-4 w-4" />,
-        loggedIn: true,
+        newButton: '/chat/new',
       },
       {
         name: 'Text-to-Speech',
@@ -94,20 +97,34 @@ export const sidebarItems: SidebarItem[] = [
     ],
   },
   {
-    group: 'AI',
+    group: 'Contexts',
     collapsible: true,
     defaultOpen: true,
     loggedIn: true,
     items: [
       {
-        name: 'Chat',
-        href: '/chat',
-        icon: <Bot className="h-4 w-4" />,
+        name: 'Files',
+        href: '/files',
+        icon: <FileIcon className="h-4 w-4" />,
         loggedIn: true,
-        newButton: '/chat/new',
+        newButton: '/files/new',
+      },
+      {
+        name: 'URLs',
+        href: '/urls',
+        icon: <LinkIcon className="h-4 w-4" />,
+        loggedIn: true,
+        newButton: '/urls/new',
+      },
+      {
+        name: 'Parse',
+        href: '/parse',
+        icon: <FileTextIcon className="h-4 w-4" />,
+        loggedIn: true,
       },
     ],
   },
+
   {
     group: 'Misc',
     collapsible: true,
