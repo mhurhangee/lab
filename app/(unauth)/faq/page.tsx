@@ -16,8 +16,7 @@ export default function FaqPage() {
     <LabLayout
       title="FAQ"
       icon="message-circle-question-mark"
-      backToHref="/"
-      backToLabel="Home"
+      backTo={{ href: '/', label: 'Home' }}
       breadcrumb={[{ href: '/faq', label: 'FAQ' }]}
       description="Frequently Asked Questions"
     >

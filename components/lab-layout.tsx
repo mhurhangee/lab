@@ -29,8 +29,7 @@ interface LabPageProps {
   breadcrumb?: { href: string; label: ReactNode | string }[]
   actions?: ReactNode
   children?: ReactNode
-  backToHref?: string
-  backToLabel?: string
+  backTo?: { href: string; label: ReactNode | string }
   className?: string
 }
 
@@ -41,8 +40,7 @@ export function LabLayout({
   breadcrumb,
   actions,
   children,
-  backToHref,
-  backToLabel,
+  backTo,
   className = '',
 }: LabPageProps) {
   const isMobile = useIsMobile()
@@ -91,7 +89,7 @@ export function LabLayout({
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        {backToHref && <BackToButton href={backToHref} label={`${backToLabel}`} />}
+        {backTo && <BackToButton href={backTo.href} label={`${backTo.label}`} />}
       </div>
       <div
         className={cn(

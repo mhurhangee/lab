@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 
 import { LabLayout } from '@/components/lab-layout'
 
-import { FilesWidget } from './components/files-widget'
+import { ContextsWidget } from './components/contexts-widget'
 import { ProjectsWidget } from './components/projects-widget'
 
 export default function DashboardPage() {
@@ -13,17 +13,16 @@ export default function DashboardPage() {
       title="Dashboard"
       description="Welcome to Superfier lab"
       icon="layout-grid"
-      backToHref="/"
-      backToLabel="Home"
+      backTo={{ href: '/faq', label: 'FAQ' }}
       breadcrumb={[{ href: '/dashboard', label: 'Dashboard' }]}
       actions={
         <div className="flex items-center gap-2">
           <Link href="/projects/new">
             <Button size="sm">New Project</Button>
           </Link>
-          <Link href="/files/new">
+          <Link href="/contexts">
             <Button size="sm" variant="outline">
-              New File
+              New Context
             </Button>
           </Link>
         </div>
@@ -31,7 +30,7 @@ export default function DashboardPage() {
     >
       <div className="grid gap-6 md:grid-cols-2">
         <ProjectsWidget />
-        <FilesWidget />
+        <ContextsWidget />
       </div>
     </LabLayout>
   )

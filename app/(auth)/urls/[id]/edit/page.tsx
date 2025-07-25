@@ -36,8 +36,7 @@ export default async function UrlEditPage({ params }: UrlEditPageProps) {
     <LabLayout
       title={`Edit ${url.name}`}
       icon="link"
-      backToHref={`/urls/${url.id}`}
-      backToLabel={url.name}
+      backTo={{ href: `/urls/${url.id}`, label: url.name }}
       breadcrumb={[
         { href: '/urls', label: 'URLs' },
         { href: `/urls/${url.id}`, label: url.name },

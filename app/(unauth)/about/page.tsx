@@ -25,8 +25,7 @@ export default function AboutPage() {
     <LabLayout
       title="About"
       icon="user"
-      backToHref="/"
-      backToLabel="Home"
+      backTo={{ href: '/', label: 'Home' }}
       breadcrumb={[{ href: '/about', label: 'About' }]}
       actions={
         <Link

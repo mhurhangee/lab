@@ -322,8 +322,7 @@ function STTPageContent() {
       description="Convert speech to text using AI-powered transcription."
       icon="mic"
       breadcrumb={[{ href: '/speech-to-text', label: 'Speech to Text' }]}
-      backToHref="/dashboard"
-      backToLabel="Dashboard"
+      backTo={{ href: '/dashboard', label: 'Dashboard' }}
     >
       <div className="mx-auto max-w-4xl space-y-6">
         {/* Main STT Card */}

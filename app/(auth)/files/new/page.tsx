@@ -13,8 +13,7 @@ export default async function NewFilePage() {
       title="Upload File"
       icon="file-plus"
       description="Select a file to upload. Supported formats include images, documents, and more."
-      backToHref="/files"
-      backToLabel="Files"
+      backTo={{ href: '/files', label: 'Files' }}
       breadcrumb={[{ href: '/files', label: 'Files' }]}
     >
       {error ? <ErrorAlert error={error} /> : <UploadForm projects={projects} />}

@@ -132,6 +132,7 @@ function ParsePageContent() {
         { href: '/files', label: 'Files' },
         { href: '/parse', label: 'Parse' },
       ]}
+      backTo={{ href: '/dashboard', label: 'Dashboard' }}
     >
       <div className="space-y-6">
         <Card className="w-fit">

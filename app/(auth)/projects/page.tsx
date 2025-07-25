@@ -21,8 +21,7 @@ export default async function ProjectsPage() {
       title="Projects"
       icon="folder"
       breadcrumb={[{ href: '/projects', label: 'Projects' }]}
-      backToHref="/dashboard"
-      backToLabel="Dashboard"
+      backTo={{ href: '/dashboard', label: 'Dashboard' }}
       actions={
         <Link href="/projects/new">
           <Button size="sm">

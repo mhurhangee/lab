@@ -36,8 +36,7 @@ export default async function EditFilePage({ params }: EditFilePageProps) {
     <LabLayout
       title={`Edit ${file.name}`}
       icon="file"
-      backToHref={`/files/${file.id}`}
-      backToLabel={file.name}
+      backTo={{ href: `/files/${file.id}`, label: file.name }}
       breadcrumb={[
         { href: '/files', label: 'Files' },
         { href: `/files/${file.id}`, label: file.name },

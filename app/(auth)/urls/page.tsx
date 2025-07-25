@@ -20,8 +20,7 @@ export default async function UrlsPage() {
     <LabLayout
       title="URLs"
       icon="link"
-      backToHref="/dashboard"
-      backToLabel="Dashboard"
+      backTo={{ href: '/dashboard', label: 'Dashboard' }}
       breadcrumb={[{ href: '/urls', label: 'URLs' }]}
       actions={
         <Link href="/urls/new">

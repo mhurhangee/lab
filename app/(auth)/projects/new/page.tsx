@@ -7,8 +7,7 @@ export default function NewProjectPage() {
     <LabLayout
       title="Create a new project"
       icon={'folder-plus'}
-      backToHref="/projects"
-      backToLabel="Projects"
+      backTo={{ href: '/projects', label: 'Projects' }}
       breadcrumb={[
         { href: '/projects', label: 'Projects' },
         { href: '/projects/new', label: 'New' },

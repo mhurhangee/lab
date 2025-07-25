@@ -26,8 +26,7 @@ export default async function ChatPage({ params }: ChatPageProps) {
         { href: `/chat/${chat.id}`, label: <ChatBreadcrumbTitle fallback={chat.title} /> },
       ]}
       icon="bot"
-      backToHref="/chat"
-      backToLabel="All chats"
+      backTo={{ href: '/chat', label: 'All chats' }}
     >
       <Chat savedChat={chat} />
     </LabLayout>

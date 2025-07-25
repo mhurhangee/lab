@@ -29,7 +29,7 @@ function getFileIcon(type: string): IconName {
   return 'file'
 }
 
-export function FilesWidget() {
+export function ContextsWidget() {
   const [files, setFiles] = useState<ContextDB[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -62,9 +62,9 @@ export function FilesWidget() {
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="flex items-center gap-2 text-sm font-medium">
             <DynamicIcon name="file" className="h-4 w-4" />
-            Recent Files
+            Recent Contexts
           </CardTitle>
-          <Link href="/files">
+          <Link href="/contexts">
             <Button variant="ghost" size="sm">
               View All
             </Button>
@@ -90,9 +90,9 @@ export function FilesWidget() {
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="flex items-center gap-2 text-sm font-medium">
             <DynamicIcon name="file" className="h-4 w-4" />
-            Recent Files
+            Recent Contexts
           </CardTitle>
-          <Link href="/files">
+          <Link href="/contexts">
             <Button variant="ghost" size="sm">
               View All
             </Button>
@@ -110,9 +110,9 @@ export function FilesWidget() {
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2">
           <DynamicIcon name="file" className="h-4 w-4" />
-          Recent Files
+          Recent Contexts
         </CardTitle>
-        <Link href="/files">
+        <Link href="/contexts">
           <Button variant="ghost" size="sm">
             View All
           </Button>
@@ -121,7 +121,7 @@ export function FilesWidget() {
       <CardContent>
         {files.length === 0 ? (
           <div className="text-muted-foreground text-sm">
-            No files yet. Upload your first file to get started.
+            No contexts yet. Upload your first file to get started.
           </div>
         ) : (
           <div className="space-y-3">

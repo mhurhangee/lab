@@ -21,8 +21,7 @@ export default async function ChatsPage() {
       title="Chats"
       icon="bot"
       breadcrumb={[{ href: '/chat', label: 'Chat' }]}
-      backToHref="/dashboard"
-      backToLabel="Dashboard"
+      backTo={{ href: '/dashboard', label: 'Dashboard' }}
       actions={
         <Link href="/chat/new">
           <Button size="sm">

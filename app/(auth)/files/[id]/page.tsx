@@ -49,8 +49,7 @@ export default async function FilePage({ params }: FilePageProps) {
         { href: `/files/${file.id}`, label: file.name },
       ]}
       icon="file"
-      backToHref="/files"
-      backToLabel="All files"
+      backTo={{ href: '/files', label: 'All files' }}
     >
       <EntityCard
         title={file.name}

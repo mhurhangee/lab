@@ -12,8 +12,7 @@ export default function PostsPage() {
     <LabLayout
       title="Posts"
       icon="pen-box"
-      backToHref="/"
-      backToLabel="Home"
+      backTo={{ href: '/', label: 'Home' }}
       breadcrumb={[{ href: '/posts', label: 'Posts' }]}
       description="Thoughts, insights, and ramblings"
     >

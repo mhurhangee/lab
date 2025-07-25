@@ -46,8 +46,7 @@ export default async function UrlPage({ params }: UrlPageProps) {
         { href: `/urls/${url.id}`, label: url.name },
       ]}
       icon="link"
-      backToHref="/urls"
-      backToLabel="All URLs"
+      backTo={{ href: '/urls', label: 'All URLs' }}
     >
       <EntityCard
         title="URL Details"

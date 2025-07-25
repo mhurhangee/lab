@@ -20,8 +20,7 @@ export default async function FilesPage() {
     <LabLayout
       title="Files"
       icon="file"
-      backToHref="/dashboard"
-      backToLabel="Dashboard"
+      backTo={{ href: '/dashboard', label: 'Dashboard' }}
       breadcrumb={[{ href: '/files', label: 'Files' }]}
       actions={
         <Link href="/files/new">

@@ -25,8 +25,7 @@ export default async function PostPage({ params }: PostPageProps) {
   return (
     <LabLayout
       icon="pen-box"
-      backToHref="/posts"
-      backToLabel="All posts"
+      backTo={{ href: '/posts', label: 'All posts' }}
       breadcrumb={[
         { href: '/posts', label: 'Posts' },
         { href: `/posts/${post._meta.path}`, label: post.title },

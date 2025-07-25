@@ -231,8 +231,7 @@ function TTSPageContent() {
       description="Convert text to speech using AI-powered voice synthesis."
       icon="volume-2"
       breadcrumb={[{ href: '/text-to-speech', label: 'Text to Speech' }]}
-      backToHref="/dashboard"
-      backToLabel="Dashboard"
+      backTo={{ href: '/dashboard', label: 'Dashboard' }}
     >
       <div className="mx-auto max-w-4xl space-y-6">
         {/* Main TTS Card */}
