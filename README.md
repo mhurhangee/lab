@@ -7,17 +7,20 @@ A laboratory and portfolio of AI experiments, learning, and insights
 ### Checking
 
 - [ ] Check parsing of files
+- [ ] Urls
+- [ ] Url forms
 
 ### New features
+
+- [ ] Chat image input
+- [ ] Files as context
+- [ ] URL scrapes as context
 
 - [ ] Prompt library/builder
 - [ ] Quick add to prompt
 
-- [ ] Files as context
-- [ ] URL scrapes as context
-
 - [ ] Prompt copilot?
 
-- [ ] Knowledge bases
+- [ ] Knowledge bases?
 
 - [ ] Dashboard chats and quick actions.
