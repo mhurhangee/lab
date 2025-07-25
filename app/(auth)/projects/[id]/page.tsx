@@ -75,10 +75,15 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-medium">Files ({files.length})</h3>
-          <Link href="/files/new">
-            <Button>Add File</Button>
-          </Link>
+          <h3 className="text-lg font-medium">Contexts (files and URLs) ({files.length})</h3>
+          <div className="flex items-center gap-2">
+            <Link href="/files/new">
+              <Button>Add File</Button>
+            </Link>
+            <Link href="/urls/new">
+              <Button>Add URL</Button>
+            </Link>
+          </div>
         </div>
         <FilesDataTable data={files} hideProject />
       </div>

@@ -36,9 +36,14 @@ export const columnsFiles: ColumnDef<FileDB>[] = [
     },
     cell: ({ row }) => {
       const name = row.getValue('name')
+      const type = row.getValue('type')
       return (
         <div className="font-medium">
-          <Link href={`/files/${row.original.id}`}>{name as string}</Link>
+          {type === 'url' ? (
+            <Link href={`/urls/${row.original.id}`}>{name as string}</Link>
+          ) : (
+            <Link href={`/files/${row.original.id}`}>{name as string}</Link>
+          )}
         </div>
       )
     },
@@ -63,17 +68,23 @@ export const columnsFiles: ColumnDef<FileDB>[] = [
     cell: ({ row }) => {
       const projectTitle = row.getValue('projectTitle')
       const projectId = row.original.projectId
+      const type = row.getValue('type')
       return (
         <div className="max-w-[200px] truncate">
-          {projectTitle && projectId ? (
-            <Link href={`/projects/${projectId}`}>
+          {type === 'url' ? (
+            <Link href={`/urls/${row.original.id}`}>
               <Badge>
                 <FolderIcon />
                 {projectTitle as string}
               </Badge>
             </Link>
           ) : (
-            <span className="text-muted-foreground">No project</span>
+            <Link href={`/projects/${projectId}`}>
+              <Badge>
+                <FolderIcon />
+                {projectTitle as string}
+              </Badge>
+            </Link>
           )}
         </div>
       )
@@ -87,7 +98,11 @@ export const columnsFiles: ColumnDef<FileDB>[] = [
       const type = row.getValue('type')
       return (
         <div className="max-w-[300px] truncate">
-          <Link href={`/files/${row.original.id}`}>{(type as string) || '-'}</Link>
+          {type === 'url' ? (
+            <Link href={`/urls/${row.original.id}`}>{(type as string) || '-'}</Link>
+          ) : (
+            <Link href={`/files/${row.original.id}`}>{(type as string) || '-'}</Link>
+          )}
         </div>
       )
     },

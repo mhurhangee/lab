@@ -4,11 +4,11 @@ import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 
-import { and, desc, eq, not } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 
 import { files, projects } from '@/schema'
 
-export const listFilesWithProjectsAction = async () => {
+export const listUrlsWithProjectsAction = async () => {
   try {
     const userId = await getUserId()
 
@@ -28,12 +28,12 @@ export const listFilesWithProjectsAction = async () => {
       })
       .from(files)
       .leftJoin(projects, eq(files.projectId, projects.id))
-      .where(and(eq(files.userId, userId), not(eq(files.type, 'url'))))
+      .where(and(eq(files.userId, userId), eq(files.type, 'url')))
       .orderBy(desc(files.updatedAt))
 
-    return { files: results }
+    return { urls: results }
   } catch (error) {
-    const errorMessage = handleErrorServer(error, 'Failed to list files with projects')
+    const errorMessage = handleErrorServer(error, 'Failed to list URLs with projects')
     return { error: errorMessage }
   }
 }

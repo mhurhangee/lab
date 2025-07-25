@@ -10,7 +10,7 @@ import { LayoutGridIcon, LogInIcon, TimerIcon } from 'lucide-react'
 
 export const Hero = () => {
   return (
-    <section className="min-h-screen w-full py-20 md:py-32">
+    <section className="min-h-[calc(100vh-4rem)] w-full py-20 md:py-32">
       <div className="mx-auto flex w-full max-w-screen-xl flex-col items-center px-4 text-center sm:px-6 lg:px-8">
         <div className="mb-6 inline-flex items-center rounded-full border px-3 py-1 text-sm">
           <Link href={app.badge.link}>

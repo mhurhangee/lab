@@ -14,14 +14,10 @@ A laboratory and portfolio of AI experiments, learning, and insights
 - [ ] Quick add to prompt
 
 - [ ] Files as context
-
-- [ ] URL scraper
 - [ ] URL scrapes as context
-
-- [ ] General transcriber
-
-- [ ] Chat transcriber
 
 - [ ] Prompt copilot?
 
 - [ ] Knowledge bases
+
+- [ ] Dashboard chats and quick actions.  
