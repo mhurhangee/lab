@@ -14,6 +14,8 @@ A laboratory and portfolio of AI experiments, learning, and insights
 
 - [ ] Chats to projects
 
+- [ ] Metadata
+
 - [ ] Contexts home page
 
 - [ ] Chat image input

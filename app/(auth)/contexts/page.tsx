@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button'
 
 import { LabLayout } from '@/components/lab-layout'
 
+import { GenericWidget } from './components/generic-widget'
+
 export default function ContextsPage() {
   return (
     <LabLayout
@@ -25,7 +27,10 @@ export default function ContextsPage() {
         </div>
       }
     >
-      <div className="grid gap-6 md:grid-cols-2"></div>
+      <div className="grid gap-6 md:grid-cols-2">
+        <GenericWidget type="pdfs" limit={3} icon="file" />
+        <GenericWidget type="urls" limit={3} icon="link" />
+      </div>
     </LabLayout>
   )
 }
