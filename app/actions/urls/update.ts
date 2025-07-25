@@ -6,7 +6,7 @@ import { handleErrorServer } from '@/lib/error/server'
 
 import { and, eq } from 'drizzle-orm'
 
-import { files } from '@/schema'
+import { contexts } from '@/schema'
 
 export const updateUrlAction = async (
   id: string,
@@ -15,7 +15,7 @@ export const updateUrlAction = async (
   try {
     const userId = await getUserId()
 
-    const updateData: any = {
+    const updateData: Partial<typeof contexts.$inferInsert> = {
       updatedAt: new Date(),
     }
 
@@ -24,9 +24,9 @@ export const updateUrlAction = async (
     if (data.projectId !== undefined) updateData.projectId = data.projectId
 
     await db
-      .update(files)
+      .update(contexts)
       .set(updateData)
-      .where(and(eq(files.id, id), eq(files.userId, userId), eq(files.type, 'url')))
+      .where(and(eq(contexts.id, id), eq(contexts.userId, userId), eq(contexts.type, 'url')))
 
     return { success: true }
   } catch (error) {

@@ -20,4 +20,4 @@ A laboratory and portfolio of AI experiments, learning, and insights
 
 - [ ] Knowledge bases
 
-- [ ] Dashboard chats and quick actions.  
+- [ ] Dashboard chats and quick actions.

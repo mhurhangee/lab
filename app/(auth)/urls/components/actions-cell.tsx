@@ -10,14 +10,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import type { FileDB } from '@/types/database'
+import type { ContextDB } from '@/types/database'
 
 import { EditIcon, ExternalLinkIcon, MoreHorizontalIcon, TrashIcon } from 'lucide-react'
 
 import { deleteUrlAction } from '@/app/actions/urls/delete'
 
 interface ActionsCellProps {
-  row: { original: FileDB }
+  row: { original: ContextDB }
 }
 
 export function ActionsCell({ row }: ActionsCellProps) {

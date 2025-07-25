@@ -6,7 +6,7 @@ import { handleErrorServer } from '@/lib/error/server'
 
 import { count, desc, eq } from 'drizzle-orm'
 
-import { files, projects } from '@/schema'
+import { contexts, projects } from '@/schema'
 
 export const listProjectsWithFileCountsAction = async () => {
   try {
@@ -20,10 +20,10 @@ export const listProjectsWithFileCountsAction = async () => {
         description: projects.description,
         createdAt: projects.createdAt,
         updatedAt: projects.updatedAt,
-        fileCount: count(files.id),
+        fileCount: count(contexts.id),
       })
       .from(projects)
-      .leftJoin(files, eq(projects.id, files.projectId))
+      .leftJoin(contexts, eq(projects.id, contexts.projectId))
       .where(eq(projects.userId, userId))
       .groupBy(
         projects.id,

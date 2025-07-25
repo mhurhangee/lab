@@ -7,7 +7,7 @@ import { generateId } from '@/lib/id'
 
 import { Exa } from 'exa-js'
 
-import { files } from '@/schema'
+import { contexts } from '@/schema'
 
 export const scrapeUrlWithExaAction = async (url: string, projectId?: string) => {
   try {
@@ -33,7 +33,7 @@ export const scrapeUrlWithExaAction = async (url: string, projectId?: string) =>
 
     // Save to files table as URL type
     const fileId = generateId()
-    await db.insert(files).values({
+    await db.insert(contexts).values({
       id: fileId,
       userId,
       name: title,

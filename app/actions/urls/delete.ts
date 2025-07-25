@@ -6,15 +6,15 @@ import { handleErrorServer } from '@/lib/error/server'
 
 import { and, eq } from 'drizzle-orm'
 
-import { files } from '@/schema'
+import { contexts } from '@/schema'
 
 export const deleteUrlAction = async (id: string) => {
   try {
     const userId = await getUserId()
 
     await db
-      .delete(files)
-      .where(and(eq(files.id, id), eq(files.userId, userId), eq(files.type, 'url')))
+      .delete(contexts)
+      .where(and(eq(contexts.id, id), eq(contexts.userId, userId), eq(contexts.type, 'url')))
 
     return { success: true }
   } catch (error) {

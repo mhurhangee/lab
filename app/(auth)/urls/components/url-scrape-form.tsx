@@ -18,6 +18,8 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 
+import { handleErrorClient } from '@/lib/error/client'
+
 import { LoaderIcon } from 'lucide-react'
 
 import { scrapeUrlWithExaAction } from '@/app/actions/urls/scrape-with-exa'
@@ -62,7 +64,7 @@ export function UrlScrapeForm({ projects }: UrlScrapeFormProps) {
         })
       }
     } catch (err) {
-      setError('Failed to scrape URL')
+      setError(handleErrorClient('Failed to scrape URL', err))
     } finally {
       setIsLoading(false)
     }

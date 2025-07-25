@@ -181,7 +181,7 @@ export class SpeechToTextRecorder {
 }
 
 // Quick transcribe utility for simple use cases
-async function quickTranscribe(
+export async function quickTranscribe(
   file: File,
   options?: {
     model?: string

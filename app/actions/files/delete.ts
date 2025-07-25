@@ -8,7 +8,7 @@ import { handleErrorServer } from '@/lib/error/server'
 
 import { and, eq } from 'drizzle-orm'
 
-import { files } from '@/schema'
+import { contexts } from '@/schema'
 
 interface DeleteFileActionProps {
   id: string
@@ -21,8 +21,8 @@ export const deleteFileAction = async ({ id }: DeleteFileActionProps) => {
     // First get the file to get the URL for deletion
     const fileResult = await db
       .select()
-      .from(files)
-      .where(and(eq(files.id, id), eq(files.userId, userId)))
+      .from(contexts)
+      .where(and(eq(contexts.id, id), eq(contexts.userId, userId)))
       .limit(1)
 
     if (!fileResult?.length) {
@@ -35,7 +35,7 @@ export const deleteFileAction = async ({ id }: DeleteFileActionProps) => {
     await del(file.url)
 
     // Delete from database
-    await db.delete(files).where(and(eq(files.id, id), eq(files.userId, userId)))
+    await db.delete(contexts).where(and(eq(contexts.id, id), eq(contexts.userId, userId)))
 
     return { success: true }
   } catch (error) {

@@ -10,13 +10,13 @@ import { Button } from '@/components/ui/button'
 import { caseInsensitiveSort } from '@/lib/column-sort'
 import { formatDate } from '@/lib/date'
 
-import type { FileDB } from '@/types/database'
+import type { ContextDB } from '@/types/database'
 
 import { ArrowUpDown, CheckCircleIcon, FolderIcon } from 'lucide-react'
 
 import { ActionsCell } from './actions-cell'
 
-export const columnsFiles: ColumnDef<FileDB>[] = [
+export const columnsFiles: ColumnDef<ContextDB>[] = [
   {
     accessorKey: 'name',
     sortingFn: caseInsensitiveSort,

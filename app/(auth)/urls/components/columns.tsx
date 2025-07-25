@@ -10,13 +10,13 @@ import { Button } from '@/components/ui/button'
 import { caseInsensitiveSort } from '@/lib/column-sort'
 import { formatDate } from '@/lib/date'
 
-import type { FileDB } from '@/types/database'
+import type { ContextDB } from '@/types/database'
 
 import { ArrowUpDown, CheckCircleIcon, ExternalLinkIcon, FolderIcon } from 'lucide-react'
 
 import { ActionsCell } from './actions-cell'
 
-export const columnsUrls: ColumnDef<FileDB>[] = [
+export const columnsUrls: ColumnDef<ContextDB>[] = [
   {
     accessorKey: 'name',
     sortingFn: caseInsensitiveSort,
@@ -63,8 +63,8 @@ export const columnsUrls: ColumnDef<FileDB>[] = [
     cell: ({ row }) => {
       const url = row.getValue('url')
       return (
-        <div className="flex items-center gap-2 max-w-[300px]">
-          <span className="truncate text-sm text-muted-foreground">{url as string}</span>
+        <div className="flex max-w-[300px] items-center gap-2">
+          <span className="text-muted-foreground truncate text-sm">{url as string}</span>
           <a
             href={url as string}
             target="_blank"
@@ -132,11 +132,7 @@ export const columnsUrls: ColumnDef<FileDB>[] = [
     },
     cell: ({ row }) => {
       const updatedAt = row.getValue('updatedAt')
-      return (
-        <div className="text-sm text-muted-foreground">
-          {formatDate(updatedAt as Date)}
-        </div>
-      )
+      return <div className="text-muted-foreground text-sm">{formatDate(updatedAt as Date)}</div>
     },
   },
   {
@@ -149,7 +145,7 @@ export const columnsUrls: ColumnDef<FileDB>[] = [
           {parsedMarkdown ? (
             <CheckCircleIcon className="h-4 w-4 text-green-600" />
           ) : (
-            <div className="h-4 w-4 rounded-full border-2 border-muted" />
+            <div className="border-muted h-4 w-4 rounded-full border-2" />
           )}
         </div>
       )

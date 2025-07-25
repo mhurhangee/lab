@@ -6,7 +6,7 @@ import { handleErrorServer } from '@/lib/error/server'
 
 import { and, eq } from 'drizzle-orm'
 
-import { files, projects } from '@/schema'
+import { contexts, projects } from '@/schema'
 
 export const getUrlByIdAction = async (id: string) => {
   try {
@@ -14,21 +14,21 @@ export const getUrlByIdAction = async (id: string) => {
 
     const result = await db
       .select({
-        id: files.id,
-        userId: files.userId,
-        name: files.name,
-        url: files.url,
-        size: files.size,
-        type: files.type,
-        projectId: files.projectId,
-        parsedMarkdown: files.parsedMarkdown,
-        createdAt: files.createdAt,
-        updatedAt: files.updatedAt,
+        id: contexts.id,
+        userId: contexts.userId,
+        name: contexts.name,
+        url: contexts.url,
+        size: contexts.size,
+        type: contexts.type,
+        projectId: contexts.projectId,
+        parsedMarkdown: contexts.parsedMarkdown,
+        createdAt: contexts.createdAt,
+        updatedAt: contexts.updatedAt,
         projectTitle: projects.title,
       })
-      .from(files)
-      .leftJoin(projects, eq(files.projectId, projects.id))
-      .where(and(eq(files.id, id), eq(files.userId, userId), eq(files.type, 'url')))
+      .from(contexts)
+      .leftJoin(projects, eq(contexts.projectId, projects.id))
+      .where(and(eq(contexts.id, id), eq(contexts.userId, userId), eq(contexts.type, 'url')))
       .limit(1)
 
     if (result.length === 0) {

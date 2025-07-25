@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 
+import { useRouter } from 'next/navigation'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ErrorAlert } from '@/components/ui/error-alert'
@@ -18,12 +20,13 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 
+import { formatDate } from '@/lib/date'
+import { handleErrorClient } from '@/lib/error/client'
+import { formatFileSize } from '@/lib/file-size'
+
 import { ExternalLinkIcon, SaveIcon } from 'lucide-react'
 
 import { updateUrlAction } from '@/app/actions/urls/update'
-import { handleErrorClient } from '@/lib/error/client'
-import { formatFileSize } from '@/lib/file-size'
-import { formatDate } from '@/lib/date'
 
 type UrlWithProject = {
   id: string
@@ -44,6 +47,7 @@ interface UrlEditFormProps {
 }
 
 export function UrlEditForm({ url, projects }: UrlEditFormProps) {
+  const router = useRouter()
   const [name, setName] = useState(url.name)
   const [projectId, setProjectId] = useState(url.projectId || 'none')
   const [parsedMarkdown, setParsedMarkdown] = useState(url.parsedMarkdown || '')
@@ -67,7 +71,9 @@ export function UrlEditForm({ url, projects }: UrlEditFormProps) {
         setError(result.error)
       } else {
         setSuccess(true)
-        setTimeout(() => setSuccess(false), 3000)
+        setTimeout(() => {
+          router.push(`/urls/${url.id}`)
+        }, 1000)
       }
     } catch (err) {
       handleErrorClient('Failed to update URL', err)
@@ -75,7 +81,6 @@ export function UrlEditForm({ url, projects }: UrlEditFormProps) {
       setIsLoading(false)
     }
   }
-
 
   return (
     <div className="space-y-6">
@@ -147,7 +152,7 @@ export function UrlEditForm({ url, projects }: UrlEditFormProps) {
 
           {success && (
             <div className="rounded-md border border-green-200 bg-green-50 p-3">
-              <p className="text-sm text-green-800">URL updated successfully!</p>
+              <p className="text-sm text-green-800">URL updated successfully! Redirecting...</p>
             </div>
           )}
 
@@ -166,12 +171,12 @@ export function UrlEditForm({ url, projects }: UrlEditFormProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs>
+          <Tabs defaultValue="edit">
             <TabsList>
-              <TabsTrigger value="content">Content</TabsTrigger>
-              <TabsTrigger value="markdown">Markdown</TabsTrigger>
+              <TabsTrigger value="edit">Edit</TabsTrigger>
+              <TabsTrigger value="preview">Preview</TabsTrigger>
             </TabsList>
-            <TabsContent value="content">
+            <TabsContent value="edit">
               <Textarea
                 value={parsedMarkdown}
                 onChange={e => setParsedMarkdown(e.target.value)}
@@ -181,8 +186,10 @@ export function UrlEditForm({ url, projects }: UrlEditFormProps) {
                 placeholder="No content extracted"
               />
             </TabsContent>
-            <TabsContent value="markdown">
-              <Markdown>{parsedMarkdown}</Markdown>
+            <TabsContent value="preview">
+              <div className="prose prose-sm dark:prose-invert min-h-[500px] max-w-none rounded-md border p-4">
+                <Markdown>{parsedMarkdown || 'No content to preview'}</Markdown>
+              </div>
             </TabsContent>
           </Tabs>
         </CardContent>

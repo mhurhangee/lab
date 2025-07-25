@@ -14,14 +14,14 @@ import { ProjectSelector } from '@/components/project-selector'
 import { handleErrorClient } from '@/lib/error/client'
 import { formatFileSize } from '@/lib/file-size'
 
-import type { FileDB, ProjectDB } from '@/types/database'
+import type { ContextDB, ProjectDB } from '@/types/database'
 
 import { toast } from 'sonner'
 
 import { updateFileAction } from '@/app/actions/files/update'
 
 interface EditFormProps {
-  file: FileDB
+  file: ContextDB
   projects: ProjectDB[]
 }
 

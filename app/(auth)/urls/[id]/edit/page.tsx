@@ -7,7 +7,7 @@ import { LabLayout } from '@/components/lab-layout'
 import { listProjectsAction } from '@/app/actions/projects/list'
 import { getUrlByIdAction } from '@/app/actions/urls/get-by-id'
 
-import { UrlEditForm } from './components/url-edit-form'
+import { UrlEditForm } from '../../components/url-edit-form'
 
 interface UrlEditPageProps {
   params: Promise<{ id: string }>

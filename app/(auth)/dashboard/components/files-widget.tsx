@@ -13,7 +13,7 @@ import { formatDate } from '@/lib/date'
 import { handleErrorClient } from '@/lib/error/client'
 import { formatFileSize } from '@/lib/file-size'
 
-import type { FileDB } from '@/types/database'
+import type { ContextDB } from '@/types/database'
 
 import { DynamicIcon, type IconName } from 'lucide-react/dynamic'
 
@@ -30,7 +30,7 @@ function getFileIcon(type: string): IconName {
 }
 
 export function FilesWidget() {
-  const [files, setFiles] = useState<FileDB[]>([])
+  const [files, setFiles] = useState<ContextDB[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 

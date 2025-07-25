@@ -2,7 +2,7 @@ import { LabLayout } from '@/components/lab-layout'
 
 import { listProjectsAction } from '@/app/actions/projects/list'
 
-import { UrlScrapeForm } from './components/url-scrape-form'
+import { UrlScrapeForm } from '../components/url-scrape-form'
 
 export default async function NewUrlPage() {
   const { projects } = await listProjectsAction()
