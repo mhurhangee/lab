@@ -1,11 +1,11 @@
 'use client'
 
+import { DynamicIcon, type IconName } from 'lucide-react/dynamic'
+
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 
 import { cn } from '@/lib/utils'
-
-import { DynamicIcon, type IconName } from 'lucide-react/dynamic'
 
 export interface EntityAttribute {
   id: string

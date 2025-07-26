@@ -1,11 +1,5 @@
 import Link from 'next/link'
 
-import { Button } from '@/components/ui/button'
-
-import { LabLayout } from '@/components/lab-layout'
-
-import { app } from '@/lib/app'
-
 import {
   AwardIcon,
   BookmarkIcon,
@@ -20,13 +14,18 @@ import {
   TreesIcon,
 } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
+
+import { LabLayout } from '@/components/lab-layout'
+
+import { app } from '@/lib/app'
+
 export default function AboutPage() {
   return (
     <LabLayout
       title="About"
       icon="user"
-      backToHref="/"
-      backToLabel="Home"
+      backTo={{ href: '/', label: 'Home' }}
       breadcrumb={[{ href: '/about', label: 'About' }]}
       actions={
         <Link

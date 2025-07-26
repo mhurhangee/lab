@@ -1,5 +1,7 @@
 import { NextRequest } from 'next/server'
 
+import { updateChatAction } from '@/app/actions/chats/update'
+
 import { models } from '@/lib/models'
 import { generatePostResponseData } from '@/lib/post-response-data'
 import { system } from '@/lib/prompts'
@@ -13,8 +15,6 @@ import {
   smoothStream,
   streamText,
 } from 'ai'
-
-import { updateChatAction } from '@/app/actions/chats/update'
 
 interface Body {
   messages: UIMessage[]

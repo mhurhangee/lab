@@ -4,9 +4,9 @@ import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 
-import { desc, eq } from 'drizzle-orm'
-
 import { chats } from '@/schema'
+
+import { desc, eq } from 'drizzle-orm'
 
 export const listChatsAction = async () => {
   try {

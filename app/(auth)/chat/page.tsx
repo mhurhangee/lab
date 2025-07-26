@@ -1,13 +1,13 @@
 import Link from 'next/link'
 
+import { PlusIcon } from 'lucide-react'
+
+import { listChatsAction } from '@/app/actions/chats/list'
+
 import { Button } from '@/components/ui/button'
 import { ErrorAlert } from '@/components/ui/error-alert'
 
 import { LabLayout } from '@/components/lab-layout'
-
-import { PlusIcon } from 'lucide-react'
-
-import { listChatsAction } from '@/app/actions/chats/list'
 
 import { ChatsDataTable } from './components/data-table'
 
@@ -21,8 +21,7 @@ export default async function ChatsPage() {
       title="Chats"
       icon="bot"
       breadcrumb={[{ href: '/chat', label: 'Chat' }]}
-      backToHref="/dashboard"
-      backToLabel="Dashboard"
+      backTo={{ href: '/dashboard', label: 'Dashboard' }}
       actions={
         <Link href="/chat/new">
           <Button size="sm">

@@ -4,6 +4,9 @@ import { SignedIn, SignedOut } from '@clerk/nextjs'
 
 import React, { ReactNode } from 'react'
 
+import { HomeIcon, LayoutGridIcon } from 'lucide-react'
+import { DynamicIcon, type IconName } from 'lucide-react/dynamic'
+
 import { BackToButton } from '@/components/ui/back-to-button'
 import {
   Breadcrumb,
@@ -19,9 +22,6 @@ import { cn } from '@/lib/utils'
 
 import { useIsMobile } from '@/hooks/use-mobile'
 
-import { HomeIcon, LayoutGridIcon } from 'lucide-react'
-import { DynamicIcon, type IconName } from 'lucide-react/dynamic'
-
 interface LabPageProps {
   title?: ReactNode
   description?: ReactNode
@@ -29,8 +29,7 @@ interface LabPageProps {
   breadcrumb?: { href: string; label: ReactNode | string }[]
   actions?: ReactNode
   children?: ReactNode
-  backToHref?: string
-  backToLabel?: string
+  backTo?: { href: string; label: ReactNode | string }
   className?: string
 }
 
@@ -41,8 +40,7 @@ export function LabLayout({
   breadcrumb,
   actions,
   children,
-  backToHref,
-  backToLabel,
+  backTo,
   className = '',
 }: LabPageProps) {
   const isMobile = useIsMobile()
@@ -91,7 +89,7 @@ export function LabLayout({
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        {backToHref && <BackToButton href={backToHref} label={`${backToLabel}`} />}
+        {backTo && <BackToButton href={backTo.href} label={`${backTo.label}`} />}
       </div>
       <div
         className={cn(

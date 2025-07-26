@@ -12,6 +12,12 @@ A laboratory and portfolio of AI experiments, learning, and insights
 
 ### New features
 
+- [ ] Chats to projects
+
+- [ ] Metadata
+
+- [ ] Contexts home page
+
 - [ ] Chat image input
 - [ ] Files as context
 - [ ] URL scrapes as context

@@ -1,6 +1,6 @@
-import { LabLayout } from '@/components/lab-layout'
-
 import { listProjectsAction } from '@/app/actions/projects/list'
+
+import { LabLayout } from '@/components/lab-layout'
 
 import { UrlScrapeForm } from '../components/url-scrape-form'
 
@@ -11,8 +11,7 @@ export default async function NewUrlPage() {
     <LabLayout
       title="Scrape URL"
       icon="link"
-      backToHref="/urls"
-      backToLabel="URLs"
+      backTo={{ href: '/urls', label: 'URLs' }}
       breadcrumb={[
         { href: '/urls', label: 'URLs' },
         { href: '/urls/new', label: 'Scrape URL' },

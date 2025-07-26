@@ -16,6 +16,7 @@ export const contexts = pgTable('contexts', {
   url: varchar('url', { length: 512 }).notNull(),
   size: integer('size').notNull(),
   type: varchar('type', { length: 255 }).notNull(),
+  fileType: varchar('file_type', { length: 255 }),
   projectId: varchar('project_id', { length: 12 }),
   parsedMarkdown: text('parsed_markdown'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),

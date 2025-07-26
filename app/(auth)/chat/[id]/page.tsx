@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation'
 
-import { LabLayout } from '@/components/lab-layout'
-
 import { getChatAction } from '@/app/actions/chats/get'
+
+import { LabLayout } from '@/components/lab-layout'
 
 import { Chat } from '../components/chat'
 import { ChatBreadcrumbTitle } from '../components/chat-breadcrumb-title'
@@ -26,8 +26,7 @@ export default async function ChatPage({ params }: ChatPageProps) {
         { href: `/chat/${chat.id}`, label: <ChatBreadcrumbTitle fallback={chat.title} /> },
       ]}
       icon="bot"
-      backToHref="/chat"
-      backToLabel="All chats"
+      backTo={{ href: '/chat', label: 'All chats' }}
     >
       <Chat savedChat={chat} />
     </LabLayout>

@@ -6,6 +6,25 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import Link from 'next/link'
 
+import {
+  Bot,
+  Copy,
+  Edit,
+  GlobeIcon,
+  MicIcon,
+  PlusIcon,
+  RefreshCw,
+  Send,
+  SparklesIcon,
+  Square,
+  Trash,
+  User,
+  Volume2,
+  VolumeX,
+} from 'lucide-react'
+
+import { updateChatAction } from '@/app/actions/chats/update'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ButtonTT } from '@/components/ui/button-tt'
@@ -30,31 +49,14 @@ import { RecordingState, SpeechToTextRecorder, TranscriptResult } from '@/lib/sp
 import { SimpleTTSPlayer } from '@/lib/text-to-speech'
 import { cn } from '@/lib/utils'
 
+import { useChatTitle } from '@/providers/chat-title'
+
 import { TransientUIMessage } from '@/types/ai'
 import { ChatDB } from '@/types/database'
 
 import { DefaultChatTransport } from 'ai'
-import {
-  Bot,
-  Copy,
-  Edit,
-  GlobeIcon,
-  MicIcon,
-  PlusIcon,
-  RefreshCw,
-  Send,
-  SparklesIcon,
-  Square,
-  Trash,
-  User,
-  Volume2,
-  VolumeX,
-} from 'lucide-react'
 import { toast } from 'sonner'
 import { useStickToBottom } from 'use-stick-to-bottom'
-
-import { updateChatAction } from '@/app/actions/chats/update'
-import { useChatTitle } from '@/providers/chat-title'
 
 export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
   // State

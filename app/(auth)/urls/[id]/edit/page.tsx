@@ -1,11 +1,11 @@
 import { notFound } from 'next/navigation'
 
+import { getContextsWithProjectAction } from '@/app/actions/contexts/get-with-project'
+import { listProjectsAction } from '@/app/actions/projects/list'
+
 import { ErrorAlert } from '@/components/ui/error-alert'
 
 import { LabLayout } from '@/components/lab-layout'
-
-import { listProjectsAction } from '@/app/actions/projects/list'
-import { getUrlByIdAction } from '@/app/actions/urls/get-by-id'
 
 import { UrlEditForm } from '../../components/url-edit-form'
 
@@ -15,8 +15,8 @@ interface UrlEditPageProps {
 
 export default async function UrlEditPage({ params }: UrlEditPageProps) {
   const { id } = await params
-  const [{ url, error }, { projects }] = await Promise.all([
-    getUrlByIdAction(id),
+  const [{ context: url, error }, { projects }] = await Promise.all([
+    getContextsWithProjectAction({ id, type: 'urls' }),
     listProjectsAction(),
   ])
 
@@ -36,8 +36,7 @@ export default async function UrlEditPage({ params }: UrlEditPageProps) {
     <LabLayout
       title={`Edit ${url.name}`}
       icon="link"
-      backToHref={`/urls/${url.id}`}
-      backToLabel={url.name}
+      backTo={{ href: `/urls/${url.id}`, label: url.name }}
       breadcrumb={[
         { href: '/urls', label: 'URLs' },
         { href: `/urls/${url.id}`, label: url.name },

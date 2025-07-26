@@ -4,6 +4,8 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import Link from 'next/link'
 
+import { ArrowUpDown, FileIcon } from 'lucide-react'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 
@@ -11,8 +13,6 @@ import { caseInsensitiveSort } from '@/lib/column-sort'
 import { formatDate } from '@/lib/date'
 
 import type { ProjectDB } from '@/types/database'
-
-import { ArrowUpDown, FileIcon } from 'lucide-react'
 
 import { ActionsCell } from './actions-cell'
 

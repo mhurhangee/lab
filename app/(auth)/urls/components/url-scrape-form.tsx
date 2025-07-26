@@ -4,6 +4,10 @@ import { useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
+import { LoaderIcon } from 'lucide-react'
+
+import { scrapeUrlWithExaAction } from '@/app/actions/urls/scrape-with-exa'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ErrorAlert } from '@/components/ui/error-alert'
@@ -19,10 +23,6 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 
 import { handleErrorClient } from '@/lib/error/client'
-
-import { LoaderIcon } from 'lucide-react'
-
-import { scrapeUrlWithExaAction } from '@/app/actions/urls/scrape-with-exa'
 
 interface UrlScrapeFormProps {
   projects: Array<{ id: string; title: string }>

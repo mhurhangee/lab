@@ -5,6 +5,7 @@ import {
   Folders,
   Home,
   InfoIcon,
+  LayersIcon,
   LayoutGrid,
   LinkIcon,
   LogIn,
@@ -103,11 +104,17 @@ export const sidebarItems: SidebarItem[] = [
     loggedIn: true,
     items: [
       {
-        name: 'Files',
-        href: '/files',
+        name: 'Contexts',
+        href: '/contexts',
+        icon: <LayersIcon className="h-4 w-4" />,
+        loggedIn: true,
+      },
+      {
+        name: 'PDFs',
+        href: '/pdfs',
         icon: <FileIcon className="h-4 w-4" />,
         loggedIn: true,
-        newButton: '/files/new',
+        newButton: '/pdfs/new',
       },
       {
         name: 'URLs',

@@ -4,9 +4,9 @@ import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 
-import { count, desc, eq } from 'drizzle-orm'
-
 import { contexts, projects } from '@/schema'
+
+import { count, desc, eq } from 'drizzle-orm'
 
 export const listProjectsWithFileCountsAction = async () => {
   try {

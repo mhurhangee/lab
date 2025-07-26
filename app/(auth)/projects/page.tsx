@@ -1,13 +1,13 @@
 import Link from 'next/link'
 
+import { PlusIcon } from 'lucide-react'
+
+import { listProjectsWithFileCountsAction } from '@/app/actions/projects/list-with-file-counts'
+
 import { Button } from '@/components/ui/button'
 import { ErrorAlert } from '@/components/ui/error-alert'
 
 import { LabLayout } from '@/components/lab-layout'
-
-import { PlusIcon } from 'lucide-react'
-
-import { listProjectsWithFileCountsAction } from '@/app/actions/projects/list-with-file-counts'
 
 import { ProjectsDataTable } from './components/data-table'
 
@@ -21,8 +21,7 @@ export default async function ProjectsPage() {
       title="Projects"
       icon="folder"
       breadcrumb={[{ href: '/projects', label: 'Projects' }]}
-      backToHref="/dashboard"
-      backToLabel="Dashboard"
+      backTo={{ href: '/dashboard', label: 'Dashboard' }}
       actions={
         <Link href="/projects/new">
           <Button size="sm">

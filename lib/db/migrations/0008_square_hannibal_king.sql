@@ -1,0 +1,1 @@
+ALTER TABLE "contexts" ADD COLUMN "file_type" varchar(255) NOT NULL;

@@ -4,11 +4,11 @@ import { Row } from '@tanstack/react-table'
 
 import Link from 'next/link'
 
+import { Eye } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 
 import { ChatDB } from '@/types/database'
-
-import { Eye } from 'lucide-react'
 
 import { DeleteChatDialog } from '@/app/(auth)/chat/components/delete-chat-dialog'
 

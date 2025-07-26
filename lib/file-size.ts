@@ -6,5 +6,5 @@ export const formatFileSize = (bytes: number) => {
     size /= 1024
     unitIndex++
   }
-  return `${size.toFixed(2)} ${units[unitIndex]}`
+  return `${size.toFixed(0)} ${units[unitIndex]}`
 }

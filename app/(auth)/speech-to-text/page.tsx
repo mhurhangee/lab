@@ -2,6 +2,19 @@
 
 import { Suspense, useEffect, useRef, useState } from 'react'
 
+import {
+  AlertCircle,
+  FileAudio,
+  Loader2,
+  Mic,
+  Pause,
+  Play,
+  RotateCcw,
+  Square,
+  Upload,
+  Wand2,
+} from 'lucide-react'
+
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -17,19 +30,6 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 
 import { LabLayout } from '@/components/lab-layout'
-
-import {
-  AlertCircle,
-  FileAudio,
-  Loader2,
-  Mic,
-  Pause,
-  Play,
-  RotateCcw,
-  Square,
-  Upload,
-  Wand2,
-} from 'lucide-react'
 
 const LANGUAGE_OPTIONS = [
   { value: 'auto', label: 'Auto-detect' },
@@ -322,8 +322,7 @@ function STTPageContent() {
       description="Convert speech to text using AI-powered transcription."
       icon="mic"
       breadcrumb={[{ href: '/speech-to-text', label: 'Speech to Text' }]}
-      backToHref="/dashboard"
-      backToLabel="Dashboard"
+      backTo={{ href: '/dashboard', label: 'Dashboard' }}
     >
       <div className="mx-auto max-w-4xl space-y-6">
         {/* Main STT Card */}

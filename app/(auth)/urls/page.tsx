@@ -1,27 +1,26 @@
 import Link from 'next/link'
 
+import { PlusIcon } from 'lucide-react'
+
+import { listContextsByTypeWithProjectsAction } from '@/app/actions/contexts/list-by-type-with-project'
+
 import { Button } from '@/components/ui/button'
 import { ErrorAlert } from '@/components/ui/error-alert'
 
 import { LabLayout } from '@/components/lab-layout'
-
-import { PlusIcon } from 'lucide-react'
-
-import { listUrlsWithProjectsAction } from '@/app/actions/urls/list-with-projects'
 
 import { UrlsDataTable } from './components/data-table'
 
 export const dynamic = 'force-dynamic'
 
 export default async function UrlsPage() {
-  const { urls, error } = await listUrlsWithProjectsAction()
+  const { contexts: urls, error } = await listContextsByTypeWithProjectsAction({ type: 'urls' })
 
   return (
     <LabLayout
       title="URLs"
       icon="link"
-      backToHref="/dashboard"
-      backToLabel="Dashboard"
+      backTo={{ href: '/dashboard', label: 'Dashboard' }}
       breadcrumb={[{ href: '/urls', label: 'URLs' }]}
       actions={
         <Link href="/urls/new">

@@ -3,12 +3,13 @@ import { MDXContent } from '@content-collections/mdx/react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
+import { ArrowLeft } from 'lucide-react'
+
 import { LabLayout } from '@/components/lab-layout'
 
 import { formatDate } from '@/lib/date'
 
 import { allPosts } from 'content'
-import { ArrowLeft } from 'lucide-react'
 
 interface PostPageProps {
   params: Promise<{ id: string }>
@@ -25,8 +26,7 @@ export default async function PostPage({ params }: PostPageProps) {
   return (
     <LabLayout
       icon="pen-box"
-      backToHref="/posts"
-      backToLabel="All posts"
+      backTo={{ href: '/posts', label: 'All posts' }}
       breadcrumb={[
         { href: '/posts', label: 'Posts' },
         { href: `/posts/${post._meta.path}`, label: post.title },

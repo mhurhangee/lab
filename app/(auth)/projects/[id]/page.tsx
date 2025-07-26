@@ -1,19 +1,19 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
+import { Edit } from 'lucide-react'
+
+import { getProjectAction } from '@/app/actions/projects/get'
+
 import { Button } from '@/components/ui/button'
 import { EntityCard } from '@/components/ui/entity-card'
 
+import { GenericWidget } from '@/components/generic-widget'
 import { LabLayout } from '@/components/lab-layout'
 
 import { formatDate } from '@/lib/date'
 
-import { Edit } from 'lucide-react'
-
-import { FilesDataTable } from '@/app/(auth)/files/components/data-table'
 import { DeleteProjectDialog } from '@/app/(auth)/projects/components/delete-project-dialog'
-import { listFilesByProjectAction } from '@/app/actions/files/list-by-project'
-import { getProjectAction } from '@/app/actions/projects/get'
 
 interface ProjectPageProps {
   params: Promise<{ id: string }>
@@ -21,10 +21,7 @@ interface ProjectPageProps {
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { id } = await params
-  const [{ project, error }, { files = [] }] = await Promise.all([
-    getProjectAction({ id }),
-    listFilesByProjectAction({ projectId: id }),
-  ])
+  const { project, error } = await getProjectAction({ id })
 
   if (error || !project) {
     notFound()
@@ -36,8 +33,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         { href: '/projects', label: 'Projects' },
         { href: `/projects/${project.id}`, label: project.title },
       ]}
-      backToHref="/projects"
-      backToLabel="All Projects"
+      backTo={{ href: '/projects', label: 'All Projects' }}
     >
       <EntityCard
         title={project.title}
@@ -57,7 +53,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             value: formatDate(project.updatedAt),
             icon: 'calendar',
           },
-          { id: 'filesCount', label: 'Files', value: files.length, icon: 'file-text' },
         ]}
         badges={[{ label: 'Active', variant: 'default' }]}
         tags={[{ label: 'Project' }, { label: 'Files' }]}
@@ -73,19 +68,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         }
       />
 
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-medium">Contexts (files and URLs) ({files.length})</h3>
-          <div className="flex items-center gap-2">
-            <Link href="/files/new">
-              <Button>Add File</Button>
-            </Link>
-            <Link href="/urls/new">
-              <Button>Add URL</Button>
-            </Link>
-          </div>
-        </div>
-        <FilesDataTable data={files} hideProject />
+      <div className="grid gap-6 md:grid-cols-2">
+        <GenericWidget type="pdfs" limit={3} icon="file" projectId={project.id} />
+        <GenericWidget type="urls" limit={3} icon="link" projectId={project.id} />
       </div>
     </LabLayout>
   )

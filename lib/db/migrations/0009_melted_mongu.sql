@@ -1,0 +1,1 @@
+ALTER TABLE "contexts" ALTER COLUMN "file_type" DROP NOT NULL;
