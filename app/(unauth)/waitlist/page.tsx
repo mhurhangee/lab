@@ -8,6 +8,7 @@ export default function WaitlistPage() {
   return (
     <LabLayout
       title="Waitlist"
+      pageTitle="Waitlist"
       icon="timer"
       backTo={{ href: '/', label: 'Home' }}
       breadcrumb={[{ href: '/waitlist', label: 'Waitlist' }]}

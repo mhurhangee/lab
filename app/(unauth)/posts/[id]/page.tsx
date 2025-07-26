@@ -25,6 +25,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
   return (
     <LabLayout
+      pageTitle={post.title}
       icon="pen-box"
       backTo={{ href: '/posts', label: 'All posts' }}
       breadcrumb={[

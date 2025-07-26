@@ -39,7 +39,7 @@ export default async function PdfPage({ params }: PdfPageProps) {
 
   if (error) {
     return (
-      <LabLayout title="PDF" icon="file">
+      <LabLayout pageTitle="Error PDF" title="PDF" icon="file">
         <ErrorAlert error={error} />
       </LabLayout>
     )
@@ -125,6 +125,7 @@ export default async function PdfPage({ params }: PdfPageProps) {
         { href: '/pdfs', label: 'PDFs' },
         { href: `/pdfs/${context.id}`, label: context.name },
       ]}
+      pageTitle={context.name}
       icon="file"
       backTo={{ href: '/pdfs', label: 'All PDFs' }}
     >

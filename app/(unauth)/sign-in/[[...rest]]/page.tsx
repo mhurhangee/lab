@@ -8,6 +8,7 @@ export default function SignInPage() {
   return (
     <LabLayout
       title="Sign In"
+      pageTitle="Sign In"
       icon="pen-box"
       backTo={{ href: '/', label: 'Home' }}
       breadcrumb={[{ href: '/sign-in', label: 'Sign In' }]}

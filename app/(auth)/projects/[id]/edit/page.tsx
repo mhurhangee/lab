@@ -20,6 +20,7 @@ export default async function EditProjectPage({ params }: EditProjectPageProps) 
   return (
     <LabLayout
       title={`Edit ${project.title}`}
+      pageTitle={`Edit ${project.title}`}
       icon={'folder-edit'}
       backTo={{ href: `/projects/${project.id}`, label: project.title }}
       breadcrumb={[

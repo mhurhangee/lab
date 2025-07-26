@@ -33,6 +33,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         { href: '/projects', label: 'Projects' },
         { href: `/projects/${project.id}`, label: project.title },
       ]}
+      pageTitle={project.title}
       backTo={{ href: '/projects', label: 'All Projects' }}
     >
       <EntityCard
