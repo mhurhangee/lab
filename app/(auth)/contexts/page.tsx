@@ -17,7 +17,7 @@ export default function ContextsPage() {
       actions={
         <div className="flex items-center gap-2">
           <Link href="/pdfs/new">
-            <Button size="sm">New Files</Button>
+            <Button size="sm">New PDF</Button>
           </Link>
           <Link href="/urls/new">
             <Button size="sm" variant="outline">

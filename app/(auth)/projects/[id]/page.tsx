@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { Edit } from 'lucide-react'
+
 import { getProjectAction } from '@/app/actions/projects/get'
 
 import { Button } from '@/components/ui/button'

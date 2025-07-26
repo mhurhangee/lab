@@ -39,7 +39,7 @@ export const scrapeUrlWithExaAction = async (url: string, projectId?: string) =>
       name: title,
       url: scrapedUrl,
       size: content?.length || 0,
-      type: 'url',
+      type: 'urls',
       projectId: projectId || null,
       parsedMarkdown: content,
     })

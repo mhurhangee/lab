@@ -22,7 +22,7 @@ export const createContextAction = async ({ file, projectId, type }: CreateConte
     const userId = await getUserId()
 
     // Upload file to Vercel Blob
-    const blob = await put(file.name, file, {
+    const blob = await put(userId + '/' + file.name, file, {
       access: 'public',
     })
 

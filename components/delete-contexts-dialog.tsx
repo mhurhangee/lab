@@ -17,8 +17,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button'
+import { ButtonTT } from '@/components/ui/button-tt'
 
 import { handleErrorClient } from '@/lib/error/client'
 
@@ -79,10 +79,10 @@ export function DeleteContextsDialog({
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant={variant} size={size} className={`${className}`}>
+        <ButtonTT variant={variant} size={size} className={`${className}`} tooltip="Delete">
           <Trash className="h-4 w-4" />
           {size !== 'icon' ? `Delete ${type.slice(0, -1).toUpperCase()}` : null}
-        </Button>
+        </ButtonTT>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

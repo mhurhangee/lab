@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 import { PlusIcon } from 'lucide-react'
 
-import { listContextsByTypeAction } from '@/app/actions/contexts/list-by-type'
+import { listContextsByTypeWithProjectsAction } from '@/app/actions/contexts/list-by-type-with-project'
 
 import { Button } from '@/components/ui/button'
 import { ErrorAlert } from '@/components/ui/error-alert'
@@ -14,7 +14,7 @@ import { UrlsDataTable } from './components/data-table'
 export const dynamic = 'force-dynamic'
 
 export default async function UrlsPage() {
-  const { results: urls, error } = await listContextsByTypeAction('urls')
+  const { contexts: urls, error } = await listContextsByTypeWithProjectsAction({ type: 'urls' })
 
   return (
     <LabLayout

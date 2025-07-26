@@ -21,6 +21,8 @@ import { formatFileSize } from '@/lib/file-size'
 import { ContextsTypes } from '@/types/contexts'
 import type { ContextDB } from '@/types/database'
 
+import { getContextIcon } from '@/lib/context-to-icon'
+
 interface GenericWidgetProps {
   type: ContextsTypes
   limit?: number
@@ -95,7 +97,7 @@ export function GenericWidget({ type, limit = 3, icon = 'layers', projectId }: G
               <div className="flex items-start justify-between">
                 <div className="flex min-w-0 flex-1 items-start gap-3">
                   <DynamicIcon
-                    name="file"
+                    name={getContextIcon(type)}
                     className="text-muted-foreground mt-0.5 h-4 w-4 flex-shrink-0"
                   />
                   <div className="min-w-0 flex-1">

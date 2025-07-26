@@ -2,19 +2,20 @@
 
 import { Suspense, useEffect, useState } from 'react'
 
-import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 
-import { AlertCircle, CheckCircle, FileText, Loader2 } from 'lucide-react'
+import { AlertCircle, CheckCircle, ChevronDownIcon } from 'lucide-react'
 
 import { listContextsAction } from '@/app/actions/contexts/list'
 import { getParseStatusAction, parseContextAction } from '@/app/actions/contexts/parse'
+import { updateContextAction } from '@/app/actions/contexts/update'
 
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
+import { Loader } from '@/components/ui/loader'
+import { Markdown } from '@/components/ui/markdown'
 import {
   Select,
   SelectContent,
@@ -22,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 
 import { LabLayout } from '@/components/lab-layout'
@@ -29,6 +31,8 @@ import { LabLayout } from '@/components/lab-layout'
 import { handleErrorClient } from '@/lib/error/client'
 
 import { ContextDB } from '@/types/database'
+
+import { toast } from 'sonner'
 
 function ParsePageContent() {
   const searchParams = useSearchParams()
@@ -40,6 +44,7 @@ function ParsePageContent() {
   const [isParsing, setIsParsing] = useState(false)
   const [error, setError] = useState('')
   const [parsedContent, setParsedContent] = useState('')
+  const [isUpdating, setIsUpdating] = useState(false)
 
   // Load files on component mount
   useEffect(() => {
@@ -110,38 +115,79 @@ function ParsePageContent() {
     }
   }
 
+  const handleEditParse = async () => {
+    if (!selectedContextId) {
+      setError('Please select a file')
+      return
+    }
+
+    setIsUpdating(true)
+    setError('')
+
+    try {
+      const result = await updateContextAction({ id: selectedContextId, markdown: parsedContent })
+      if (result.error) {
+        setError(result.error)
+      }
+      if (result.success) {
+        toast.success('Parse updated successfully')
+      }
+    } catch (error) {
+      setError(handleErrorClient('An unexpected error occurred', error))
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
   const selectedContext = contexts.find(context => context.id === selectedContextId)
+
+  const renderSaveButton = () => {
+    if (!selectedContextId) {
+      return null
+    }
+
+    return (
+      <Button onClick={handleEditParse} disabled={isUpdating}>
+        {isUpdating ? (
+          <>
+            <Loader />
+            Updating...
+          </>
+        ) : (
+          'Save Edit'
+        )}
+      </Button>
+    )
+  }
 
   return (
     <LabLayout
-      title="Parse Files"
-      description="Select a file to parse the content into markdown."
+      title="Parse PDF to Markdown"
+      description="Use's Llama Cloud to parse the content of a PDF file into markdown. For larger and longer PDFs, this can take a minute or two."
       icon="file-text"
       breadcrumb={[
-        { href: '/files', label: 'Files' },
+        { href: '/pdfs', label: 'PDFs' },
         { href: '/parse', label: 'Parse' },
       ]}
-      backTo={{ href: '/pdfs', label: 'Dashboard' }}
+      backTo={{ href: '/pdfs', label: 'PDFs' }}
     >
       <div className="space-y-6">
-        <Card className="w-fit">
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              Parse File with Llama Cloud
+              <ChevronDownIcon />
+              Select File
             </CardTitle>
-            <CardDescription></CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {isLoading ? (
               <div className="flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader />
                 <span>Loading files...</span>
               </div>
             ) : (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="file-select">Select File</Label>
                   <Select value={selectedContextId} onValueChange={setSelectedContextId}>
                     <SelectTrigger>
                       <SelectValue placeholder="Choose a file to parse" />
@@ -181,22 +227,16 @@ function ParsePageContent() {
                   <Button
                     onClick={() => void handleParse()}
                     disabled={!selectedContextId || isParsing}
-                    className="flex-1"
                   >
                     {isParsing ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader />
                         Parsing...
                       </>
                     ) : (
                       'Parse File'
                     )}
                   </Button>
-                  {selectedContextId && (
-                    <Button variant="outline" asChild>
-                      <Link href={`/contexts/${selectedContextId}`}>View Context</Link>
-                    </Button>
-                  )}
                 </div>
               </>
             )}
@@ -206,16 +246,31 @@ function ParsePageContent() {
         {parsedContent && (
           <Card>
             <CardHeader>
-              <CardTitle>Parsed Content</CardTitle>
+              <div className="flex items-start justify-between gap-4">
+                <CardTitle>Parsed Content</CardTitle>
+                {renderSaveButton()}
+              </div>
               <CardDescription>The markdown content extracted from your file.</CardDescription>
             </CardHeader>
             <CardContent>
-              <Textarea
-                value={parsedContent}
-                readOnly
-                className="min-h-[400px] font-mono text-sm"
-                placeholder="Parsed markdown content will appear here..."
-              />
+              <Tabs defaultValue="source">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="source">Source</TabsTrigger>
+                  <TabsTrigger value="preview">Preview</TabsTrigger>
+                </TabsList>
+                <TabsContent value="preview">
+                  <Markdown>{parsedContent}</Markdown>
+                </TabsContent>
+                <TabsContent value="source">
+                  <Textarea
+                    value={parsedContent}
+                    className="min-h-[400px] font-mono text-sm"
+                    placeholder="Parsed markdown content will appear here..."
+                    onChange={e => setParsedContent(e.target.value)}
+                  />
+                  <div className="mt-4 flex justify-end">{renderSaveButton()}</div>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
         )}

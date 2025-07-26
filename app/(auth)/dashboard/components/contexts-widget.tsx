@@ -131,6 +131,9 @@ export function ContextsWidget() {
                           {context.name}
                         </h4>
                         <div className="mt-1 flex items-center gap-2">
+                          <Badge variant="default" className="text-xs">
+                            {context.type}
+                          </Badge>
                           <Badge variant="outline" className="text-xs">
                             {formatFileSize(context.size)}
                           </Badge>
