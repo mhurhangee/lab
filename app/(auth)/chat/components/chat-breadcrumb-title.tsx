@@ -1,10 +1,8 @@
 'use client'
 
-import { ReactNode } from 'react'
-
 import { useChatTitle } from '@/providers/chat-title'
 
-export function ChatBreadcrumbTitle({ fallback }: { fallback: string }): ReactNode {
+export const ChatBreadcrumbTitle = ({ fallback }: { fallback: string }): string => {
   const { title } = useChatTitle()
   return title || fallback
 }

@@ -10,6 +10,7 @@ export default async function NewUrlPage() {
   return (
     <LabLayout
       title="Scrape URL"
+      pageTitle="Scrape URL"
       icon="link"
       backTo={{ href: '/urls', label: 'URLs' }}
       breadcrumb={[

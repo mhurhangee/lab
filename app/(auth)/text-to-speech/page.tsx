@@ -213,6 +213,7 @@ function TTSPageContent() {
   return (
     <LabLayout
       title="Text to Speech"
+      pageTitle="Text to Speech"
       description="Convert text to speech using AI-powered voice synthesis."
       icon="volume-2"
       breadcrumb={[{ href: '/text-to-speech', label: 'Text to Speech' }]}

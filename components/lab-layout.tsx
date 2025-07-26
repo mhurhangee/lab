@@ -2,7 +2,7 @@
 
 import { SignedIn, SignedOut } from '@clerk/nextjs'
 
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useEffect } from 'react'
 
 import { HomeIcon, LayoutGridIcon } from 'lucide-react'
 import { DynamicIcon, type IconName } from 'lucide-react/dynamic'
@@ -18,11 +18,13 @@ import {
 } from '@/components/ui/breadcrumb'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 
+import { appTitle } from '@/lib/app'
 import { cn } from '@/lib/utils'
 
 import { useIsMobile } from '@/hooks/use-mobile'
 
 interface LabPageProps {
+  pageTitle: string
   title?: ReactNode
   description?: ReactNode
   icon?: IconName
@@ -34,6 +36,7 @@ interface LabPageProps {
 }
 
 export function LabLayout({
+  pageTitle,
   title,
   description,
   icon,
@@ -45,6 +48,9 @@ export function LabLayout({
 }: LabPageProps) {
   const isMobile = useIsMobile()
 
+  useEffect(() => {
+    document.title = pageTitle + ' | ' + appTitle
+  }, [pageTitle])
   return (
     <>
       {/* Top Header with Sidebar Toggle and Breadcrumbs */}

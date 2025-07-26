@@ -163,6 +163,7 @@ function ParsePageContent() {
   return (
     <LabLayout
       title="Parse PDF to Markdown"
+      pageTitle="Parse PDF"
       description="Use's Llama Cloud to parse the content of a PDF file into markdown. For larger and longer PDFs, this can take a minute or two."
       icon="file-text"
       breadcrumb={[

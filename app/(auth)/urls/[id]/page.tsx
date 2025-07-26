@@ -29,7 +29,7 @@ export default async function UrlPage({ params }: UrlPageProps) {
 
   if (error) {
     return (
-      <LabLayout title="URL" icon="link">
+      <LabLayout pageTitle="URL" title="URL" icon="link">
         <ErrorAlert error={error} />
       </LabLayout>
     )
@@ -45,6 +45,7 @@ export default async function UrlPage({ params }: UrlPageProps) {
         { href: '/urls', label: 'URLs' },
         { href: `/urls/${url.id}`, label: url.name },
       ]}
+      pageTitle={url.name}
       icon="link"
       backTo={{ href: '/urls', label: 'All URLs' }}
     >

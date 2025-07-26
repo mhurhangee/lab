@@ -24,6 +24,7 @@ export default function AboutPage() {
   return (
     <LabLayout
       title="About"
+      pageTitle="About"
       icon="user"
       backTo={{ href: '/', label: 'Home' }}
       breadcrumb={[{ href: '/about', label: 'About' }]}

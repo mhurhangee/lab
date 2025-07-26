@@ -19,6 +19,7 @@ export default async function ProjectsPage() {
   return (
     <LabLayout
       title="Projects"
+      pageTitle="Projects"
       icon="folder"
       breadcrumb={[{ href: '/projects', label: 'Projects' }]}
       backTo={{ href: '/dashboard', label: 'Dashboard' }}

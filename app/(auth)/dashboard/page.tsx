@@ -11,6 +11,7 @@ export default function DashboardPage() {
   return (
     <LabLayout
       title="Dashboard"
+      pageTitle="Dashboard"
       description="Welcome to Superfier lab"
       icon="layout-grid"
       backTo={{ href: '/faq', label: 'FAQ' }}

@@ -19,6 +19,7 @@ export default async function PdfsPage() {
   return (
     <LabLayout
       title="PDFs"
+      pageTitle="PDFs"
       icon="file"
       backTo={{ href: '/dashboard', label: 'Dashboard' }}
       breadcrumb={[{ href: '/pdfs', label: 'PDFs' }]}
