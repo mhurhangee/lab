@@ -1,11 +1,12 @@
 import Link from 'next/link'
 
+import { ArrowRight } from 'lucide-react'
+
 import { LabLayout } from '@/components/lab-layout'
 
 import { formatDate } from '@/lib/date'
 
 import { allPosts } from 'content'
-import { ArrowRight } from 'lucide-react'
 
 export default function PostsPage() {
   return (

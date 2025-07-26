@@ -4,6 +4,9 @@ import { SignedIn, SignedOut } from '@clerk/nextjs'
 
 import React, { ReactNode } from 'react'
 
+import { HomeIcon, LayoutGridIcon } from 'lucide-react'
+import { DynamicIcon, type IconName } from 'lucide-react/dynamic'
+
 import { BackToButton } from '@/components/ui/back-to-button'
 import {
   Breadcrumb,
@@ -18,9 +21,6 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
 
 import { useIsMobile } from '@/hooks/use-mobile'
-
-import { HomeIcon, LayoutGridIcon } from 'lucide-react'
-import { DynamicIcon, type IconName } from 'lucide-react/dynamic'
 
 interface LabPageProps {
   title?: ReactNode

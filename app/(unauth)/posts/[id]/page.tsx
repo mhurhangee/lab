@@ -3,12 +3,13 @@ import { MDXContent } from '@content-collections/mdx/react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
+import { ArrowLeft } from 'lucide-react'
+
 import { LabLayout } from '@/components/lab-layout'
 
 import { formatDate } from '@/lib/date'
 
 import { allPosts } from 'content'
-import { ArrowLeft } from 'lucide-react'
 
 interface PostPageProps {
   params: Promise<{ id: string }>

@@ -1,6 +1,11 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
+import { EditIcon, EyeIcon, LinkIcon, Volume2Icon } from 'lucide-react'
+
+import { deleteContextsAction } from '@/app/actions/contexts/delete'
+import { getContextsWithProjectAction } from '@/app/actions/contexts/get-with-project'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { EntityCard } from '@/components/ui/entity-card'
@@ -8,16 +13,11 @@ import { ErrorAlert } from '@/components/ui/error-alert'
 import { Markdown } from '@/components/ui/markdown'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
+import { DeleteContextsDialog } from '@/components/delete-contexts-dialog'
 import { LabLayout } from '@/components/lab-layout'
 
 import { formatDate } from '@/lib/date'
 import { formatFileSize } from '@/lib/file-size'
-
-import { EditIcon, EyeIcon, LinkIcon, Volume2Icon } from 'lucide-react'
-
-import { getUrlByIdAction } from '@/app/actions/urls/get-by-id'
-
-import { DeleteUrlDialog } from '../components/delete-url-dialog'
 
 interface UrlPageProps {
   params: Promise<{ id: string }>
@@ -25,7 +25,7 @@ interface UrlPageProps {
 
 export default async function UrlPage({ params }: UrlPageProps) {
   const { id } = await params
-  const { url, error } = await getUrlByIdAction(id)
+  const { context: url, error } = await getContextsWithProjectAction({ id, type: 'urls' })
 
   if (error) {
     return (
@@ -106,7 +106,12 @@ export default async function UrlPage({ params }: UrlPageProps) {
                 <Volume2Icon className="h-4 w-4" />
               </Button>
             </Link>
-            <DeleteUrlDialog urlId={url.id} />
+            <DeleteContextsDialog
+              contextsId={url.id}
+              type="urls"
+              size="icon"
+              action={deleteContextsAction}
+            />
           </>
         }
       />

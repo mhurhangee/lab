@@ -4,6 +4,11 @@ import { useEffect, useState } from 'react'
 
 import Link from 'next/link'
 
+import { FolderIcon, FoldersIcon } from 'lucide-react'
+import { DynamicIcon } from 'lucide-react/dynamic'
+
+import { listProjectsAction } from '@/app/actions/projects/list'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -13,11 +18,6 @@ import { formatDate } from '@/lib/date'
 import { handleErrorClient } from '@/lib/error/client'
 
 import type { ProjectDB } from '@/types/database'
-
-import { FolderIcon, FoldersIcon } from 'lucide-react'
-import { DynamicIcon } from 'lucide-react/dynamic'
-
-import { listProjectsAction } from '@/app/actions/projects/list'
 
 export function ProjectsWidget() {
   const [projects, setProjects] = useState<ProjectDB[]>([])

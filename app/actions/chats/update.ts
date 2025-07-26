@@ -4,10 +4,10 @@ import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 
+import { chats } from '@/schema'
+
 import { UIMessage } from 'ai'
 import { and, eq } from 'drizzle-orm'
-
-import { chats } from '@/schema'
 
 interface UpdateChatActionProps {
   id: string

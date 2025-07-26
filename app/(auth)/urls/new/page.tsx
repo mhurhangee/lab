@@ -1,6 +1,6 @@
-import { LabLayout } from '@/components/lab-layout'
-
 import { listProjectsAction } from '@/app/actions/projects/list'
+
+import { LabLayout } from '@/components/lab-layout'
 
 import { UrlScrapeForm } from '../components/url-scrape-form'
 

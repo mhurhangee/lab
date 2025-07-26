@@ -4,6 +4,8 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import Link from 'next/link'
 
+import { ArrowUpDown } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 
 import { caseInsensitiveSort } from '@/lib/column-sort'
@@ -12,7 +14,6 @@ import { formatDate } from '@/lib/date'
 import type { ChatDB } from '@/types/database'
 
 import { UIMessage } from 'ai'
-import { ArrowUpDown } from 'lucide-react'
 
 import { ActionsCell } from './actions-cell'
 

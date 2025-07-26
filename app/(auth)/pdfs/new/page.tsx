@@ -1,20 +1,20 @@
+import { listProjectsAction } from '@/app/actions/projects/list'
+
 import { ErrorAlert } from '@/components/ui/error-alert'
 
 import { LabLayout } from '@/components/lab-layout'
 
-import { listProjectsAction } from '@/app/actions/projects/list'
-
 import { UploadForm } from '../components/upload-form'
 
-export default async function NewFilePage() {
+export default async function NewPdfPage() {
   const { projects = [], error } = await listProjectsAction()
   return (
     <LabLayout
-      title="Upload File"
+      title="Upload PDF"
       icon="file-plus"
-      description="Select a file to upload. Supported formats include images, documents, and more."
-      backTo={{ href: '/files', label: 'Files' }}
-      breadcrumb={[{ href: '/files', label: 'Files' }]}
+      description="Select a PDF to upload."
+      backTo={{ href: '/pdfs', label: 'PDFs' }}
+      breadcrumb={[{ href: '/pdfs', label: 'PDFs' }]}
     >
       {error ? <ErrorAlert error={error} /> : <UploadForm projects={projects} />}
     </LabLayout>

@@ -4,9 +4,9 @@ import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 
-import { and, eq } from 'drizzle-orm'
-
 import { chats } from '@/schema'
+
+import { and, eq } from 'drizzle-orm'
 
 interface GetChatActionProps {
   id: string

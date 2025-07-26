@@ -5,6 +5,11 @@ import { Suspense, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 
+import { AlertCircle, CheckCircle, FileText, Loader2 } from 'lucide-react'
+
+import { listContextsAction } from '@/app/actions/contexts/list'
+import { getParseStatusAction, parseContextAction } from '@/app/actions/contexts/parse'
+
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -21,23 +26,16 @@ import { Textarea } from '@/components/ui/textarea'
 
 import { LabLayout } from '@/components/lab-layout'
 
-import { AlertCircle, CheckCircle, FileText, Loader2 } from 'lucide-react'
+import { handleErrorClient } from '@/lib/error/client'
 
-import { listFilesAction } from '@/app/actions/files/list'
-import { getParseStatusAction, parseFileAction } from '@/app/actions/files/parse'
-
-interface FileOption {
-  id: string
-  name: string
-  isParsed: boolean
-}
+import { ContextDB } from '@/types/database'
 
 function ParsePageContent() {
   const searchParams = useSearchParams()
-  const preselectedFileId = searchParams.get('fileId')
+  const preselectedContextId = searchParams.get('id')
 
-  const [files, setFiles] = useState<FileOption[]>([])
-  const [selectedFileId, setSelectedFileId] = useState<string>(preselectedFileId || '')
+  const [contexts, setContexts] = useState<ContextDB[]>([])
+  const [selectedContextId, setSelectedContextId] = useState<string>(preselectedContextId || '')
   const [isLoading, setIsLoading] = useState(false)
   const [isParsing, setIsParsing] = useState(false)
   const [error, setError] = useState('')
@@ -45,41 +43,30 @@ function ParsePageContent() {
 
   // Load files on component mount
   useEffect(() => {
-    const loadFiles = async () => {
+    const loadContexts = async () => {
       setIsLoading(true)
       try {
-        const result = await listFilesAction()
+        const result = await listContextsAction()
         if (result.error) {
           setError(result.error)
-        } else if (result.files) {
-          // Check parse status for each file
-          const filesWithStatus = await Promise.all(
-            result.files.map(async file => {
-              const statusResult = await getParseStatusAction({ fileId: file.id })
-              return {
-                id: file.id,
-                name: file.name,
-                isParsed: statusResult.success ? statusResult.isParsed : false,
-              }
-            })
-          )
-          setFiles(filesWithStatus)
+        } else if (result.results) {
+          setContexts(result.results)
         }
-      } catch {
-        setError('Failed to load files')
+      } catch (error) {
+        setError(handleErrorClient('Failed to load contexts', error))
       } finally {
         setIsLoading(false)
       }
     }
 
-    void loadFiles()
+    void loadContexts()
   }, [])
 
   // Load existing parsed content if file is already parsed
   useEffect(() => {
-    if (selectedFileId) {
+    if (selectedContextId) {
       const loadParseStatus = async () => {
-        const result = await getParseStatusAction({ fileId: selectedFileId })
+        const result = await getParseStatusAction({ contextId: selectedContextId })
         if (result.success && result.isParsed && result.markdown) {
           setParsedContent(result.markdown)
         } else {
@@ -88,10 +75,10 @@ function ParsePageContent() {
       }
       void loadParseStatus()
     }
-  }, [selectedFileId])
+  }, [selectedContextId])
 
   const handleParse = async () => {
-    if (!selectedFileId) {
+    if (!selectedContextId) {
       setError('Please select a file')
       return
     }
@@ -101,7 +88,7 @@ function ParsePageContent() {
     setParsedContent('')
 
     try {
-      const result = await parseFileAction({ fileId: selectedFileId })
+      const result = await parseContextAction({ contextId: selectedContextId })
 
       if (result.error) {
         setError(result.error)
@@ -109,8 +96,10 @@ function ParsePageContent() {
         setParsedContent(result.markdown || '')
 
         // Update the files list to reflect the new parse status
-        setFiles(prev =>
-          prev.map(file => (file.id === selectedFileId ? { ...file, isParsed: true } : file))
+        setContexts(prev =>
+          prev.map(context =>
+            context.id === selectedContextId ? { ...context, isParsed: true } : context
+          )
         )
       }
     } catch (error) {
@@ -121,7 +110,7 @@ function ParsePageContent() {
     }
   }
 
-  const selectedFile = files.find(f => f.id === selectedFileId)
+  const selectedContext = contexts.find(context => context.id === selectedContextId)
 
   return (
     <LabLayout
@@ -132,7 +121,7 @@ function ParsePageContent() {
         { href: '/files', label: 'Files' },
         { href: '/parse', label: 'Parse' },
       ]}
-      backTo={{ href: '/dashboard', label: 'Dashboard' }}
+      backTo={{ href: '/pdfs', label: 'Dashboard' }}
     >
       <div className="space-y-6">
         <Card className="w-fit">
@@ -153,16 +142,16 @@ function ParsePageContent() {
               <>
                 <div className="space-y-2">
                   <Label htmlFor="file-select">Select File</Label>
-                  <Select value={selectedFileId} onValueChange={setSelectedFileId}>
+                  <Select value={selectedContextId} onValueChange={setSelectedContextId}>
                     <SelectTrigger>
                       <SelectValue placeholder="Choose a file to parse" />
                     </SelectTrigger>
                     <SelectContent>
-                      {files.map(file => (
-                        <SelectItem key={file.id} value={file.id}>
+                      {contexts.map(context => (
+                        <SelectItem key={context.id} value={context.id}>
                           <div className="flex w-full items-center justify-between">
-                            <span>{file.name}</span>
-                            {file.isParsed && (
+                            <span>{context.name}</span>
+                            {context.parsedMarkdown && (
                               <Badge variant="secondary" className="ml-2">
                                 <CheckCircle className="mr-1 h-3 w-3" />
                                 Parsed
@@ -173,7 +162,7 @@ function ParsePageContent() {
                       ))}
                     </SelectContent>
                   </Select>
-                  {selectedFile?.isParsed && (
+                  {selectedContext?.parsedMarkdown && (
                     <p className="text-muted-foreground text-sm">
                       This file has already been parsed. Parsing again will overwrite the existing
                       content.
@@ -191,7 +180,7 @@ function ParsePageContent() {
                 <div className="flex gap-2">
                   <Button
                     onClick={() => void handleParse()}
-                    disabled={!selectedFileId || isParsing}
+                    disabled={!selectedContextId || isParsing}
                     className="flex-1"
                   >
                     {isParsing ? (
@@ -203,9 +192,9 @@ function ParsePageContent() {
                       'Parse File'
                     )}
                   </Button>
-                  {selectedFileId && (
+                  {selectedContextId && (
                     <Button variant="outline" asChild>
-                      <Link href={`/files/${selectedFileId}`}>View File</Link>
+                      <Link href={`/contexts/${selectedContextId}`}>View Context</Link>
                     </Button>
                   )}
                 </div>

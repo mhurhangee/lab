@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 
+import { ChevronDownIcon, FolderIcon } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -12,11 +14,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import type { ProjectDB } from '@/types/database'
-
-import { ChevronDownIcon, FolderIcon } from 'lucide-react'
-
 import { useProject } from '@/providers/project'
+
+import type { ProjectDB } from '@/types/database'
 
 interface ProjectSelectorProps {
   projects: ProjectDB[]

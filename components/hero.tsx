@@ -2,11 +2,11 @@ import { SignedIn, SignedOut } from '@clerk/nextjs'
 
 import Link from 'next/link'
 
+import { LayoutGridIcon, LogInIcon, TimerIcon } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 
 import { app } from '@/lib/app'
-
-import { LayoutGridIcon, LogInIcon, TimerIcon } from 'lucide-react'
 
 export const Hero = () => {
   return (

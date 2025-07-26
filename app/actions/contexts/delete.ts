@@ -6,40 +6,38 @@ import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 
-import { and, eq } from 'drizzle-orm'
-
 import { contexts } from '@/schema'
 
-interface DeleteFileActionProps {
-  id: string
-}
+import { and, eq } from 'drizzle-orm'
 
-export const deleteFileAction = async ({ id }: DeleteFileActionProps) => {
+export const deleteContextsAction = async (id: string) => {
   try {
     const userId = await getUserId()
 
     // First get the file to get the URL for deletion
-    const fileResult = await db
+    const contextsResult = await db
       .select()
       .from(contexts)
       .where(and(eq(contexts.id, id), eq(contexts.userId, userId)))
       .limit(1)
 
-    if (!fileResult?.length) {
-      throw new Error('File not found')
+    if (!contextsResult?.length) {
+      throw new Error('Contexts not found')
     }
 
-    const file = fileResult[0]
+    const context = contextsResult[0]
 
-    // Delete from Vercel Blob
-    await del(file.url)
+    // If the URL is from Vercel Blob, delete it
+    if (context.url.includes('public.blob.vercel-storage.com')) {
+      await del(context.url)
+    }
 
     // Delete from database
     await db.delete(contexts).where(and(eq(contexts.id, id), eq(contexts.userId, userId)))
 
     return { success: true }
   } catch (error) {
-    const errorMessage = handleErrorServer(error, 'Failed to delete file')
-    return { error: errorMessage }
+    const errorMessage = handleErrorServer(error, 'Failed to delete contexts')
+    return { error: errorMessage, success: false }
   }
 }

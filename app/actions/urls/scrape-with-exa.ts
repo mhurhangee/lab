@@ -5,9 +5,9 @@ import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 import { generateId } from '@/lib/id'
 
-import { Exa } from 'exa-js'
-
 import { contexts } from '@/schema'
+
+import { Exa } from 'exa-js'
 
 export const scrapeUrlWithExaAction = async (url: string, projectId?: string) => {
   try {

@@ -4,6 +4,10 @@ import { useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
+import { ExternalLinkIcon, SaveIcon } from 'lucide-react'
+
+import { updateContextAction } from '@/app/actions/contexts/update'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ErrorAlert } from '@/components/ui/error-alert'
@@ -24,21 +28,16 @@ import { formatDate } from '@/lib/date'
 import { handleErrorClient } from '@/lib/error/client'
 import { formatFileSize } from '@/lib/file-size'
 
-import { ExternalLinkIcon, SaveIcon } from 'lucide-react'
-
-import { updateUrlAction } from '@/app/actions/urls/update'
 
 type UrlWithProject = {
   id: string
   name: string
+  projectId: string | null
   url: string
   size: number
-  type: string
-  projectId: string | null
-  parsedMarkdown: string | null
   createdAt: Date
   updatedAt: Date
-  projectTitle: string | null
+  parsedMarkdown: string | null
 }
 
 interface UrlEditFormProps {
@@ -50,7 +49,7 @@ export function UrlEditForm({ url, projects }: UrlEditFormProps) {
   const router = useRouter()
   const [name, setName] = useState(url.name)
   const [projectId, setProjectId] = useState(url.projectId || 'none')
-  const [parsedMarkdown, setParsedMarkdown] = useState(url.parsedMarkdown || '')
+  const [markdown, setMarkdown] = useState(url.parsedMarkdown || '')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -61,10 +60,11 @@ export function UrlEditForm({ url, projects }: UrlEditFormProps) {
     setSuccess(false)
 
     try {
-      const result = await updateUrlAction(url.id, {
+      const result = await updateContextAction({
+        id: url.id,
         name,
         projectId: projectId === 'none' ? null : projectId,
-        parsedMarkdown,
+        markdown,
       })
 
       if (result.error) {
@@ -178,8 +178,8 @@ export function UrlEditForm({ url, projects }: UrlEditFormProps) {
             </TabsList>
             <TabsContent value="edit">
               <Textarea
-                value={parsedMarkdown}
-                onChange={e => setParsedMarkdown(e.target.value)}
+                value={markdown}
+                onChange={e => setMarkdown(e.target.value)}
                 disabled={isLoading}
                 rows={20}
                 className="font-mono text-sm"
@@ -188,7 +188,7 @@ export function UrlEditForm({ url, projects }: UrlEditFormProps) {
             </TabsContent>
             <TabsContent value="preview">
               <div className="prose prose-sm dark:prose-invert min-h-[500px] max-w-none rounded-md border p-4">
-                <Markdown>{parsedMarkdown || 'No content to preview'}</Markdown>
+                <Markdown>{markdown || 'No content to preview'}</Markdown>
               </div>
             </TabsContent>
           </Tabs>

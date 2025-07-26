@@ -4,6 +4,8 @@ import { useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
+import { createContextAction } from '@/app/actions/contexts/create'
+
 import { Button } from '@/components/ui/button'
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/components/ui/dropzone'
 
@@ -14,8 +16,6 @@ import { handleErrorClient } from '@/lib/error/client'
 import type { ProjectDB } from '@/types/database'
 
 import { toast } from 'sonner'
-
-import { createFileAction } from '@/app/actions/files/create'
 
 interface UploadFormProps {
   projects: ProjectDB[]
@@ -37,20 +37,21 @@ export function UploadForm({ projects }: UploadFormProps) {
 
     try {
       const file = files[0]
-      const result = await createFileAction({
+      const result = await createContextAction({
         file,
         projectId: selectedProjectId || undefined,
+        type: 'pdfs',
       })
 
       if (result.error) {
-        handleErrorClient('Failed to upload file', result.error)
-        return
+        throw handleErrorClient('Failed to upload file', result.error)
       }
-
-      toast.success('File uploaded successfully!')
-      router.push(`/files/${result.id}`)
+      if (result.success) {
+        toast.success('PDF uploaded successfully!')
+        router.push(`/pdfs/${result.id}`)
+      }
     } catch (error) {
-      handleErrorClient('Failed to upload file', error)
+      throw handleErrorClient('Failed to upload file', error)
     } finally {
       setIsUploading(false)
     }
@@ -72,6 +73,7 @@ export function UploadForm({ projects }: UploadFormProps) {
       <div className="bg-card rounded-lg border p-6">
         <h2 className="mb-4 text-lg font-semibold">Select File</h2>
         <Dropzone
+          accept={{ 'application/pdf': ['.pdf'] }}
           src={files}
           onDrop={acceptedFiles => setFiles(acceptedFiles)}
           maxFiles={1}
@@ -108,7 +110,7 @@ export function UploadForm({ projects }: UploadFormProps) {
       </div>
 
       <div className="flex justify-end gap-4">
-        <Button variant="outline" onClick={() => router.push('/files')} disabled={isUploading}>
+        <Button variant="outline" onClick={() => router.push('/pdfs')} disabled={isUploading}>
           Cancel
         </Button>
         <Button onClick={() => void handleUpload()} disabled={!files.length || isUploading}>

@@ -14,10 +14,10 @@ import { app } from '@/lib/app'
 import { mono, sans, serif } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
 
-import '@/styles/globals.css'
-
 import { ProjectProvider } from '@/providers/project'
 import { ThemeProvider } from '@/providers/theme'
+
+import '@/styles/globals.css'
 
 export const metadata: Metadata = {
   title: process.env.NODE_ENV === 'development' ? ` (dev) ${app.title}` : app.title,

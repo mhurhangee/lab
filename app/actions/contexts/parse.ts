@@ -4,17 +4,13 @@ import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 
-import { eq } from 'drizzle-orm'
-
 import { contexts } from '@/schema'
+
+import { eq } from 'drizzle-orm'
 
 const LLAMA_API_BASE = 'https://api.cloud.llamaindex.ai/api/v1/parsing'
 
 type JobStatus = 'PENDING' | 'SUCCESS' | 'ERROR' | 'PARTIAL_SUCCESS' | 'CANCELLED'
-
-interface ParseFileActionProps {
-  fileId: string
-}
 
 async function uploadFileToLlama(fileUrl: string, fileName: string, apiKey: string) {
   // Fetch the file from the URL
@@ -125,27 +121,31 @@ async function waitForJobCompletion(jobId: string, apiKey: string) {
   return status
 }
 
-export const parseFileAction = async ({ fileId }: ParseFileActionProps) => {
+export const parseContextAction = async ({ contextId }: { contextId: string }) => {
   try {
     const userId = await getUserId()
 
     // Get the file from database
-    const fileRecord = await db.select().from(contexts).where(eq(contexts.id, fileId)).limit(1)
+    const contextResult = await db
+      .select()
+      .from(contexts)
+      .where(eq(contexts.id, contextId))
+      .limit(1)
 
-    if (!fileRecord?.length) {
-      throw new Error('File not found')
+    if (!contextResult?.length) {
+      throw new Error('Context not found')
     }
 
-    const file = fileRecord[0]
+    const context = contextResult[0]
 
     // Check if user owns the file
-    if (file.userId !== userId) {
+    if (context.userId !== userId) {
       throw new Error('Unauthorized')
     }
 
     // Check if file is already parsed
-    if (file.parsedMarkdown) {
-      return { success: true, message: 'File already parsed', markdown: file.parsedMarkdown }
+    if (context.parsedMarkdown) {
+      return { success: true, message: 'File already parsed', markdown: context.parsedMarkdown }
     }
 
     // Get API key from environment
@@ -157,7 +157,7 @@ export const parseFileAction = async ({ fileId }: ParseFileActionProps) => {
     }
 
     // Upload file to Llama Cloud
-    const jobId = await uploadFileToLlama(file.url, file.name, apiKey)
+    const jobId = await uploadFileToLlama(context.url, context.name, apiKey)
 
     // Wait for job completion
     await waitForJobCompletion(jobId, apiKey)
@@ -172,7 +172,7 @@ export const parseFileAction = async ({ fileId }: ParseFileActionProps) => {
         parsedMarkdown: markdown,
         updatedAt: new Date(),
       })
-      .where(eq(contexts.id, fileId))
+      .where(eq(contexts.id, contextId))
 
     return { success: true, message: 'File parsed successfully', markdown }
   } catch (error) {
@@ -181,11 +181,11 @@ export const parseFileAction = async ({ fileId }: ParseFileActionProps) => {
   }
 }
 
-export const getParseStatusAction = async ({ fileId }: { fileId: string }) => {
+export const getParseStatusAction = async ({ contextId }: { contextId: string }) => {
   try {
     const userId = await getUserId()
 
-    const fileRecord = await db
+    const contextRecord = await db
       .select({
         id: contexts.id,
         name: contexts.name,
@@ -193,27 +193,27 @@ export const getParseStatusAction = async ({ fileId }: { fileId: string }) => {
         userId: contexts.userId,
       })
       .from(contexts)
-      .where(eq(contexts.id, fileId))
+      .where(eq(contexts.id, contextId))
       .limit(1)
 
-    if (!fileRecord?.length) {
-      throw new Error('File not found')
+    if (!contextRecord?.length) {
+      throw new Error('Context not found')
     }
 
-    const file = fileRecord[0]
+    const context = contextRecord[0]
 
-    if (file.userId !== userId) {
+    if (context.userId !== userId) {
       throw new Error('Unauthorized')
     }
 
     return {
       success: true,
-      isParsed: !!file.parsedMarkdown,
-      markdown: file.parsedMarkdown,
-      fileName: file.name,
+      isParsed: !!context.parsedMarkdown,
+      markdown: context.parsedMarkdown,
+      fileName: context.name,
     }
   } catch (error) {
     const errorMessage = handleErrorServer(error, 'Failed to get parse status')
-    return { error: errorMessage }
+    return { error: errorMessage, success: false }
   }
 }

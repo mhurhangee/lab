@@ -8,14 +8,14 @@ import type { ContextDB } from '@/types/database'
 
 import Fuse from 'fuse.js'
 
-import { columnsFiles } from './columns'
+import { columnsPdfs } from './columns'
 
-interface FileDataTableProps {
+interface PdfsDataTableProps {
   data: ContextDB[]
   hideProject?: boolean
 }
 
-export function FilesDataTable({ data, hideProject }: FileDataTableProps) {
+export function PdfsDataTable({ data, hideProject }: PdfsDataTableProps) {
   // Create Fuse instance once with its options
   const fuseInstance = useMemo(() => {
     const fuseOptions = {
@@ -34,7 +34,7 @@ export function FilesDataTable({ data, hideProject }: FileDataTableProps) {
 
   return (
     <BaseDataTable
-      columns={columnsFiles}
+      columns={columnsPdfs}
       data={data}
       filterFunction={filterFiles}
       searchPlaceholder="Search files ..."

@@ -110,11 +110,11 @@ export const sidebarItems: SidebarItem[] = [
         loggedIn: true,
       },
       {
-        name: 'Files',
-        href: '/files',
+        name: 'PDFs',
+        href: '/pdfs',
         icon: <FileIcon className="h-4 w-4" />,
         loggedIn: true,
-        newButton: '/files/new',
+        newButton: '/pdfs/new',
       },
       {
         name: 'URLs',

@@ -4,11 +4,11 @@ import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 
-import { desc, eq } from 'drizzle-orm'
-
 import { contexts } from '@/schema'
 
-export const listFilesAction = async () => {
+import { desc, eq } from 'drizzle-orm'
+
+export const listContextsAction = async () => {
   try {
     const userId = await getUserId()
 
@@ -18,9 +18,9 @@ export const listFilesAction = async () => {
       .where(eq(contexts.userId, userId))
       .orderBy(desc(contexts.updatedAt))
 
-    return { files: results }
+    return { results, success: true }
   } catch (error) {
-    const errorMessage = handleErrorServer(error, 'Failed to list files')
-    return { error: errorMessage }
+    const errorMessage = handleErrorServer(error, 'Failed to list contexts')
+    return { error: errorMessage, success: false }
   }
 }

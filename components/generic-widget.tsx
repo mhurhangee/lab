@@ -4,6 +4,11 @@ import { useEffect, useState } from 'react'
 
 import Link from 'next/link'
 
+import { DynamicIcon, type IconName } from 'lucide-react/dynamic'
+
+import { listContextsByTypeAction } from '@/app/actions/contexts/list-by-type'
+import { listContextsByTypeByProjectAction } from '@/app/actions/contexts/list-by-type-by-project'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -13,21 +18,17 @@ import { formatDate } from '@/lib/date'
 import { handleErrorClient } from '@/lib/error/client'
 import { formatFileSize } from '@/lib/file-size'
 
-import type { ContextDB } from '@/types/database'
-
-import { DynamicIcon, type IconName } from 'lucide-react/dynamic'
-
-import { listContextsAction } from '@/app/actions/contexts/list'
-
 import { ContextsTypes } from '@/types/contexts'
+import type { ContextDB } from '@/types/database'
 
 interface GenericWidgetProps {
   type: ContextsTypes
   limit?: number
   icon?: IconName
+  projectId?: string
 }
 
-export function GenericWidget({ type, limit = 3, icon = 'layers' }: GenericWidgetProps) {
+export function GenericWidget({ type, limit = 3, icon = 'layers', projectId }: GenericWidgetProps) {
   const [items, setItems] = useState<ContextDB[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -35,8 +36,13 @@ export function GenericWidget({ type, limit = 3, icon = 'layers' }: GenericWidge
   useEffect(() => {
     const fetchFiles = async () => {
       try {
-        const result = await listContextsAction(type)
-        
+        let result: { results?: ContextDB[]; error?: string } = { results: [] }
+        if (projectId) {
+          result = await listContextsByTypeByProjectAction({ projectId, type })
+        } else {
+          result = await listContextsByTypeAction(type)
+        }
+
         if (result.error) {
           setError(result.error)
           handleErrorClient(result.error, 'Failed to load files')
@@ -53,7 +59,7 @@ export function GenericWidget({ type, limit = 3, icon = 'layers' }: GenericWidge
     }
 
     void fetchFiles()
-  }, [type, limit])
+  }, [projectId, type, limit])
 
   const renderContent = () => {
     if (loading) {
@@ -128,9 +134,7 @@ export function GenericWidget({ type, limit = 3, icon = 'layers' }: GenericWidge
           </Button>
         </Link>
       </CardHeader>
-      <CardContent>
-        {renderContent()}
-      </CardContent>
+      <CardContent>{renderContent()}</CardContent>
     </Card>
   )
 }

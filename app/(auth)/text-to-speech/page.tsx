@@ -4,6 +4,21 @@ import { Suspense, useEffect, useRef, useState } from 'react'
 
 import { useSearchParams } from 'next/navigation'
 
+import {
+  AlertCircle,
+  CheckCircle,
+  Loader2,
+  Pause,
+  Play,
+  RotateCcw,
+  Volume2,
+  VolumeX,
+  Wand2,
+} from 'lucide-react'
+
+import { listContextsByTypeAction } from '@/app/actions/contexts/list-by-type'
+import { getParseStatusAction } from '@/app/actions/contexts/parse'
+
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -24,26 +39,7 @@ import { LabLayout } from '@/components/lab-layout'
 
 import { generateSpeech } from '@/lib/text-to-speech'
 
-import {
-  AlertCircle,
-  CheckCircle,
-  Loader2,
-  Pause,
-  Play,
-  RotateCcw,
-  Volume2,
-  VolumeX,
-  Wand2,
-} from 'lucide-react'
-
-import { listFilesAction } from '@/app/actions/files/list'
-import { getParseStatusAction } from '@/app/actions/files/parse'
-
-interface FileOption {
-  id: string
-  name: string
-  isParsed: boolean
-}
+import { ContextDB } from '@/types/database'
 
 const VOICE_OPTIONS = [
   { value: 'alloy', label: 'Alloy' },
@@ -58,7 +54,7 @@ function TTSPageContent() {
   const searchParams = useSearchParams()
   const preselectedFileId = searchParams.get('fileId')
 
-  const [files, setFiles] = useState<FileOption[]>([])
+  const [contexts, setContexts] = useState<ContextDB[]>([])
   const [selectedFileId, setSelectedFileId] = useState<string>(preselectedFileId || '')
   const [text, setText] = useState('')
   const [voice, setVoice] = useState('alloy')
@@ -81,22 +77,11 @@ function TTSPageContent() {
     const loadFiles = async () => {
       setIsLoading(true)
       try {
-        const result = await listFilesAction()
+        const result = await listContextsByTypeAction('pdfs')
         if (result.error) {
           setError(result.error)
-        } else if (result.files) {
-          // Check parse status for each file
-          const filesWithStatus = await Promise.all(
-            result.files.map(async file => {
-              const statusResult = await getParseStatusAction({ fileId: file.id })
-              return {
-                id: file.id,
-                name: file.name,
-                isParsed: statusResult.success ? statusResult.isParsed : false,
-              }
-            })
-          )
-          setFiles(filesWithStatus.filter(file => file.isParsed))
+        } else if (result.results) {
+          setContexts(result.results)
         }
       } catch {
         setError('Failed to load files')
@@ -112,7 +97,7 @@ function TTSPageContent() {
   useEffect(() => {
     if (selectedFileId) {
       const loadParseContent = async () => {
-        const result = await getParseStatusAction({ fileId: selectedFileId })
+        const result = await getParseStatusAction({ contextId: selectedFileId })
         if (result.success && result.isParsed && result.markdown) {
           setText(result.markdown)
         }
@@ -223,7 +208,7 @@ function TTSPageContent() {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`
   }
 
-  const selectedFile = files.find(f => f.id === selectedFileId)
+  const selectedFile = contexts.find(f => f.id === selectedFileId)
 
   return (
     <LabLayout
@@ -247,7 +232,7 @@ function TTSPageContent() {
           </CardHeader>
           <CardContent className="space-y-6">
             {/* File Selection - Compact */}
-            {files.length > 0 && (
+            {contexts.length > 0 && (
               <div className="space-y-2">
                 <Label htmlFor="file-select" className="text-sm font-medium">
                   Load from Parsed File (Optional)
@@ -261,10 +246,10 @@ function TTSPageContent() {
                         <SelectValue placeholder="Choose a parsed file..." />
                       </SelectTrigger>
                       <SelectContent>
-                        {files.map(file => (
-                          <SelectItem key={file.id} value={file.id}>
+                        {contexts.map(context => (
+                          <SelectItem key={context.id} value={context.id}>
                             <div className="flex w-full items-center justify-between">
-                              <span>{file.name}</span>
+                              <span>{context.name}</span>
                               <Badge variant="secondary" className="ml-2">
                                 <CheckCircle className="mr-1 h-3 w-3" />
                                 Parsed

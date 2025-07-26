@@ -4,46 +4,38 @@ import { useEffect, useState } from 'react'
 
 import Link from 'next/link'
 
+import { DynamicIcon } from 'lucide-react/dynamic'
+
+import { listContextsAction } from '@/app/actions/contexts/list'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ErrorAlert } from '@/components/ui/error-alert'
 
+import { getContextIcon } from '@/lib/context-to-icon'
 import { formatDate } from '@/lib/date'
 import { handleErrorClient } from '@/lib/error/client'
 import { formatFileSize } from '@/lib/file-size'
 
+import { ContextsTypes } from '@/types/contexts'
 import type { ContextDB } from '@/types/database'
 
-import { DynamicIcon, type IconName } from 'lucide-react/dynamic'
-
-import { listFilesAction } from '@/app/actions/files/list'
-
-function getFileIcon(type: string): IconName {
-  if (type.startsWith('image/')) return 'image'
-  if (type.includes('pdf')) return 'file-text'
-  if (type.includes('video/')) return 'video'
-  if (type.includes('audio/')) return 'music'
-  if (type.includes('text/') || type.includes('application/json')) return 'file-text'
-  if (type.includes('zip') || type.includes('archive')) return 'archive'
-  return 'file'
-}
-
 export function ContextsWidget() {
-  const [files, setFiles] = useState<ContextDB[]>([])
+  const [contexts, setContexts] = useState<ContextDB[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchFiles = async () => {
+    const fetchContexts = async () => {
       try {
-        const result = await listFilesAction()
+        const result = await listContextsAction()
         if (result.error) {
           setError(result.error)
           handleErrorClient(result.error, 'Failed to load files')
         } else {
           // Show only the 3 most recent files
-          setFiles(result.files?.slice(0, 3) || [])
+          setContexts(result.results?.slice(0, 3) || [])
         }
       } catch (err) {
         setError('Failed to load files')
@@ -53,7 +45,7 @@ export function ContextsWidget() {
       }
     }
 
-    void fetchFiles()
+    void fetchContexts()
   }, [])
 
   if (loading) {
@@ -119,32 +111,32 @@ export function ContextsWidget() {
         </Link>
       </CardHeader>
       <CardContent>
-        {files.length === 0 ? (
+        {contexts.length === 0 ? (
           <div className="text-muted-foreground text-sm">
             No contexts yet. Upload your first file to get started.
           </div>
         ) : (
           <div className="space-y-3">
-            {files.map(file => (
-              <Link key={file.id} href={`/files/${file.id}`}>
+            {contexts.map(context => (
+              <Link key={context.id} href={`/contexts/${context.id}`}>
                 <div className="group hover:bg-muted/50 cursor-pointer rounded-lg p-2 transition-colors">
                   <div className="flex items-start justify-between">
                     <div className="flex min-w-0 flex-1 items-start gap-3">
                       <DynamicIcon
-                        name={getFileIcon(file.type)}
+                        name={getContextIcon(context.type as ContextsTypes)}
                         className="text-muted-foreground mt-0.5 h-4 w-4 flex-shrink-0"
                       />
                       <div className="min-w-0 flex-1">
                         <h4 className="group-hover:text-primary truncate text-sm font-medium">
-                          {file.name}
+                          {context.name}
                         </h4>
                         <div className="mt-1 flex items-center gap-2">
                           <Badge variant="outline" className="text-xs">
-                            {formatFileSize(file.size)}
+                            {formatFileSize(context.size)}
                           </Badge>
                           <Badge variant="secondary" className="text-xs">
                             <DynamicIcon name="clock" className="mr-1 h-3 w-3" />
-                            {formatDate(file.updatedAt)}
+                            {formatDate(context.updatedAt)}
                           </Badge>
                         </div>
                       </div>

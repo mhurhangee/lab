@@ -5,6 +5,8 @@ import { useAuth } from '@clerk/nextjs'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
+import { ChevronDown, PlusIcon } from 'lucide-react'
+
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import {
   SidebarContent as SidebarContentComponent,
@@ -18,8 +20,6 @@ import {
 } from '@/components/ui/sidebar'
 
 import { type SidebarItem, sidebarItems } from '@/lib/sidebar'
-
-import { ChevronDown, PlusIcon } from 'lucide-react'
 
 export const SidebarContent = () => {
   const pathname = usePathname()

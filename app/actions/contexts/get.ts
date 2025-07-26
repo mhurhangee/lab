@@ -4,15 +4,15 @@ import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 
-import { and, eq } from 'drizzle-orm'
-
 import { contexts } from '@/schema'
 
-interface GetFileActionProps {
+import { and, eq } from 'drizzle-orm'
+
+interface GetContextsActionProps {
   id: string
 }
 
-export const getFileAction = async ({ id }: GetFileActionProps) => {
+export const getContextsAction = async ({ id }: GetContextsActionProps) => {
   try {
     const userId = await getUserId()
 
@@ -23,12 +23,12 @@ export const getFileAction = async ({ id }: GetFileActionProps) => {
       .limit(1)
 
     if (!result?.length) {
-      throw new Error('File not found')
+      throw new Error('Contexts not found')
     }
 
-    return { file: result[0] }
+    return { context: result[0], success: true }
   } catch (error) {
-    const errorMessage = handleErrorServer(error, 'Failed to get file')
-    return { error: errorMessage }
+    const errorMessage = handleErrorServer(error, 'Failed to get contexts')
+    return { error: errorMessage, success: false }
   }
 }

@@ -4,6 +4,8 @@ import { useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
+import { Trash } from 'lucide-react'
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,29 +18,32 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 
 import { handleErrorClient } from '@/lib/error/client'
 
-import { Trash } from 'lucide-react'
+import type { ContextsTypes } from '@/types/contexts'
+
+import { VariantProps } from 'class-variance-authority'
 import { toast } from 'sonner'
 
-import { deleteFileAction } from '@/app/actions/files/delete'
-
-interface DeleteFileDialogProps {
-  fileId: string
-  size?: 'default' | 'icon'
+interface DeleteContextsDialogProps {
+  contextsId: string
+  variant?: VariantProps<typeof buttonVariants>['variant']
+  size?: VariantProps<typeof buttonVariants>['size']
   className?: string
-  fullWidth?: boolean
-  variant?: 'button' | 'menu-item'
+  type: ContextsTypes
+  action: (id: string) => Promise<{ error?: string; success?: boolean }>
 }
 
-export function DeleteFileDialog({
-  fileId,
+export function DeleteContextsDialog({
+  contextsId,
+  variant = 'destructive',
   size = 'default',
   className = '',
-  fullWidth = false,
-  variant = 'button',
-}: DeleteFileDialogProps) {
+  type,
+  action,
+}: DeleteContextsDialogProps) {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -46,20 +51,25 @@ export function DeleteFileDialog({
   const handleDelete = async () => {
     setIsDeleting(true)
     try {
-      const result = await deleteFileAction({ id: fileId })
+      const result = await action(contextsId)
 
-      if ('error' in result) {
-        handleErrorClient('Failed to delete file', result.error)
-        return
+      if (result.error) {
+        throw handleErrorClient(`Failed to delete ${type}`, result.error)
       }
 
-      toast.success('File deleted', {
-        description: 'The file has been successfully deleted.',
-      })
-      router.push('/files')
-      router.refresh()
+      if (result.success) {
+        toast.success(`${type} deleted`, {
+          description: `${type} has been successfully deleted.`,
+        })
+        router.push(`/${type}`)
+        router.refresh()
+      }
     } catch (error) {
-      handleErrorClient('Failed to delete file', error, 'Unexpected error in DeleteFileDialog')
+      throw handleErrorClient(
+        `Failed to delete ${type}`,
+        error,
+        'Unexpected error in DeleteContextsDialog'
+      )
     } finally {
       setIsDeleting(false)
       setIsOpen(false)
@@ -69,28 +79,17 @@ export function DeleteFileDialog({
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger asChild>
-        {variant === 'button' ? (
-          <Button
-            variant="ghost"
-            size={size}
-            className={`${className} ${fullWidth ? 'w-full' : ''}`}
-          >
-            <Trash className="h-4 w-4" />
-            {size !== 'icon' ? 'Delete File' : null}
-          </Button>
-        ) : (
-          <div className="flex cursor-pointer items-center gap-2">
-            <Trash className="h-4 w-4" />
-            <span>Delete</span>
-          </div>
-        )}
+        <Button variant={variant} size={size} className={`${className}`}>
+          <Trash className="h-4 w-4" />
+          {size !== 'icon' ? `Delete ${type.slice(0, -1).toUpperCase()}` : null}
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the file and all of its
-            associated data.
+            This action cannot be undone. This will permanently delete this{' '}
+            {type.slice(0, -1).toUpperCase()} and all of its associated data.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

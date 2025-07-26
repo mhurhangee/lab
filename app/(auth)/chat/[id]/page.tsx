@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation'
 
-import { LabLayout } from '@/components/lab-layout'
-
 import { getChatAction } from '@/app/actions/chats/get'
+
+import { LabLayout } from '@/components/lab-layout'
 
 import { Chat } from '../components/chat'
 import { ChatBreadcrumbTitle } from '../components/chat-breadcrumb-title'

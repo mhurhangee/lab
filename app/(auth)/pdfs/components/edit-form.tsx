@@ -4,6 +4,8 @@ import { useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
+import { updateContextAction } from '@/app/actions/contexts/update'
+
 import { Button } from '@/components/ui/button'
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/components/ui/dropzone'
 import { Input } from '@/components/ui/input'
@@ -17,8 +19,6 @@ import { formatFileSize } from '@/lib/file-size'
 import type { ContextDB, ProjectDB } from '@/types/database'
 
 import { toast } from 'sonner'
-
-import { updateFileAction } from '@/app/actions/files/update'
 
 interface EditFormProps {
   file: ContextDB
@@ -41,7 +41,7 @@ export function EditForm({ file, projects }: EditFormProps) {
     setIsUpdating(true)
 
     try {
-      const result = await updateFileAction({
+      const result = await updateContextAction({
         id: file.id,
         name: name.trim(),
         file: newFiles.length > 0 ? newFiles[0] : undefined,
@@ -53,8 +53,8 @@ export function EditForm({ file, projects }: EditFormProps) {
         return
       }
 
-      toast.success('File updated successfully!')
-      router.push(`/files/${file.id}`)
+      toast.success('PDF updated successfully!')
+      router.push(`/pdfs/${file.id}`)
     } catch (error) {
       handleErrorClient('Failed to update file', error, 'Unexpected error in EditForm')
     } finally {
@@ -141,13 +141,13 @@ export function EditForm({ file, projects }: EditFormProps) {
       <div className="flex justify-end gap-4">
         <Button
           variant="outline"
-          onClick={() => router.push(`/files/${file.id}`)}
+          onClick={() => router.push(`/pdfs/${file.id}`)}
           disabled={isUpdating}
         >
           Cancel
         </Button>
         <Button onClick={() => void handleUpdate()} disabled={isUpdating}>
-          {isUpdating ? 'Updating...' : 'Update File'}
+          {isUpdating ? 'Updating...' : 'Update PDF'}
         </Button>
       </div>
     </div>

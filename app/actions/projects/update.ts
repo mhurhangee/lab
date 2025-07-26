@@ -4,9 +4,9 @@ import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 
-import { and, eq } from 'drizzle-orm'
-
 import { projects } from '@/schema'
+
+import { and, eq } from 'drizzle-orm'
 
 interface UpdateProjectActionProps {
   id: string

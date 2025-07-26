@@ -9,12 +9,15 @@ import { generateId } from '@/lib/id'
 
 import { contexts } from '@/schema'
 
-interface CreateFileActionProps {
+import { ContextsTypes } from '@/types/contexts'
+
+interface CreateContextActionProps {
   file: File
   projectId?: string
+  type: ContextsTypes
 }
 
-export const createFileAction = async ({ file, projectId }: CreateFileActionProps) => {
+export const createContextAction = async ({ file, projectId, type }: CreateContextActionProps) => {
   try {
     const userId = await getUserId()
 
@@ -24,7 +27,7 @@ export const createFileAction = async ({ file, projectId }: CreateFileActionProp
     })
 
     // Save file metadata to database
-    const fileRecord = await db
+    const contextRecord = await db
       .insert(contexts)
       .values({
         id: generateId(),
@@ -32,18 +35,19 @@ export const createFileAction = async ({ file, projectId }: CreateFileActionProp
         name: file.name,
         url: blob.url,
         size: file.size,
-        type: file.type,
+        type: type,
+        fileType: file.type,
         projectId,
       })
       .returning({ id: contexts.id })
 
-    if (!fileRecord?.length) {
-      throw new Error('Failed to create file record')
+    if (!contextRecord?.length) {
+      throw new Error('Failed to create context record')
     }
 
-    return { id: fileRecord[0].id, url: blob.url }
+    return { id: contextRecord[0].id, url: blob.url, success: true }
   } catch (error) {
-    const errorMessage = handleErrorServer(error, 'Failed to upload file')
-    return { error: errorMessage }
+    const errorMessage = handleErrorServer(error, 'Failed to upload context')
+    return { error: errorMessage, success: false }
   }
 }

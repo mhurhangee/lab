@@ -2,6 +2,10 @@
 
 import Link from 'next/link'
 
+import { EditIcon, ExternalLinkIcon, MoreHorizontalIcon } from 'lucide-react'
+
+import { deleteContextsAction } from '@/app/actions/contexts/delete'
+
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -10,11 +14,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
+import { DeleteContextsDialog } from '@/components/delete-contexts-dialog'
+
 import type { ContextDB } from '@/types/database'
-
-import { EditIcon, ExternalLinkIcon, MoreHorizontalIcon, TrashIcon } from 'lucide-react'
-
-import { deleteUrlAction } from '@/app/actions/urls/delete'
 
 interface ActionsCellProps {
   row: { original: ContextDB }
@@ -22,13 +24,6 @@ interface ActionsCellProps {
 
 export function ActionsCell({ row }: ActionsCellProps) {
   const url = row.original
-
-  const handleDelete = async () => {
-    if (confirm('Are you sure you want to delete this URL?')) {
-      await deleteUrlAction(url.id)
-      window.location.reload()
-    }
-  }
 
   return (
     <div className="flex justify-end">
@@ -52,10 +47,12 @@ export function ActionsCell({ row }: ActionsCellProps) {
               Edit
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleDelete} className="text-destructive">
-            <TrashIcon className="mr-2 h-4 w-4" />
-            Delete
-          </DropdownMenuItem>
+          <DeleteContextsDialog
+            contextsId={url.id}
+            type="urls"
+            size="icon"
+            action={deleteContextsAction}
+          />
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

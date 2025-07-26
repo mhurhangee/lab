@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation'
 
+import { getProjectAction } from '@/app/actions/projects/get'
+
 import { LabLayout } from '@/components/lab-layout'
 
 import { ProjectForm } from '@/app/(auth)/projects/components/project-form'
-import { getProjectAction } from '@/app/actions/projects/get'
 
 interface EditProjectPageProps {
   params: Promise<{ id: string }>

@@ -3,12 +3,13 @@
 import type { ReactNode } from 'react'
 import { createContext, useContext } from 'react'
 
+import { UploadIcon } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 
 import { formatFileSize } from '@/lib/file-size'
 import { cn } from '@/lib/utils'
 
-import { UploadIcon } from 'lucide-react'
 import type { DropEvent, DropzoneOptions, FileRejection } from 'react-dropzone'
 import { useDropzone } from 'react-dropzone'
 

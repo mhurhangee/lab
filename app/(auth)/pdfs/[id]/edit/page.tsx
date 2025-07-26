@@ -1,11 +1,11 @@
 import { notFound } from 'next/navigation'
 
+import { getContextsAction } from '@/app/actions/contexts/get'
+import { listProjectsAction } from '@/app/actions/projects/list'
+
 import { ErrorAlert } from '@/components/ui/error-alert'
 
 import { LabLayout } from '@/components/lab-layout'
-
-import { getFileAction } from '@/app/actions/files/get'
-import { listProjectsAction } from '@/app/actions/projects/list'
 
 import { EditForm } from '../../components/edit-form'
 
@@ -15,36 +15,36 @@ interface EditFilePageProps {
 
 export default async function EditFilePage({ params }: EditFilePageProps) {
   const { id } = await params
-  const [{ file, error }, { projects = [] }] = await Promise.all([
-    getFileAction({ id }),
+  const [{ context, error }, { projects = [] }] = await Promise.all([
+    getContextsAction({ id }),
     listProjectsAction(),
   ])
 
   if (error) {
     return (
-      <LabLayout title="Edit File" icon="file" breadcrumb={[{ href: '/files', label: 'Files' }]}>
+      <LabLayout title="Edit PDF" icon="file" breadcrumb={[{ href: '/pdfs', label: 'PDFs' }]}>
         <ErrorAlert error={error} />
       </LabLayout>
     )
   }
 
-  if (!file) {
+  if (!context) {
     notFound()
   }
 
   return (
     <LabLayout
-      title={`Edit ${file.name}`}
+      title={`Edit ${context.name}`}
       icon="file"
-      backTo={{ href: `/files/${file.id}`, label: file.name }}
+      backTo={{ href: `/pdfs/${context.id}`, label: context.name }}
       breadcrumb={[
-        { href: '/files', label: 'Files' },
-        { href: `/files/${file.id}`, label: file.name },
-        { href: `/files/${file.id}/edit`, label: 'Edit' },
+        { href: '/pdfs', label: 'PDFs' },
+        { href: `/pdfs/${context.id}`, label: context.name },
+        { href: `/pdfs/${context.id}/edit`, label: 'Edit' },
       ]}
       description="Update the file name or replace the file with a new version."
     >
-      <EditForm file={file} projects={projects} />
+      <EditForm file={context} projects={projects} />
     </LabLayout>
   )
 }

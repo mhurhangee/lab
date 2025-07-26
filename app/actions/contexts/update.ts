@@ -6,33 +6,40 @@ import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 
-import { and, eq } from 'drizzle-orm'
-
 import { contexts } from '@/schema'
 
-interface UpdateFileActionProps {
+import { and, eq } from 'drizzle-orm'
+
+interface UpdateContextActionProps {
   id: string
-  file?: File
   name?: string
   projectId?: string | null
+  file?: File
+  markdown?: string
 }
 
-export const updateFileAction = async ({ id, file, name, projectId }: UpdateFileActionProps) => {
+export const updateContextAction = async ({
+  id,
+  name,
+  projectId,
+  file,
+  markdown,
+}: UpdateContextActionProps) => {
   try {
     const userId = await getUserId()
 
     // Get existing file
-    const existingFileResult = await db
+    const existingContextResult = await db
       .select()
       .from(contexts)
       .where(and(eq(contexts.id, id), eq(contexts.userId, userId)))
       .limit(1)
 
-    if (!existingFileResult?.length) {
-      throw new Error('File not found')
+    if (!existingContextResult?.length) {
+      throw new Error('Context not found')
     }
 
-    const existingFile = existingFileResult[0]
+    const existingContext = existingContextResult[0]
     let updateData: Partial<typeof contexts.$inferInsert> = {
       updatedAt: new Date(),
     }
@@ -40,7 +47,7 @@ export const updateFileAction = async ({ id, file, name, projectId }: UpdateFile
     // If updating the file content
     if (file) {
       // Delete old file from blob storage
-      await del(existingFile.url)
+      await del(existingContext.url)
 
       // Upload new file
       const blob = await put(file.name, file, {
@@ -66,20 +73,24 @@ export const updateFileAction = async ({ id, file, name, projectId }: UpdateFile
       updateData.projectId = projectId
     }
 
+    if (markdown) {
+      updateData.parsedMarkdown = markdown
+    }
+
     // Update database record
-    const updatedFile = await db
+    const updatedContext = await db
       .update(contexts)
       .set(updateData)
       .where(and(eq(contexts.id, id), eq(contexts.userId, userId)))
       .returning()
 
-    if (!updatedFile?.length) {
-      throw new Error('Failed to update file')
+    if (!updatedContext?.length) {
+      throw new Error('Failed to update context')
     }
 
-    return { file: updatedFile[0] }
+    return { context: updatedContext[0], success: true }
   } catch (error) {
-    const errorMessage = handleErrorServer(error, 'Failed to update file')
-    return { error: errorMessage }
+    const errorMessage = handleErrorServer(error, 'Failed to update context')
+    return { error: errorMessage, success: false }
   }
 }

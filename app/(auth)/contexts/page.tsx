@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 
 import { LabLayout } from '@/components/lab-layout'
 
-import { GenericWidget } from './components/generic-widget'
+import { GenericWidget } from '../../../components/generic-widget'
 
 export default function ContextsPage() {
   return (
@@ -16,7 +16,7 @@ export default function ContextsPage() {
       breadcrumb={[{ href: '/contexts', label: 'Contexts' }]}
       actions={
         <div className="flex items-center gap-2">
-          <Link href="/files/new">
+          <Link href="/pdfs/new">
             <Button size="sm">New Files</Button>
           </Link>
           <Link href="/urls/new">

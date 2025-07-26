@@ -4,6 +4,10 @@ import { useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
+import { Trash } from 'lucide-react'
+
+import { deleteChatAction } from '@/app/actions/chats/delete'
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,10 +23,7 @@ import { Button } from '@/components/ui/button'
 
 import { handleErrorClient } from '@/lib/error/client'
 
-import { Trash } from 'lucide-react'
 import { toast } from 'sonner'
-
-import { deleteChatAction } from '@/app/actions/chats/delete'
 
 interface DeleteChatDialogProps {
   chatId: string

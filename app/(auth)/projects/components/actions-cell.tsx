@@ -4,11 +4,11 @@ import { Row } from '@tanstack/react-table'
 
 import Link from 'next/link'
 
+import { Edit, Eye } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 
 import { ProjectDB } from '@/types/database'
-
-import { Edit, Eye } from 'lucide-react'
 
 import { DeleteProjectDialog } from '@/app/(auth)/projects/components/delete-project-dialog'
 

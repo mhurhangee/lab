@@ -4,13 +4,13 @@ import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 
-import { desc, eq, and } from 'drizzle-orm'
-
 import { contexts } from '@/schema'
 
 import { ContextsTypes } from '@/types/contexts'
 
-export const listContextsAction = async (type: ContextsTypes) => {
+import { and, desc, eq } from 'drizzle-orm'
+
+export const listContextsByTypeAction = async (type: ContextsTypes) => {
   try {
     const userId = await getUserId()
 

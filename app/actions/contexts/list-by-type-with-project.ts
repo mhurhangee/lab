@@ -4,15 +4,23 @@ import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 
-import { and, eq } from 'drizzle-orm'
-
 import { contexts, projects } from '@/schema'
 
-export const getUrlByIdAction = async (id: string) => {
+import type { ContextsTypes } from '@/types/contexts'
+
+import { and, desc, eq } from 'drizzle-orm'
+
+interface ListContextsByTypeWithProjectsActionProps {
+  type: ContextsTypes
+}
+
+export const listContextsByTypeWithProjectsAction = async ({
+  type,
+}: ListContextsByTypeWithProjectsActionProps) => {
   try {
     const userId = await getUserId()
 
-    const result = await db
+    const results = await db
       .select({
         id: contexts.id,
         userId: contexts.userId,
@@ -20,6 +28,7 @@ export const getUrlByIdAction = async (id: string) => {
         url: contexts.url,
         size: contexts.size,
         type: contexts.type,
+        fileType: contexts.fileType,
         projectId: contexts.projectId,
         parsedMarkdown: contexts.parsedMarkdown,
         createdAt: contexts.createdAt,
@@ -28,16 +37,12 @@ export const getUrlByIdAction = async (id: string) => {
       })
       .from(contexts)
       .leftJoin(projects, eq(contexts.projectId, projects.id))
-      .where(and(eq(contexts.id, id), eq(contexts.userId, userId), eq(contexts.type, 'url')))
-      .limit(1)
+      .where(and(eq(contexts.userId, userId), eq(contexts.type, type)))
+      .orderBy(desc(contexts.updatedAt))
 
-    if (result.length === 0) {
-      throw new Error('URL not found')
-    }
-
-    return { url: result[0] }
+    return { contexts: results }
   } catch (error) {
-    const errorMessage = handleErrorServer(error, 'Failed to get URL')
+    const errorMessage = handleErrorServer(error, 'Failed to list contexts with projects')
     return { error: errorMessage }
   }
 }

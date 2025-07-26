@@ -2,13 +2,13 @@ import { UserButton } from '@clerk/nextjs'
 
 import Link from 'next/link'
 
+import { GithubIcon, MailIcon } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 import { SidebarFooter as SidebarFooterComponent } from '@/components/ui/sidebar'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 import { app } from '@/lib/app'
-
-import { GithubIcon, MailIcon } from 'lucide-react'
 
 export const SidebarFooter = () => {
   return (
