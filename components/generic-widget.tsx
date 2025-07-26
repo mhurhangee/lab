@@ -14,14 +14,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ErrorAlert } from '@/components/ui/error-alert'
 
+import { getContextIcon } from '@/lib/context-to-icon'
 import { formatDate } from '@/lib/date'
 import { handleErrorClient } from '@/lib/error/client'
 import { formatFileSize } from '@/lib/file-size'
 
 import { ContextsTypes } from '@/types/contexts'
 import type { ContextDB } from '@/types/database'
-
-import { getContextIcon } from '@/lib/context-to-icon'
 
 interface GenericWidgetProps {
   type: ContextsTypes
