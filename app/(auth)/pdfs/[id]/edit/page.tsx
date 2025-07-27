@@ -18,7 +18,12 @@ export default async function EditFilePage({ params }: EditFilePageProps) {
 
   if (error) {
     return (
-      <LabLayout title="Edit PDF" icon="file" breadcrumb={[{ href: '/pdfs', label: 'PDFs' }]}>
+      <LabLayout
+        pageTitle="Edit PDF"
+        title="Edit PDF"
+        icon="file"
+        breadcrumb={[{ href: '/pdfs', label: 'PDFs' }]}
+      >
         <ErrorAlert error={error} />
       </LabLayout>
     )
@@ -30,6 +35,7 @@ export default async function EditFilePage({ params }: EditFilePageProps) {
 
   return (
     <LabLayout
+      pageTitle={`Edit ${context.name}`}
       title={`Edit ${context.name}`}
       icon="file"
       backTo={{ href: `/pdfs/${context.id}`, label: context.name }}

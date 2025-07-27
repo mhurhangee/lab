@@ -13,3 +13,6 @@ export const app = {
   },
   iconBackground: 'bg-gradient-to-r from-green-500 to-emerald-500',
 }
+
+export const appTitle =
+  process.env.NODE_ENV === 'development' ? `(dev) ${app.title}` : `${app.title}`

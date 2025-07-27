@@ -319,6 +319,7 @@ function STTPageContent() {
   return (
     <LabLayout
       title="Speech to Text"
+      pageTitle="Speech to Text"
       description="Convert speech to text using AI-powered transcription."
       icon="mic"
       breadcrumb={[{ href: '/speech-to-text', label: 'Speech to Text' }]}

@@ -31,6 +31,7 @@ export default async function ChatsPage() {
         </Link>
       }
       description="Manage, view, and create new chats."
+      pageTitle="Chats"
     >
       {error ? <ErrorAlert error={error} /> : <ChatsDataTable data={chats || []} />}
     </LabLayout>

@@ -18,7 +18,7 @@ export default async function UrlEditPage({ params }: UrlEditPageProps) {
 
   if (error) {
     return (
-      <LabLayout title="Edit URL" icon="link">
+      <LabLayout pageTitle="Edit URL" title="Edit URL" icon="link">
         <ErrorAlert error={error} />
       </LabLayout>
     )
@@ -31,6 +31,7 @@ export default async function UrlEditPage({ params }: UrlEditPageProps) {
   return (
     <LabLayout
       title={`Edit ${url.name}`}
+      pageTitle={`Edit ${url.name}`}
       icon="link"
       backTo={{ href: `/urls/${url.id}`, label: url.name }}
       breadcrumb={[

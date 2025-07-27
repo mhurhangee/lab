@@ -27,6 +27,7 @@ export default async function ChatPage({ params }: ChatPageProps) {
       ]}
       icon="bot"
       backTo={{ href: '/chat', label: 'All chats' }}
+      pageTitle={chat.title || 'Untitled Chat'}
     >
       <Chat savedChat={chat} />
     </LabLayout>

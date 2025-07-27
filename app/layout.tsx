@@ -10,7 +10,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 
 import { Layout } from '@/components/layout'
 
-import { app } from '@/lib/app'
+import { app, appTitle } from '@/lib/app'
 import { mono, sans, serif } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
 
@@ -20,7 +20,7 @@ import { ThemeProvider } from '@/providers/theme'
 import '@/styles/globals.css'
 
 export const metadata: Metadata = {
-  title: process.env.NODE_ENV === 'development' ? ` (dev) ${app.title}` : app.title,
+  title: appTitle,
   description: app.description,
   icons: {
     icon: [

@@ -26,6 +26,7 @@ export default function ContextsPage() {
           </Link>
         </div>
       }
+      pageTitle="Contexts"
     >
       <div className="grid gap-6 md:grid-cols-2">
         <GenericWidget type="pdfs" limit={3} icon="file" />
