@@ -16,16 +16,15 @@ import { ProjectSelector } from '@/components/project-selector'
 import { handleErrorClient } from '@/lib/error/client'
 import { formatFileSize } from '@/lib/file-size'
 
-import type { ContextDB, ProjectDB } from '@/types/database'
+import type { ContextDB } from '@/types/database'
 
 import { toast } from 'sonner'
 
 interface EditFormProps {
   file: ContextDB
-  projects: ProjectDB[]
 }
 
-export function EditForm({ file, projects }: EditFormProps) {
+export function EditForm({ file }: EditFormProps) {
   const router = useRouter()
   const [name, setName] = useState(file.name)
   const [localProjectId, setLocalProjectId] = useState<string | null>(file.projectId || null)

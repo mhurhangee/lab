@@ -129,7 +129,7 @@ export function GenericWidget({ type, limit = 3, icon = 'layers', projectId }: G
           <DynamicIcon name={icon} className="h-4 w-4" />
           Recent<span className="uppercase">{type}</span>
         </CardTitle>
-        <Link href={`/${type}/new`}>
+        <Link href={`/${type}`}>
           <Button variant="ghost" size="sm">
             View All
           </Button>

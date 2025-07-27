@@ -5,7 +5,11 @@ import { del, put } from '@vercel/blob'
 import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
-import { removeFileFromVectorStore, uploadMarkdownToVectorStore } from '@/lib/openai'
+import {
+  removeFileFromVectorStore,
+  uploadFileToVectorStore,
+  uploadMarkdownToVectorStore,
+} from '@/lib/openai'
 
 import { contexts, projects } from '@/schema'
 
@@ -63,10 +67,68 @@ export const updateContextAction = async ({
         size: file.size,
         type: file.type,
       }
+
+      // If context is associated with a project, update OpenAI vector store
+      if (existingContext.projectId && existingContext.openaiUploadId) {
+        const projectResult = await db
+          .select({ vectorStoreId: projects.vectorStoreId })
+          .from(projects)
+          .where(and(eq(projects.id, existingContext.projectId), eq(projects.userId, userId)))
+          .limit(1)
+
+        if (projectResult?.length && projectResult[0].vectorStoreId) {
+          // Remove old file from vector store
+          await removeFileFromVectorStore(
+            projectResult[0].vectorStoreId,
+            existingContext.openaiUploadId
+          )
+
+          // Upload new file to vector store
+          if (existingContext.type === 'pdfs') {
+            const openaiResult = await uploadFileToVectorStore(file, projectResult[0].vectorStoreId)
+            if (openaiResult.success) {
+              updateData.openaiUploadId = openaiResult.fileId
+            }
+          }
+        }
+      }
     }
 
-    // If only updating the name
-    if (name && !file) {
+    // If updating markdown content (for URLs)
+    if (markdown && existingContext.type === 'urls') {
+      updateData.parsedMarkdown = markdown
+
+      // If context is associated with a project, update OpenAI vector store
+      if (existingContext.projectId && existingContext.openaiUploadId) {
+        const projectResult = await db
+          .select({ vectorStoreId: projects.vectorStoreId })
+          .from(projects)
+          .where(and(eq(projects.id, existingContext.projectId), eq(projects.userId, userId)))
+          .limit(1)
+
+        if (projectResult?.length && projectResult[0].vectorStoreId) {
+          // Remove old markdown from vector store
+          await removeFileFromVectorStore(
+            projectResult[0].vectorStoreId,
+            existingContext.openaiUploadId
+          )
+
+          // Upload new markdown to vector store
+          const filename = `${name || existingContext.name}.md`
+          const openaiResult = await uploadMarkdownToVectorStore(
+            markdown,
+            filename,
+            projectResult[0].vectorStoreId
+          )
+          if (openaiResult.success) {
+            updateData.openaiUploadId = openaiResult.fileId
+          }
+        }
+      }
+    }
+
+    // If updating the name only
+    if (name && !file && !markdown) {
       updateData.name = name
     }
 
@@ -120,36 +182,6 @@ export const updateContextAction = async ({
       }
 
       updateData.projectId = projectId
-    }
-
-    if (markdown) {
-      updateData.parsedMarkdown = markdown
-
-      // If this is a URL context with markdown and it's associated with a project,
-      // upload the markdown to OpenAI vector store
-      if (
-        existingContext.type === 'urls' &&
-        existingContext.projectId &&
-        !existingContext.openaiUploadId
-      ) {
-        const projectResult = await db
-          .select({ vectorStoreId: projects.vectorStoreId })
-          .from(projects)
-          .where(and(eq(projects.id, existingContext.projectId), eq(projects.userId, userId)))
-          .limit(1)
-
-        if (projectResult?.length && projectResult[0].vectorStoreId) {
-          const vectorStoreId = projectResult[0].vectorStoreId
-          const filename = `${existingContext.name}.md`
-
-          const openaiResult = await uploadMarkdownToVectorStore(markdown, filename, vectorStoreId)
-          if (openaiResult.success) {
-            updateData.openaiUploadId = openaiResult.fileId
-          } else {
-            console.error('Failed to upload markdown to OpenAI:', openaiResult.error)
-          }
-        }
-      }
     }
 
     // Update database record

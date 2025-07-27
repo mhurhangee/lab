@@ -23,8 +23,6 @@ import { formatDate } from '@/lib/date'
 import { handleErrorClient } from '@/lib/error/client'
 import { formatFileSize } from '@/lib/file-size'
 
-import { useProject } from '@/providers/project'
-
 type UrlWithProject = {
   id: string
   name: string

@@ -6,7 +6,7 @@ import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
 import { generateId } from '@/lib/id'
-import { uploadFileToVectorStore } from '@/lib/openai'
+import { uploadFileToVectorStore, uploadMarkdownToVectorStore } from '@/lib/openai'
 
 import { contexts, projects } from '@/schema'
 
@@ -15,20 +15,51 @@ import { ContextsTypes } from '@/types/contexts'
 import { and, eq } from 'drizzle-orm'
 
 interface CreateContextActionProps {
-  file: File
+  file?: File
+  url?: string
   projectId?: string
   type: ContextsTypes
+  // For URLs: scraped content
+  metadata?: {
+    title?: string
+    markdown?: string
+  }
 }
 
-export const createContextAction = async ({ file, projectId, type }: CreateContextActionProps) => {
+export const createContextAction = async ({
+  file,
+  url,
+  projectId,
+  type,
+  metadata,
+}: CreateContextActionProps) => {
   try {
     const userId = await getUserId()
 
-    // Upload file to Vercel Blob
-    const blob = await put(userId + '/' + file.name, file, {
-      access: 'public',
-      allowOverwrite: true,
-    })
+    let blobUrl: string
+    let fileName: string
+    let fileSize: number
+    let fileType: string
+
+    if (file) {
+      // Handle file upload (PDFs)
+      const blob = await put(userId + '/' + file.name, file, {
+        access: 'public',
+        allowOverwrite: true,
+      })
+      blobUrl = blob.url
+      fileName = file.name
+      fileSize = file.size
+      fileType = file.type
+    } else if (url && metadata) {
+      // Handle URL with scraped content
+      fileName = metadata.title || 'Untitled'
+      blobUrl = url
+      fileSize = metadata.markdown?.length || 0
+      fileType = 'text/markdown'
+    } else {
+      throw new Error('Either file or url with metadata must be provided')
+    }
 
     let openaiFileId: string | undefined
 
@@ -48,7 +79,7 @@ export const createContextAction = async ({ file, projectId, type }: CreateConte
       const vectorStoreId = projectResult[0].vectorStoreId
 
       // Upload to OpenAI based on context type
-      if (type === 'pdfs') {
+      if (type === 'pdfs' && file) {
         // For PDFs, upload the file directly
         const openaiResult = await uploadFileToVectorStore(file, vectorStoreId)
         if (!openaiResult.success) {
@@ -57,11 +88,19 @@ export const createContextAction = async ({ file, projectId, type }: CreateConte
         } else {
           openaiFileId = openaiResult.fileId
         }
-      } else if (type === 'urls') {
-        // For URLs, we need the markdown content
-        // This will be handled when the markdown is parsed and saved
-        // For now, we'll skip the OpenAI upload and handle it in the update action
-        console.log('URL context created, OpenAI upload will happen when markdown is parsed')
+      } else if (type === 'urls' && metadata?.markdown) {
+        // For URLs, upload the markdown content
+        const openaiResult = await uploadMarkdownToVectorStore(
+          metadata.markdown,
+          fileName,
+          vectorStoreId
+        )
+        if (!openaiResult.success) {
+          console.error('Failed to upload URL markdown to OpenAI:', openaiResult.error)
+          // Continue with creation but log the error
+        } else {
+          openaiFileId = openaiResult.fileId
+        }
       }
     }
 
@@ -71,13 +110,15 @@ export const createContextAction = async ({ file, projectId, type }: CreateConte
       .values({
         id: generateId(),
         userId,
-        name: file.name,
-        url: blob.url,
-        size: file.size,
+        name: fileName,
+        url: blobUrl,
+        size: fileSize,
         type: type,
-        fileType: file.type,
+        fileType: fileType,
         projectId,
         openaiUploadId: openaiFileId,
+        // Store parsed markdown for URLs
+        parsedMarkdown: metadata?.markdown,
       })
       .returning({ id: contexts.id })
 
@@ -85,7 +126,7 @@ export const createContextAction = async ({ file, projectId, type }: CreateConte
       throw new Error('Failed to create context record')
     }
 
-    return { id: contextRecord[0].id, url: blob.url, success: true }
+    return { id: contextRecord[0].id }
   } catch (error) {
     const errorMessage = handleErrorServer(error, 'Failed to upload context')
     return { error: errorMessage, success: false }

@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation'
 
 import { getContextsAction } from '@/app/actions/contexts/get'
-import { listProjectsAction } from '@/app/actions/projects/list'
 
 import { ErrorAlert } from '@/components/ui/error-alert'
 
@@ -15,10 +14,7 @@ interface EditFilePageProps {
 
 export default async function EditFilePage({ params }: EditFilePageProps) {
   const { id } = await params
-  const [{ context, error }, { projects = [] }] = await Promise.all([
-    getContextsAction({ id }),
-    listProjectsAction(),
-  ])
+  const { context, error } = await getContextsAction({ id })
 
   if (error) {
     return (
@@ -44,7 +40,7 @@ export default async function EditFilePage({ params }: EditFilePageProps) {
       ]}
       description="Update the file name or replace the file with a new version."
     >
-      <EditForm file={context} projects={projects} />
+      <EditForm file={context} />
     </LabLayout>
   )
 }

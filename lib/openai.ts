@@ -59,9 +59,12 @@ export const uploadMarkdownToVectorStore = async (
   vectorStoreId: string
 ) => {
   try {
+    // Ensure filename has .md extension
+    const mdFilename = filename.endsWith('.md') ? filename : `${filename}.md`
+
     // Create a File object from markdown content
     const blob = new Blob([markdown], { type: 'text/markdown' })
-    const file = new File([blob], filename, { type: 'text/markdown' })
+    const file = new File([blob], mdFilename, { type: 'text/markdown' })
 
     return await uploadFileToVectorStore(file, vectorStoreId)
   } catch (error) {
