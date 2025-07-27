@@ -71,6 +71,20 @@
       "when": 1753473308302,
       "tag": "0009_melted_mongu",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1753565801747,
+      "tag": "0010_productive_joshua_kane",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1753619302581,
+      "tag": "0011_medical_patch",
+      "breakpoints": true
     }
   ]
 }

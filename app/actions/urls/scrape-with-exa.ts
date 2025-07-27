@@ -1,18 +1,15 @@
 'use server'
 
-import { getUserId } from '@/lib/auth'
-import { db } from '@/lib/db'
-import { handleErrorServer } from '@/lib/error/server'
-import { generateId } from '@/lib/id'
+import { createContextAction } from '@/app/actions/contexts/create'
 
-import { contexts } from '@/schema'
+import { getUserId } from '@/lib/auth'
+import { handleErrorServer } from '@/lib/error/server'
 
 import { Exa } from 'exa-js'
 
 export const scrapeUrlWithExaAction = async (url: string, projectId?: string) => {
   try {
-    const userId = await getUserId()
-
+    await getUserId()
     if (!process.env.EXA_API_KEY) {
       throw new Error('EXA_API_KEY is not configured')
     }
@@ -31,23 +28,26 @@ export const scrapeUrlWithExaAction = async (url: string, projectId?: string) =>
     const title = result.results?.[0].title || 'Untitled'
     const scrapedUrl = result.results?.[0].url || url
 
-    // Save to files table as URL type
-    const fileId = generateId()
-    await db.insert(contexts).values({
-      id: fileId,
-      userId,
-      name: title,
+    // Create a context using the standard creation flow (includes OpenAI upload)
+    const contextResult = await createContextAction({
       url: scrapedUrl,
-      size: content?.length || 0,
+      projectId,
       type: 'urls',
-      projectId: projectId || null,
-      parsedMarkdown: content,
+      metadata: {
+        title,
+        markdown: content,
+      },
     })
+
+    if (contextResult.error) {
+      throw new Error(contextResult.error)
+    }
 
     return {
       success: true,
+      id: contextResult.id,
       file: {
-        id: fileId,
+        id: contextResult.id,
         name: title,
         url: scrapedUrl,
         content,

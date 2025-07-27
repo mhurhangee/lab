@@ -12,6 +12,8 @@ import { Input } from '@/components/ui/input'
 
 import { handleErrorClient } from '@/lib/error/client'
 
+import { mutateProjectsGlobally } from '@/providers/project'
+
 import { ProjectDB } from '@/types/database'
 
 import { toast } from 'sonner'
@@ -47,6 +49,8 @@ export function ProjectForm({ project, isEdit = false }: ProjectFormProps) {
         toast.success('Project updated', {
           description: 'Your project has been updated successfully.',
         })
+        // Refresh projects list immediately
+        mutateProjectsGlobally()
         router.push(`/projects/${project.id}`)
         router.refresh()
       } else {
@@ -63,6 +67,8 @@ export function ProjectForm({ project, isEdit = false }: ProjectFormProps) {
         toast.success('Project created', {
           description: 'Your new project has been created successfully.',
         })
+        // Refresh projects list immediately
+        mutateProjectsGlobally()
         router.push(`/projects/${result.id}`)
         router.refresh()
       }

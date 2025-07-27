@@ -23,6 +23,8 @@ import { Button } from '@/components/ui/button'
 
 import { handleErrorClient } from '@/lib/error/client'
 
+import { mutateProjectsGlobally } from '@/providers/project'
+
 import { toast } from 'sonner'
 
 interface DeleteProjectDialogProps {
@@ -57,6 +59,8 @@ export function DeleteProjectDialog({
       toast.success('Project deleted', {
         description: 'The project has been successfully deleted.',
       })
+      // Refresh projects list immediately
+      mutateProjectsGlobally()
       router.push('/projects')
       router.refresh()
     } catch (error) {

@@ -1,12 +1,8 @@
-import { listProjectsAction } from '@/app/actions/projects/list'
-
 import { LabLayout } from '@/components/lab-layout'
 
 import { UrlScrapeForm } from '../components/url-scrape-form'
 
-export default async function NewUrlPage() {
-  const { projects } = await listProjectsAction()
-
+export default function NewUrlPage() {
   return (
     <LabLayout
       title="Scrape URL"
@@ -19,7 +15,7 @@ export default async function NewUrlPage() {
       ]}
       description="Extract content from any URL using various extraction methods."
     >
-      <UrlScrapeForm projects={projects || []} />
+      <UrlScrapeForm />
     </LabLayout>
   )
 }

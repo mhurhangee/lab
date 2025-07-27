@@ -50,7 +50,7 @@ export function ActionsCell({ row }: ActionsCellProps) {
           <DeleteContextsDialog
             contextsId={url.id}
             type="urls"
-            size="icon"
+            size="sm"
             action={deleteContextsAction}
           />
         </DropdownMenuContent>

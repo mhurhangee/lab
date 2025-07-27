@@ -16,19 +16,18 @@ import { ProjectSelector } from '@/components/project-selector'
 import { handleErrorClient } from '@/lib/error/client'
 import { formatFileSize } from '@/lib/file-size'
 
-import type { ContextDB, ProjectDB } from '@/types/database'
+import type { ContextDB } from '@/types/database'
 
 import { toast } from 'sonner'
 
 interface EditFormProps {
   file: ContextDB
-  projects: ProjectDB[]
 }
 
-export function EditForm({ file, projects }: EditFormProps) {
+export function EditForm({ file }: EditFormProps) {
   const router = useRouter()
   const [name, setName] = useState(file.name)
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(file.projectId || null)
+  const [localProjectId, setLocalProjectId] = useState<string | null>(file.projectId || null)
   const [newFiles, setNewFiles] = useState<File[]>([])
   const [isUpdating, setIsUpdating] = useState(false)
 
@@ -45,7 +44,7 @@ export function EditForm({ file, projects }: EditFormProps) {
         id: file.id,
         name: name.trim(),
         file: newFiles.length > 0 ? newFiles[0] : undefined,
-        projectId: selectedProjectId,
+        projectId: localProjectId,
       })
 
       if (result.error) {
@@ -66,13 +65,18 @@ export function EditForm({ file, projects }: EditFormProps) {
     <div className="space-y-6">
       <div className="bg-card rounded-lg border p-6">
         <h2 className="mb-4 text-lg font-semibold">Project</h2>
-        <ProjectSelector
-          projects={projects}
-          selectedProjectId={selectedProjectId}
-          onProjectSelect={setSelectedProjectId}
-          placeholder="Select a project (optional)"
-          className="mb-6"
-        />
+        <div className="space-y-2">
+          <Label htmlFor="project">Project (Optional)</Label>
+          <p className="text-muted-foreground text-sm">Select which project this PDF belongs to.</p>
+          <ProjectSelector
+            placeholder="Select a project (optional)"
+            className="w-full"
+            variant="outline"
+            controlled={true}
+            value={localProjectId}
+            onValueChange={setLocalProjectId}
+          />
+        </div>
       </div>
 
       <div className="bg-card rounded-lg border p-6">
