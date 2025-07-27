@@ -291,6 +291,7 @@ function KnowledgeBaseContent() {
 export default function KnowledgeBasePage() {
   return (
     <LabLayout
+      pageTitle="Knowledge Base"
       title="Knowledge Base"
       icon="book-open"
       breadcrumb={[{ href: '/knowledge-base', label: 'Knowledge Base' }]}
