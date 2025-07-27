@@ -18,6 +18,7 @@ export const listProjectsWithFileCountsAction = async () => {
         userId: projects.userId,
         title: projects.title,
         description: projects.description,
+        vectorStoreId: projects.vectorStoreId,
         createdAt: projects.createdAt,
         updatedAt: projects.updatedAt,
         fileCount: count(contexts.id),
@@ -30,6 +31,7 @@ export const listProjectsWithFileCountsAction = async () => {
         projects.userId,
         projects.title,
         projects.description,
+        projects.vectorStoreId,
         projects.createdAt,
         projects.updatedAt
       )

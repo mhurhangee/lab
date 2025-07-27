@@ -3,7 +3,7 @@
 import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
-
+import { deleteVectorStore } from '@/lib/openai'
 import { contexts, projects } from '@/schema'
 
 import { and, eq } from 'drizzle-orm'
@@ -26,7 +26,10 @@ export const deleteProjectAction = async ({ id }: DeleteProjectActionProps) => {
     const result = await db
       .delete(projects)
       .where(and(eq(projects.id, id), eq(projects.userId, userId)))
-      .returning({ id: projects.id })
+      .returning({ id: projects.id, vectorStoreId: projects.vectorStoreId })
+    
+    // Delete the vector store
+    await deleteVectorStore(result[0].vectorStoreId)
 
     if (!result?.length) {
       throw new Error('Project not found or you do not have permission to delete it')

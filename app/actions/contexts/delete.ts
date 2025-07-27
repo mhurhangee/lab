@@ -5,8 +5,9 @@ import { del } from '@vercel/blob'
 import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
+import { deleteOpenAIFile, removeFileFromVectorStore } from '@/lib/openai'
 
-import { contexts } from '@/schema'
+import { contexts, projects } from '@/schema'
 
 import { and, eq } from 'drizzle-orm'
 
@@ -30,6 +31,24 @@ export const deleteContextsAction = async (id: string) => {
     // If the URL is from Vercel Blob, delete it
     if (context.url.includes('public.blob.vercel-storage.com')) {
       await del(context.url)
+    }
+
+    // Remove from OpenAI vector store if it exists
+    if (context.openaiUploadId && context.projectId) {
+      // Get the project's vector store ID
+      const projectResult = await db
+        .select({ vectorStoreId: projects.vectorStoreId })
+        .from(projects)
+        .where(and(eq(projects.id, context.projectId), eq(projects.userId, userId)))
+        .limit(1)
+
+      if (projectResult?.length && projectResult[0].vectorStoreId) {
+        // Remove from vector store (best effort)
+        await removeFileFromVectorStore(projectResult[0].vectorStoreId, context.openaiUploadId)
+
+        // Delete the file from OpenAI (best effort)
+        await deleteOpenAIFile(context.openaiUploadId)
+      }
     }
 
     // Delete from database

@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ALTER COLUMN "vector_store_id" SET NOT NULL;

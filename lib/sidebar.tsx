@@ -1,4 +1,5 @@
 import {
+  BookOpenIcon,
   Bot,
   FileIcon,
   FileTextIcon,
@@ -103,6 +104,12 @@ export const sidebarItems: SidebarItem[] = [
     defaultOpen: true,
     loggedIn: true,
     items: [
+      {
+        name: 'Knowledge Base',
+        href: '/knowledge-base',
+        icon: <BookOpenIcon className="h-4 w-4" />,
+        loggedIn: true,
+      },
       {
         name: 'Contexts',
         href: '/contexts',
