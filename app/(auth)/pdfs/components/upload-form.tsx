@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
@@ -13,19 +13,23 @@ import { ProjectSelector } from '@/components/project-selector'
 
 import { handleErrorClient } from '@/lib/error/client'
 
-import type { ProjectDB } from '@/types/database'
+import { useProject } from '@/providers/project'
 
 import { toast } from 'sonner'
 
-interface UploadFormProps {
-  projects: ProjectDB[]
-}
-
-export function UploadForm({ projects }: UploadFormProps) {
+export function UploadForm() {
   const router = useRouter()
+  const { selectedProject } = useProject()
   const [files, setFiles] = useState<File[]>([])
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
+  const [localProjectId, setLocalProjectId] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
+
+  // Pre-select the current project when component mounts
+  useEffect(() => {
+    if (selectedProject) {
+      setLocalProjectId(selectedProject.id)
+    }
+  }, [selectedProject])
 
   const handleUpload = async () => {
     if (!files.length) {
@@ -39,7 +43,7 @@ export function UploadForm({ projects }: UploadFormProps) {
       const file = files[0]
       const result = await createContextAction({
         file,
-        projectId: selectedProjectId || undefined,
+        projectId: localProjectId || undefined,
         type: 'pdfs',
       })
 
@@ -61,12 +65,15 @@ export function UploadForm({ projects }: UploadFormProps) {
     <div className="space-y-6">
       <div className="bg-card rounded-lg border p-6">
         <h2 className="mb-4 text-lg font-semibold">Project</h2>
+        <p className="text-muted-foreground mb-3 text-sm">
+          Select which project to upload this file to. Defaults to your currently selected project.
+        </p>
         <ProjectSelector
-          projects={projects}
-          selectedProjectId={selectedProjectId}
-          onProjectSelect={setSelectedProjectId}
           placeholder="Select a project (optional)"
-          className="mb-6"
+          variant="outline"
+          controlled={true}
+          value={localProjectId}
+          onValueChange={setLocalProjectId}
         />
       </div>
 

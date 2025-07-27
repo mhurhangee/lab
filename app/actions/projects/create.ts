@@ -1,5 +1,7 @@
 'use server'
 
+import { revalidateTag } from 'next/cache'
+
 import { getUserId } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { handleErrorServer } from '@/lib/error/server'
@@ -39,6 +41,9 @@ export const createProjectAction = async ({ title, description }: CreateProjectA
     if (!project?.length) {
       throw new Error('Failed to create project')
     }
+
+    // Revalidate projects cache
+    revalidateTag('projects')
 
     return { id: project[0].id }
   } catch (error) {

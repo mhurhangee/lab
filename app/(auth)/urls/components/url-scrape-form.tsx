@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
@@ -22,17 +22,18 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 
+import { ProjectSelector } from '@/components/project-selector'
+
 import { handleErrorClient } from '@/lib/error/client'
 
-interface UrlScrapeFormProps {
-  projects: Array<{ id: string; title: string }>
-}
+import { useProject } from '@/providers/project'
 
-export function UrlScrapeForm({ projects }: UrlScrapeFormProps) {
+export function UrlScrapeForm() {
   const router = useRouter()
+  const { selectedProject } = useProject()
   const [url, setUrl] = useState('')
   const [extractionMethod, setExtractionMethod] = useState('exa')
-  const [projectId, setProjectId] = useState<string>('none')
+  const [localProjectId, setLocalProjectId] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [scrapedContent, setScrapedContent] = useState<{
@@ -40,6 +41,13 @@ export function UrlScrapeForm({ projects }: UrlScrapeFormProps) {
     content: string
     url: string
   } | null>(null)
+
+  // Pre-select the current project when component mounts
+  useEffect(() => {
+    if (selectedProject) {
+      setLocalProjectId(selectedProject.id)
+    }
+  }, [selectedProject])
 
   const handleScrape = async () => {
     if (!url.trim()) {
@@ -52,7 +60,7 @@ export function UrlScrapeForm({ projects }: UrlScrapeFormProps) {
     setScrapedContent(null)
 
     try {
-      const result = await scrapeUrlWithExaAction(url, projectId === 'none' ? undefined : projectId)
+      const result = await scrapeUrlWithExaAction(url, localProjectId || undefined)
 
       if (result.error) {
         setError(result.error)
@@ -124,19 +132,17 @@ export function UrlScrapeForm({ projects }: UrlScrapeFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="project">Project (Optional)</Label>
-            <Select value={projectId} onValueChange={setProjectId} disabled={isLoading}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a project" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">No project</SelectItem>
-                {projects.map(project => (
-                  <SelectItem key={project.id} value={project.id}>
-                    {project.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <p className="text-muted-foreground text-sm">
+              Select which project to add this URL to. Defaults to your currently selected project.
+            </p>
+            <ProjectSelector
+              placeholder="Select a project (optional)"
+              className="w-full"
+              variant="outline"
+              controlled={true}
+              value={localProjectId}
+              onValueChange={setLocalProjectId}
+            />
           </div>
 
           {error && <ErrorAlert error={error} />}

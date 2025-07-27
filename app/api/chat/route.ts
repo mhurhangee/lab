@@ -1,3 +1,5 @@
+import { openai } from '@ai-sdk/openai'
+
 import { NextRequest } from 'next/server'
 
 import { updateChatAction } from '@/app/actions/chats/update'
@@ -21,10 +23,14 @@ interface Body {
   chatId: string
   toolWeb: boolean
   model: string
+  projectVectorStoreId: string | null
 }
 
 export async function POST(req: NextRequest) {
-  const { messages, chatId, toolWeb, model }: Body = (await req.json()) as Body
+  const { messages, chatId, toolWeb, model, projectVectorStoreId }: Body =
+    (await req.json()) as Body
+
+  const vectorStoreId = projectVectorStoreId || null
 
   const stream = createUIMessageStream({
     execute({ writer }) {
@@ -37,9 +43,12 @@ export async function POST(req: NextRequest) {
           chunking: 'line',
         }),
         tools: {
-          web_search_preview,
+          ...(vectorStoreId
+            ? { file_search: openai.tools.fileSearch({ vectorStoreIds: [vectorStoreId] }) }
+            : {}),
+          ...(toolWeb ? { web_search_preview } : {}),
         },
-        toolChoice: toolWeb ? { type: 'tool', toolName: 'web_search_preview' } : 'auto',
+        toolChoice: 'auto',
       })
 
       writer.merge(
@@ -47,7 +56,7 @@ export async function POST(req: NextRequest) {
           originalMessages: messages,
           onFinish: async ({ messages }) => {
             let title: string | null = null
-            // Generate and stream suggestions
+            // Generate suggestions and title
             try {
               const postResponseData = await generatePostResponseData(messages)
 
@@ -65,6 +74,7 @@ export async function POST(req: NextRequest) {
               console.error('Failed to generate post response data:', error)
             }
 
+            // Update db
             void updateChatAction({ id: chatId, messages, title: title || undefined })
           },
         })

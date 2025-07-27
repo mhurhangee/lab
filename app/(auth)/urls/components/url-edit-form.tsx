@@ -14,19 +14,16 @@ import { ErrorAlert } from '@/components/ui/error-alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Markdown } from '@/components/ui/markdown'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
+
+import { ProjectSelector } from '@/components/project-selector'
 
 import { formatDate } from '@/lib/date'
 import { handleErrorClient } from '@/lib/error/client'
 import { formatFileSize } from '@/lib/file-size'
+
+import { useProject } from '@/providers/project'
 
 type UrlWithProject = {
   id: string
@@ -41,13 +38,12 @@ type UrlWithProject = {
 
 interface UrlEditFormProps {
   url: UrlWithProject
-  projects: Array<{ id: string; title: string }>
 }
 
-export function UrlEditForm({ url, projects }: UrlEditFormProps) {
+export function UrlEditForm({ url }: UrlEditFormProps) {
   const router = useRouter()
   const [name, setName] = useState(url.name)
-  const [projectId, setProjectId] = useState(url.projectId || 'none')
+  const [localProjectId, setLocalProjectId] = useState<string | null>(url.projectId || null)
   const [markdown, setMarkdown] = useState(url.parsedMarkdown || '')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -62,7 +58,7 @@ export function UrlEditForm({ url, projects }: UrlEditFormProps) {
       const result = await updateContextAction({
         id: url.id,
         name,
-        projectId: projectId === 'none' ? null : projectId,
+        projectId: localProjectId,
         markdown,
       })
 
@@ -131,20 +127,18 @@ export function UrlEditForm({ url, projects }: UrlEditFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="project">Project</Label>
-            <Select value={projectId} onValueChange={setProjectId} disabled={isLoading}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a project" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">No project</SelectItem>
-                {projects.map(project => (
-                  <SelectItem key={project.id} value={project.id}>
-                    {project.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="project">Project (Optional)</Label>
+            <p className="text-muted-foreground text-sm">
+              Select which project this URL belongs to.
+            </p>
+            <ProjectSelector
+              placeholder="Select a project (optional)"
+              className="w-full"
+              variant="outline"
+              controlled={true}
+              value={localProjectId}
+              onValueChange={setLocalProjectId}
+            />
           </div>
 
           {error && <ErrorAlert error={error} />}

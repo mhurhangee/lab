@@ -1,8 +1,12 @@
+import { useAuth } from '@clerk/nextjs'
+
 import Link from 'next/link'
 
 import { Logo } from '@/components/ui/logo'
 import { SidebarHeader as SidebarHeaderComponent, SidebarTrigger } from '@/components/ui/sidebar'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+
+import { ProjectSelector } from '@/components/project-selector'
 
 import { app } from '@/lib/app'
 
@@ -10,6 +14,7 @@ import { useIsMobile } from '@/hooks/use-mobile'
 
 export const SidebarHeader = () => {
   const isMobile = useIsMobile()
+  const { userId } = useAuth()
 
   return (
     <SidebarHeaderComponent>
@@ -27,6 +32,20 @@ export const SidebarHeader = () => {
           </Tooltip>
         )}
       </div>
+
+      {userId && (
+        // Project Selector
+        <div className="pb-2 group-data-[collapsible=icon]:hidden">
+          <ProjectSelector
+            placeholder="Select project"
+            variant="ghost"
+            size="sm"
+            showRefresh={true}
+            className="w-full"
+          />
+        </div>
+      )}
+
       {!isMobile && (
         <div className="flex hidden items-center justify-center group-data-[collapsible=icon]:block group-data-[state=collapsed]:block">
           <Tooltip>

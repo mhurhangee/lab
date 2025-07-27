@@ -7,3 +7,8 @@ export const web_search_preview = openai.tools.webSearchPreview({
     country: 'GB',
   },
 })
+
+export const file_search = (vectorStoreId: string) =>
+  openai.tools.fileSearch({
+    vectorStoreIds: [vectorStoreId],
+  })

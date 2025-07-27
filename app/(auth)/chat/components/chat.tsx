@@ -42,6 +42,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { Thinking } from '@/components/ui/thinking'
 import { Toggle } from '@/components/ui/toggle'
 
+import { ProjectSelector } from '@/components/project-selector'
+
 import { copyToClipboard } from '@/lib/copy-to-clipboard'
 import { handleErrorClient } from '@/lib/error/client'
 import { models } from '@/lib/models'
@@ -50,6 +52,7 @@ import { SimpleTTSPlayer } from '@/lib/text-to-speech'
 import { cn } from '@/lib/utils'
 
 import { useChatTitle } from '@/providers/chat-title'
+import { useProject } from '@/providers/project'
 
 import { TransientUIMessage } from '@/types/ai'
 import { ChatDB } from '@/types/database'
@@ -59,6 +62,7 @@ import { toast } from 'sonner'
 import { useStickToBottom } from 'use-stick-to-bottom'
 
 export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
+  const { selectedProject } = useProject()
   // State
   const [input, setInput] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -189,7 +193,10 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (input.trim()) {
-      void sendMessage({ text: input }, { body: { toolWeb, model } })
+      void sendMessage(
+        { text: input },
+        { body: { toolWeb, model, projectVectorStoreId: selectedProject?.vectorStoreId } }
+      )
       setInput('')
       setSuggestions([])
     }
@@ -407,6 +414,13 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
                   <PlusIcon />
                 </Link>
               </ButtonTT>
+              {/* Project selector */}
+              <ProjectSelector
+                placeholder="Select project"
+                variant="ghost"
+                size="sm"
+                showRefresh={true}
+              />
 
               {/* Model selector */}
               <Select value={model} onValueChange={setModel}>

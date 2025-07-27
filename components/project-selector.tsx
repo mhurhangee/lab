@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
-import { ChevronDownIcon, FolderIcon } from 'lucide-react'
+import { ChevronDownIcon, FolderIcon, FolderPlusIcon, RefreshCwIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -13,57 +13,124 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Loader } from '@/components/ui/loader'
+
+import { cn } from '@/lib/utils'
 
 import { useProject } from '@/providers/project'
 
-import type { ProjectDB } from '@/types/database'
-
 interface ProjectSelectorProps {
-  projects: ProjectDB[]
-  selectedProjectId?: string | null
-  onProjectSelect: (projectId: string | null) => void
   placeholder?: string
   className?: string
+  variant?: 'default' | 'outline' | 'ghost'
+  size?: 'default' | 'sm' | 'lg'
+  showRefresh?: boolean
+  // Controlled mode props (for forms)
+  value?: string | null
+  onValueChange?: (projectId: string | null) => void
+  controlled?: boolean
 }
 
 export function ProjectSelector({
-  projects,
-  selectedProjectId,
-  onProjectSelect,
   placeholder = 'Select a project',
   className,
+  variant = 'outline',
+  size = 'default',
+  showRefresh = false,
+  value,
+  onValueChange,
+  controlled = false,
 }: ProjectSelectorProps) {
-  const { selectedProject } = useProject()
+  const router = useRouter()
+  const { selectedProject, setSelectedProject, projects, isLoading, error, refreshProjects } =
+    useProject()
 
-  // Use the selected project from context as default if no selectedProjectId is provided
-  const defaultProjectId = selectedProjectId ?? selectedProject?.id ?? null
-  const [currentProjectId, setCurrentProjectId] = useState<string | null>(defaultProjectId)
-
-  const selectedProject_ = projects.find(p => p.id === currentProjectId)
+  // Use controlled value or global selected project
+  const currentSelectedProject = controlled
+    ? value
+      ? projects.find(p => p.id === value) || null
+      : null
+    : selectedProject
 
   const handleProjectSelect = (projectId: string | null) => {
-    setCurrentProjectId(projectId)
-    onProjectSelect(projectId)
+    if (controlled && onValueChange) {
+      // In controlled mode, call the provided callback
+      onValueChange(projectId)
+    } else {
+      // In uncontrolled mode, update global state
+      const project = projects.find(p => p.id === projectId) || null
+      setSelectedProject(project)
+    }
+  }
+
+  const handleRefresh = async () => {
+    await refreshProjects()
+  }
+
+  const handleNewProject = () => {
+    setSelectedProject(null)
+    router.push('/projects/new')
+  }
+
+  if (error) {
+    return (
+      <Button
+        variant={variant}
+        size={size}
+        className={cn('text-destructive justify-between', className)}
+        onClick={handleRefresh}
+      >
+        <div className="flex items-center gap-2">
+          <FolderIcon className="h-4 w-4" />
+          Error loading projects
+        </div>
+        <RefreshCwIcon className="h-4 w-4" />
+      </Button>
+    )
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className={`w-full justify-between ${className}`}>
+        <Button
+          variant={variant}
+          size={size}
+          className={cn('justify-between', className)}
+          disabled={isLoading}
+        >
           <div className="flex items-center gap-2">
             <FolderIcon className="h-4 w-4" />
-            {selectedProject_ ? selectedProject_.title : placeholder}
+            {isLoading ? (
+              'Loading projects...'
+            ) : currentSelectedProject ? (
+              <span className="truncate">{currentSelectedProject.title}</span>
+            ) : (
+              placeholder
+            )}
           </div>
-          <ChevronDownIcon className="h-4 w-4 opacity-50" />
+          {isLoading ? <Loader /> : <ChevronDownIcon className="h-4 w-4 opacity-50" />}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>Select Project</DropdownMenuLabel>
+        <div className="flex items-center justify-between px-2 py-1.5">
+          <DropdownMenuLabel className="px-0 py-0">Select Project</DropdownMenuLabel>
+          {showRefresh && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0"
+              onClick={handleRefresh}
+              disabled={isLoading}
+            >
+              <RefreshCwIcon className={cn('h-3 w-3', isLoading && 'animate-spin')} />
+            </Button>
+          )}
+        </div>
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
           onClick={() => handleProjectSelect(null)}
-          className={currentProjectId === null ? 'bg-accent' : ''}
+          className={currentSelectedProject === null ? 'bg-accent' : ''}
         >
           <div className="flex items-center gap-2">
             <FolderIcon className="h-4 w-4 opacity-50" />
@@ -75,12 +142,12 @@ export function ProjectSelector({
           <DropdownMenuItem
             key={project.id}
             onClick={() => handleProjectSelect(project.id)}
-            className={currentProjectId === project.id ? 'bg-accent' : ''}
+            className={currentSelectedProject?.id === project.id ? 'bg-accent' : ''}
           >
-            <div className="flex items-center gap-2">
-              <FolderIcon className="h-4 w-4" />
-              <div className="flex flex-col">
-                <span className="font-medium">{project.title}</span>
+            <div className="flex min-w-0 items-center gap-2">
+              <FolderIcon className="h-4 w-4 flex-shrink-0" />
+              <div className="flex min-w-0 flex-col">
+                <span className="truncate font-medium">{project.title}</span>
                 {project.description && (
                   <span className="text-muted-foreground truncate text-xs">
                     {project.description}
@@ -90,6 +157,22 @@ export function ProjectSelector({
             </div>
           </DropdownMenuItem>
         ))}
+
+        {projects.length === 0 && !isLoading && (
+          <DropdownMenuItem disabled>
+            <div className="text-muted-foreground flex items-center gap-2">
+              <FolderIcon className="h-4 w-4" />
+              No projects found
+            </div>
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleNewProject}>
+          <div className="flex items-center gap-2">
+            <FolderPlusIcon className="h-4 w-4 opacity-50" />
+            New project
+          </div>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

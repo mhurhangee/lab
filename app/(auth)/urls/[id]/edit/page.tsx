@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation'
 
 import { getContextsWithProjectAction } from '@/app/actions/contexts/get-with-project'
-import { listProjectsAction } from '@/app/actions/projects/list'
 
 import { ErrorAlert } from '@/components/ui/error-alert'
 
@@ -15,10 +14,7 @@ interface UrlEditPageProps {
 
 export default async function UrlEditPage({ params }: UrlEditPageProps) {
   const { id } = await params
-  const [{ context: url, error }, { projects }] = await Promise.all([
-    getContextsWithProjectAction({ id, type: 'urls' }),
-    listProjectsAction(),
-  ])
+  const { context: url, error } = await getContextsWithProjectAction({ id, type: 'urls' })
 
   if (error) {
     return (
@@ -44,7 +40,7 @@ export default async function UrlEditPage({ params }: UrlEditPageProps) {
       ]}
       description="Edit the title, project assignment, and content of this scraped URL."
     >
-      <UrlEditForm url={url} projects={projects || []} />
+      <UrlEditForm url={url} />
     </LabLayout>
   )
 }
