@@ -22,7 +22,7 @@ export function EditorApp({ context }: { context: ContextDB }) {
     extensions: [
       ...extensions,
       TableOfContents.configure({
-        anchorTypes: ['heading', 'blockquote'],
+        anchorTypes: ['heading', 'blockquote', ],
         getIndex: getHierarchicalIndexes,
         onUpdate(content) {
           setTocItems(content)
