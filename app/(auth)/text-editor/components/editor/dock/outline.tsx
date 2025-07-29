@@ -101,20 +101,31 @@ const buildOutlineTree = (items: TableOfContentDataItem[]): OutlineNode[] => {
 
   for (const item of items) {
     const node: OutlineNode = { item, children: [] }
+    const isHeading = item.node.type.name === 'heading'
+    const isBlockquote = item.node.type.name === 'blockquote'
     
-    // Find the correct parent based on level
-    while (stack.length > 0 && stack[stack.length - 1].item.level >= item.level) {
-      stack.pop()
-    }
-    
-    if (stack.length === 0) {
-      tree.push(node)
-    } else {
-      stack[stack.length - 1].children.push(node)
-    }
-    
-    // Only headings can have children (blockquotes are leaf nodes)
-    if (item.node.type.name === 'heading') {
+    if (isBlockquote) {
+      // Blockquotes should always be children of the most recent heading
+      // Find the last heading in the stack to attach this blockquote to
+      if (stack.length > 0) {
+        stack[stack.length - 1].children.push(node)
+      } else {
+        // If no heading exists, add to root (shouldn't happen in normal usage)
+        tree.push(node)
+      }
+    } else if (isHeading) {
+      // Find the correct parent based on heading level
+      while (stack.length > 0 && stack[stack.length - 1].item.level >= item.level) {
+        stack.pop()
+      }
+      
+      if (stack.length === 0) {
+        tree.push(node)
+      } else {
+        stack[stack.length - 1].children.push(node)
+      }
+      
+      // Add this heading to the stack so it can have children
       stack.push(node)
     }
   }
