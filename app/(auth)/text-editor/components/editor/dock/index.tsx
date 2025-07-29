@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import type { TableOfContentDataItem } from '@tiptap/extension-table-of-contents'
 import { Outline } from './outline'
+import { MentionsNav } from './mentions-nav'
 
 interface DockProps {
     editor: TiptapEditor
@@ -37,9 +38,15 @@ export const Dock = ({ editor, tocItems }: DockProps) => {
       <TabsContent value="outline">
         <Outline tocItems={tocItems} />
       </TabsContent>
-      <TabsContent value="characters">characters</TabsContent>
-      <TabsContent value="locations">locations</TabsContent>
-      <TabsContent value="events">events</TabsContent>
+      <TabsContent value="characters">
+        <MentionsNav editor={editor} type="character" />
+      </TabsContent>
+      <TabsContent value="locations">
+        <MentionsNav editor={editor} type="location" />
+      </TabsContent>
+      <TabsContent value="events">
+        <MentionsNav editor={editor} type="event" />
+      </TabsContent>
       <TabsContent value="notes">notes</TabsContent>
     </Tabs>
   )
