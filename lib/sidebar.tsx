@@ -14,6 +14,7 @@ import {
   MicIcon,
   Pen,
   TimerIcon,
+  TypeOutlineIcon,
   Volume2Icon,
 } from 'lucide-react'
 
@@ -83,6 +84,13 @@ export const sidebarItems: SidebarItem[] = [
         icon: <Bot className="h-4 w-4" />,
         loggedIn: true,
         newButton: '/chat/new',
+      },
+      {
+        name: 'Text Editor',
+        href: '/text-editor',
+        icon: <TypeOutlineIcon className="h-4 w-4" />,
+        loggedIn: true,
+        newButton: '/text-editor/new',
       },
       {
         name: 'Text-to-Speech',

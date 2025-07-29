@@ -21,6 +21,7 @@ interface UpdateContextActionProps {
   projectId?: string | null
   file?: File
   markdown?: string
+  textDocument?: string
 }
 
 export const updateContextAction = async ({
@@ -29,6 +30,7 @@ export const updateContextAction = async ({
   projectId,
   file,
   markdown,
+  textDocument,
 }: UpdateContextActionProps) => {
   try {
     const userId = await getUserId()
@@ -125,6 +127,10 @@ export const updateContextAction = async ({
           }
         }
       }
+    }
+
+    if (textDocument) {
+      updateData.textDocument = textDocument
     }
 
     // If updating the name only

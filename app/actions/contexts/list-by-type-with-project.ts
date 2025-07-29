@@ -31,6 +31,7 @@ export const listContextsByTypeWithProjectsAction = async ({
         fileType: contexts.fileType,
         projectId: contexts.projectId,
         parsedMarkdown: contexts.parsedMarkdown,
+        textDocument: contexts.textDocument,
         openaiUploadId: contexts.openaiUploadId,
         createdAt: contexts.createdAt,
         updatedAt: contexts.updatedAt,
