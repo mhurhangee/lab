@@ -145,8 +145,6 @@ export const updateContextAction = async ({
       }
     }
 
-    console.log('Server updateData:', JSON.stringify(updateData, null, 2))
-
     // If updating the name only
     if (name && !file && !markdown) {
       updateData.name = name
