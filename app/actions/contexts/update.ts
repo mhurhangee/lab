@@ -21,7 +21,7 @@ interface UpdateContextActionProps {
   projectId?: string | null
   file?: File
   markdown?: string
-  textDocument?: string
+  textDocument?: string | unknown
 }
 
 export const updateContextAction = async ({
@@ -129,9 +129,23 @@ export const updateContextAction = async ({
       }
     }
 
+    // If updating the textDocument
     if (textDocument) {
-      updateData.textDocument = textDocument
+      // If textDocument is a string, parse it back to JSON
+      if (typeof textDocument === 'string') {
+        try {
+          const parsedDocument = JSON.parse(textDocument)
+          updateData.textDocument = parsedDocument
+        } catch (error) {
+          handleErrorServer(error, 'Error parsing textDocument JSON')
+          updateData.textDocument = textDocument
+        }
+      } else {
+        updateData.textDocument = textDocument
+      }
     }
+
+    console.log('Server updateData:', JSON.stringify(updateData, null, 2))
 
     // If updating the name only
     if (name && !file && !markdown) {

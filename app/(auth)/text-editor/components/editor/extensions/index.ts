@@ -8,8 +8,7 @@ import { Text } from '@tiptap/extension-text'
 import { Placeholder, UndoRedo } from '@tiptap/extensions'
 import CodeBlock from '@tiptap/extension-code-block'
 
-import { mentionSuggestion } from './mentions'
-import { locationMentionSuggestion, eventMentionSuggestion, characterMentionSuggestion } from './multi-mentions'
+import { dynamicLocationMentionSuggestion, dynamicEventMentionSuggestion, dynamicCharacterMentionSuggestion } from './dynamic-mentions'
 
 export const extensions = [
   Document,
@@ -21,12 +20,40 @@ export const extensions = [
   Blockquote,
   HorizontalRule,
   // Location mentions (@)
-  Mention.configure({
+  Mention.extend({
+    addAttributes() {
+      return {
+        id: {
+          default: null,
+          parseHTML: (element: any) => element.getAttribute('data-id'),
+          renderHTML: (attributes: any) => {
+            if (!attributes.id) return {}
+            return { 'data-id': attributes.id }
+          },
+        },
+        label: {
+          default: null,
+          parseHTML: (element: any) => element.getAttribute('data-label'),
+          renderHTML: (attributes: any) => {
+            if (!attributes.label) return {}
+            return { 'data-label': attributes.label }
+          },
+        },
+        type: {
+          default: 'location',
+          parseHTML: (element: any) => element.getAttribute('data-type') || 'location',
+          renderHTML: (attributes: any) => {
+            return { 'data-type': attributes.type || 'location' }
+          },
+        },
+      }
+    },
+  }).configure({
     HTMLAttributes: {
       class: 'mention',
       'data-type': 'location',
     },
-    suggestion: locationMentionSuggestion,
+    suggestion: dynamicLocationMentionSuggestion,
     renderLabel({ node }) {
       return `@${node.attrs.label || node.attrs.id}`
     },
@@ -34,13 +61,40 @@ export const extensions = [
   // Event mentions (!)
   Mention.extend({
     name: 'eventMention',
+    addAttributes() {
+      return {
+        id: {
+          default: null,
+          parseHTML: (element: any) => element.getAttribute('data-id'),
+          renderHTML: (attributes: any) => {
+            if (!attributes.id) return {}
+            return { 'data-id': attributes.id }
+          },
+        },
+        label: {
+          default: null,
+          parseHTML: (element: any) => element.getAttribute('data-label'),
+          renderHTML: (attributes: any) => {
+            if (!attributes.label) return {}
+            return { 'data-label': attributes.label }
+          },
+        },
+        type: {
+          default: 'event',
+          parseHTML: (element: any) => element.getAttribute('data-type') || 'event',
+          renderHTML: (attributes: any) => {
+            return { 'data-type': attributes.type || 'event' }
+          },
+        },
+      }
+    },
   }).configure({
     HTMLAttributes: {
       class: 'mention',
       'data-type': 'event',
     },
     suggestion: {
-      ...eventMentionSuggestion,
+      ...dynamicEventMentionSuggestion,
       char: '!',
     },
     renderLabel({ node }) {
@@ -50,13 +104,40 @@ export const extensions = [
   // Character mentions (&)
   Mention.extend({
     name: 'characterMention',
+    addAttributes() {
+      return {
+        id: {
+          default: null,
+          parseHTML: (element: any) => element.getAttribute('data-id'),
+          renderHTML: (attributes: any) => {
+            if (!attributes.id) return {}
+            return { 'data-id': attributes.id }
+          },
+        },
+        label: {
+          default: null,
+          parseHTML: (element: any) => element.getAttribute('data-label'),
+          renderHTML: (attributes: any) => {
+            if (!attributes.label) return {}
+            return { 'data-label': attributes.label }
+          },
+        },
+        type: {
+          default: 'character',
+          parseHTML: (element: any) => element.getAttribute('data-type') || 'character',
+          renderHTML: (attributes: any) => {
+            return { 'data-type': attributes.type || 'character' }
+          },
+        },
+      }
+    },
   }).configure({
     HTMLAttributes: {
       class: 'mention',
       'data-type': 'character',
     },
     suggestion: {
-      ...characterMentionSuggestion,
+      ...dynamicCharacterMentionSuggestion,
       char: '&',
     },
     renderLabel({ node }) {
