@@ -5,7 +5,15 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import { Dock } from './dock'
 import { Editor } from './editor'
 
-export const SplitView = ({ editor, id }: { editor: TiptapEditor; id: string }) => {
+import { TableOfContentDataItem } from '@tiptap/extension-table-of-contents'
+
+interface SplitViewProps {
+    editor: TiptapEditor
+    id: string
+    tocItems: TableOfContentDataItem[]
+}
+
+export const SplitView = ({ editor, id, tocItems }: SplitViewProps) => {
   return (
     <main className="mx-auto h-full w-full font-sans">
       <ResizablePanelGroup direction="horizontal" className="h-full w-full">
@@ -14,7 +22,7 @@ export const SplitView = ({ editor, id }: { editor: TiptapEditor; id: string }) 
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={40} minSize={20}>
-          <Dock editor={editor} />
+          <Dock editor={editor} tocItems={tocItems} />
         </ResizablePanel>
       </ResizablePanelGroup>
     </main>

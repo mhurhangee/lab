@@ -6,7 +6,15 @@ import { CalendarIcon, ListIcon, MapPinIcon, StickyNoteIcon, UsersIcon } from 'l
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-export const Dock = ({ editor }: { editor: TiptapEditor }) => {
+import type { TableOfContentDataItem } from '@tiptap/extension-table-of-contents'
+import { Outline } from './outline'
+
+interface DockProps {
+    editor: TiptapEditor
+    tocItems: TableOfContentDataItem[]
+}
+
+export const Dock = ({ editor, tocItems }: DockProps) => {
   return (
     <Tabs defaultValue="outline" className="w-full">
       <TabsList className="bg-background w-full">
@@ -26,7 +34,9 @@ export const Dock = ({ editor }: { editor: TiptapEditor }) => {
           <StickyNoteIcon />
         </TabsTrigger>
       </TabsList>
-      <TabsContent value="outline">outline</TabsContent>
+      <TabsContent value="outline">
+        <Outline tocItems={tocItems} />
+      </TabsContent>
       <TabsContent value="characters">characters</TabsContent>
       <TabsContent value="locations">locations</TabsContent>
       <TabsContent value="events">events</TabsContent>

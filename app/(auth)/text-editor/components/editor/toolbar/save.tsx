@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { handleErrorClient } from '@/lib/error/client'
 
 import { toast } from 'sonner'
+import { useProject } from '@/providers/project'
 
 interface SaveProps {
   editor: TiptapEditor
@@ -18,8 +19,10 @@ interface SaveProps {
 }
 
 export function Save({ editor, id }: SaveProps) {
+  const { selectedProject } = useProject()
+  
   const handleSave = async () => {
-    const { error } = await updateContextAction({ id, textDocument: editor.getHTML() })
+    const { error } = await updateContextAction({ id, textDocument: editor.getHTML(), projectId: selectedProject?.id || '' })
     if (error) {
       handleErrorClient('Error saving document', error)
     } else {
