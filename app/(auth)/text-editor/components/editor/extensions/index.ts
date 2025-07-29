@@ -9,6 +9,7 @@ import { Placeholder, UndoRedo } from '@tiptap/extensions'
 import CodeBlock from '@tiptap/extension-code-block'
 
 import { mentionSuggestion } from './mentions'
+import { locationMentionSuggestion, eventMentionSuggestion, characterMentionSuggestion } from './multi-mentions'
 
 export const extensions = [
   Document,
@@ -19,13 +20,47 @@ export const extensions = [
   }),
   Blockquote,
   HorizontalRule,
+  // Location mentions (@)
   Mention.configure({
     HTMLAttributes: {
       class: 'mention',
+      'data-type': 'location',
     },
-    suggestion: mentionSuggestion,
+    suggestion: locationMentionSuggestion,
     renderLabel({ node }) {
       return `@${node.attrs.label || node.attrs.id}`
+    },
+  }),
+  // Event mentions (!)
+  Mention.extend({
+    name: 'eventMention',
+  }).configure({
+    HTMLAttributes: {
+      class: 'mention',
+      'data-type': 'event',
+    },
+    suggestion: {
+      ...eventMentionSuggestion,
+      char: '!',
+    },
+    renderLabel({ node }) {
+      return `!${node.attrs.label || node.attrs.id}`
+    },
+  }),
+  // Character mentions (&)
+  Mention.extend({
+    name: 'characterMention',
+  }).configure({
+    HTMLAttributes: {
+      class: 'mention',
+      'data-type': 'character',
+    },
+    suggestion: {
+      ...characterMentionSuggestion,
+      char: '&',
+    },
+    renderLabel({ node }) {
+      return `&${node.attrs.label || node.attrs.id}`
     },
   }),
   Placeholder.configure({
