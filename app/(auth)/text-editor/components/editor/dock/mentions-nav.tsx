@@ -303,22 +303,96 @@ export const MentionsNav = ({ editor, type }: MentionsNavProps) => {
   }, [editor, type])
 
   const handleMentionClick = (mention: MentionReference) => {
-    const editorElement = editor.view.dom
-    const mentionElements = editorElement.querySelectorAll(`[data-type="${type}"]`)
+    // Use TipTap's built-in position-based navigation
+    // We need to find the exact position of this specific mention in the document
+    const doc = editor.getJSON()
+    let currentPosition = 0
+    let targetPosition = -1
     
-    for (const element of mentionElements) {
-      const label = element.getAttribute('data-label')
-      if (label === mention.label) {
-        element.scrollIntoView({ 
+    const findMentionPosition = (node: any): boolean => {
+      currentPosition++
+      
+      // Check if this is the mention we're looking for
+      if ((node.type === 'mention' || node.type === 'eventMention' || node.type === 'characterMention') &&
+          node.attrs?.label === mention.label &&
+          currentPosition === mention.position) {
+        targetPosition = currentPosition
+        return true
+      }
+      
+      // Recursively search child nodes
+      if (node.content && Array.isArray(node.content)) {
+        for (const childNode of node.content) {
+          if (findMentionPosition(childNode)) {
+            return true
+          }
+        }
+      }
+      
+      return false
+    }
+    
+    // Find the target position
+    if (doc.content && Array.isArray(doc.content)) {
+      for (const node of doc.content) {
+        if (findMentionPosition(node)) {
+          break
+        }
+      }
+    }
+    
+    // If we found the position, try to navigate to it
+    if (targetPosition > 0) {
+      // Fallback to DOM-based approach with better targeting
+      const editorElement = editor.view.dom
+      const mentionElements = editorElement.querySelectorAll(`[data-type="${type}"][data-label="${mention.label}"]`)
+      
+      // Try to find the nth occurrence of this mention
+      const allMentionsOfThisType = Array.from(editorElement.querySelectorAll(`[data-type="${type}"]`))
+      const mentionsWithSameLabel = allMentionsOfThisType.filter(el => 
+        el.getAttribute('data-label') === mention.label
+      )
+      
+      // Calculate which occurrence this should be based on position
+      const doc2 = editor.getJSON()
+      let pos = 0
+      let occurrenceIndex = 0
+      
+      const countOccurrences = (node: any): void => {
+        pos++
+        
+        if ((node.type === 'mention' || node.type === 'eventMention' || node.type === 'characterMention') &&
+            node.attrs?.label === mention.label) {
+          if (pos === mention.position) {
+            // This is our target occurrence
+            return
+          }
+          if (pos < mention.position) {
+            occurrenceIndex++
+          }
+        }
+        
+        if (node.content && Array.isArray(node.content)) {
+          node.content.forEach(countOccurrences)
+        }
+      }
+      
+      if (doc2.content && Array.isArray(doc2.content)) {
+        doc2.content.forEach(countOccurrences)
+      }
+      
+      // Navigate to the specific occurrence
+      const targetElement = mentionsWithSameLabel[occurrenceIndex]
+      if (targetElement) {
+        targetElement.scrollIntoView({ 
           behavior: 'smooth', 
           block: 'center',
           inline: 'nearest'
         })
-        element.classList.add('ring-2', 'ring-yellow-400')
+        targetElement.classList.add('ring-2', 'ring-yellow-400')
         setTimeout(() => {
-          element.classList.remove('ring-2', 'ring-yellow-400')
+          targetElement.classList.remove('ring-2', 'ring-yellow-400')
         }, 2000)
-        break
       }
     }
   }
