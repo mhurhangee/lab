@@ -5,15 +5,18 @@ import { Heading } from '@tiptap/extension-heading'
 import { HorizontalRule } from '@tiptap/extension-horizontal-rule'
 import { Mention } from '@tiptap/extension-mention'
 import { Paragraph } from '@tiptap/extension-paragraph'
-import { Text } from '@tiptap/extension-text'
-import { Placeholder, UndoRedo } from '@tiptap/extensions'
-
 import {
   type TableOfContentDataItem,
   TableOfContents,
   getHierarchicalIndexes,
 } from '@tiptap/extension-table-of-contents'
+import { Text } from '@tiptap/extension-text'
+import { Placeholder, UndoRedo } from '@tiptap/extensions'
+import type { Editor as TiptapEditor } from '@tiptap/react'
 
+import { AIGhostText } from './ghost-text'
+import { InlineAISuggestion } from './inline-ai-suggestion'
+import { fetchSuggestion } from './inline-ai-suggestion/utils'
 import {
   type MentionAttributes,
   dynamicCharacterMentionSuggestion,
@@ -21,18 +24,12 @@ import {
   dynamicLocationMentionSuggestion,
 } from './multi-mentions/dynamic-mentions'
 
-import { AIGhostText } from './ghost-text'
-import { InlineAISuggestion } from './inline-ai-suggestion'
-import { fetchSuggestion } from './inline-ai-suggestion/utils'
-
-import type { Editor as TiptapEditor } from '@tiptap/react'
-
 interface ExtensionsOptions {
   setTocItems: (content: TableOfContentDataItem[]) => void
   editorRef: React.RefObject<TiptapEditor | null>
 }
 
-export const defaultExtensions = [
+const defaultExtensions = [
   Document,
   Paragraph,
   Text,
@@ -52,9 +49,7 @@ export const extensions = ({ setTocItems, editorRef }: ExtensionsOptions) => [
   ...defaultExtensions,
   AIGhostText,
   InlineAISuggestion.configure({
-    onTrigger: () =>
-      editorRef.current &&
-      fetchSuggestion(editorRef.current),
+    onTrigger: () => editorRef.current && fetchSuggestion(editorRef.current),
   }),
   TableOfContents.configure({
     anchorTypes: ['heading', 'blockquote'],
@@ -188,5 +183,4 @@ export const extensions = ({ setTocItems, editorRef }: ExtensionsOptions) => [
       return `&${node.attrs.label || node.attrs.id}`
     },
   }),
-
 ]

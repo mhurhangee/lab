@@ -49,11 +49,14 @@
 }
 
 .ai-ghost-text {
-  opacity: 0.4;
+  opacity: 0.5;
   pointer-events: none;
   user-select: none;
   font-style: italic;
-  margin-left: 2px;
+  display: inline;
+  margin: 0;
+  padding: 0;
+  line-height: inherit;
 }
 
 .animate-spin {

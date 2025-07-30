@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { models } from '@/lib/models'
 
 import { generateObject } from 'ai'
-
 import { z } from 'zod'
 
 export const runtime = 'edge'
@@ -12,7 +11,7 @@ export const maxDuration = 30
 export async function POST(req: NextRequest) {
   const { fullText, selectionEnd } = await req.json()
 
-    const system = `\
+  const system = `\
   - You are a expert writing assistant.  
   - You will be given a piece of text that a user has asked for help writing part of.
   - You will be provided the whole text AND where the user has asked for help inserting text <AI_CONTENT_GOES_HERE>.
@@ -22,12 +21,12 @@ export async function POST(req: NextRequest) {
   - The full text of the document is provided for context, you only need to return the text that should be inserted.
   - Return the text as a JSON object with the key 'aiContent'.
   - Format the text as markdown.`
-  
-    const schema = z.object({
-      aiContent: z.string(),
-    })
-  
-    const prompt = `\
+
+  const schema = z.object({
+    aiContent: z.string(),
+  })
+
+  const prompt = `\
   ${fullText.slice(0, selectionEnd)}
   <AI_CONTENT_GOES_HERE>
   ${fullText.slice(selectionEnd)}
@@ -39,8 +38,6 @@ export async function POST(req: NextRequest) {
     schema,
     prompt,
   })
-
-  console.log(result.object)
 
   return NextResponse.json(result.object)
 }

@@ -1,13 +1,22 @@
 import { Extension } from '@tiptap/react'
 
-export const InlineAISuggestion = Extension.create({
+interface InlineAISuggestionOptions {
+  onTrigger?: () => void
+}
+
+export const InlineAISuggestion = Extension.create<InlineAISuggestionOptions>({
   name: 'inlineAISuggestion',
+
+  addOptions() {
+    return {
+      onTrigger: undefined,
+    }
+  },
+
   addKeyboardShortcuts() {
     return {
       'Mod-Space': () => {
-        if (this.options.onTrigger) {
-          this.options.onTrigger()
-        }
+        this.options.onTrigger?.()
         return true
       },
     }

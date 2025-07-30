@@ -1,8 +1,6 @@
 'use client'
 
-import {
-  type TableOfContentDataItem,
-} from '@tiptap/extension-table-of-contents'
+import { type TableOfContentDataItem } from '@tiptap/extension-table-of-contents'
 import { Editor as TiptapEditor, useEditor } from '@tiptap/react'
 
 import { useRef, useState } from 'react'
@@ -19,9 +17,7 @@ export function EditorApp({ context }: { context: ContextDB }) {
   const [tocItems, setTocItems] = useState<TableOfContentDataItem[]>([])
 
   const editor = useEditor({
-    extensions: [
-      ...extensions({ setTocItems, editorRef }),
-    ],
+    extensions: [...extensions({ setTocItems, editorRef })],
     content: context.textDocument || '',
     immediatelyRender: false,
     editorProps: {

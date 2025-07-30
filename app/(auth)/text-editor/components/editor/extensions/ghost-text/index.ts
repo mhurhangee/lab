@@ -1,18 +1,13 @@
 import { Extension } from '@tiptap/react'
-import type { Editor, Command } from '@tiptap/react'
+import type { Command } from '@tiptap/react'
 
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
-import { markdownToTiptapContent } from './markdown-to-tiptap'
 
 interface GhostTextState {
   ghostText: string
   from: number
   loading: boolean
-}
-
-interface GhostTextOptions {
-  // No options needed
 }
 
 declare module '@tiptap/react' {
@@ -27,11 +22,8 @@ declare module '@tiptap/react' {
 
 const ghostTextPluginKey = new PluginKey<GhostTextState>('aiGhostText')
 
-export const AIGhostText = Extension.create<GhostTextOptions>({
+export const AIGhostText = Extension.create({
   name: 'aiGhostText',
-  addOptions() {
-    return {}
-  },
 
   addCommands() {
     return {
@@ -132,39 +124,34 @@ export const AIGhostText = Extension.create<GhostTextOptions>({
           decorations: (state: EditorState) => {
             const pluginState = ghostTextPluginKey.getState(state)
             if (!pluginState) return DecorationSet.empty
-            
+
             const { ghostText, from, loading } = pluginState
-            
+
             // Show loading spinner or ghost text
             if (!loading && !ghostText) return DecorationSet.empty
-            
+
             // Use current cursor position if from is 0 or invalid
             const position = from > 0 && from <= state.doc.content.size ? from : state.selection.to
-            
+
             return DecorationSet.create(state.doc, [
               Decoration.widget(position, () => {
                 const span = document.createElement('span')
-                span.style.opacity = '0.5'
-                span.style.pointerEvents = 'none'
-                span.style.userSelect = 'none'
-                span.style.fontStyle = 'italic'
-                span.style.color = '#888'
                 span.className = 'ai-ghost-text'
 
                 if (loading) {
                   span.innerHTML = `
-                    <svg class="inline animate-spin" width="14" height="14" fill="none" viewBox="0 0 24 24" style="margin-left: 2px;">
+                    <svg class="inline animate-spin" width="12" height="12" fill="none" viewBox="0 0 24 24" style="vertical-align: middle;">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
                     </svg>
-                    <span style="margin-left: 4px; font-size: 0.9em;">Generating...</span>
+                    <span style="margin-left: 4px; font-size: 0.9em; vertical-align: middle;">Generating...</span>
                   `
                 } else if (ghostText) {
                   span.innerHTML = `
-                    <span style="background: rgba(0,0,0,0.05); padding: 1px 4px; border-radius: 3px; margin-left: 2px;">
-                      ${ghostText}
+                    <span style="background: rgba(0,0,0,0.06); padding: 1px 3px; border-radius: 2px; font-size: inherit;">
+                      ${ghostText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
                     </span>
-                    <span style="opacity: 0.6; font-size: 0.8em; margin-left: 4px; color: #666;">(Tab to accept)</span>
+                    <span style="opacity: 0.6; font-size: 0.75em; margin-left: 6px; color: #888; vertical-align: middle;">(Tab)</span>
                   `
                 }
 
