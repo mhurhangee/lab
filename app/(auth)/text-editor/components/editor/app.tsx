@@ -1,17 +1,19 @@
 'use client'
 
+import {
+  type TableOfContentDataItem,
+  TableOfContents,
+  getHierarchicalIndexes,
+} from '@tiptap/extension-table-of-contents'
 import { Editor as TiptapEditor, useEditor } from '@tiptap/react'
 
 import { useRef, useState } from 'react'
+import React from 'react'
 
 import { ContextDB } from '@/types/database'
 
 import { extensions } from './extensions'
 import { SplitView } from './split-view'
-import { TableOfContents, getHierarchicalIndexes, type TableOfContentDataItem } from '@tiptap/extension-table-of-contents'
-import React from 'react'
-
-
 
 export function EditorApp({ context }: { context: ContextDB }) {
   const editorRef = useRef<TiptapEditor | null>(null)
@@ -22,7 +24,7 @@ export function EditorApp({ context }: { context: ContextDB }) {
     extensions: [
       ...extensions,
       TableOfContents.configure({
-        anchorTypes: ['heading', 'blockquote', ],
+        anchorTypes: ['heading', 'blockquote'],
         getIndex: getHierarchicalIndexes,
         onUpdate(content) {
           setTocItems(content)
@@ -43,5 +45,5 @@ export function EditorApp({ context }: { context: ContextDB }) {
 
   if (!editor) return null
 
-  return <SplitView editor={editor} id={context.id} tocItems={tocItems}/>
+  return <SplitView editor={editor} id={context.id} tocItems={tocItems} />
 }

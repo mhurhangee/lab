@@ -1,13 +1,24 @@
 'use client'
 
-import { ReactRenderer } from '@tiptap/react'
-import tippy, { Instance, Props } from 'tippy.js'
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
-import { cn } from '@/lib/utils'
+import { JSONContent, ReactRenderer } from '@tiptap/react'
 import { Editor } from '@tiptap/react'
+import type { SuggestionKeyDownProps, SuggestionProps } from '@tiptap/suggestion'
+
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
+
+import { cn } from '@/lib/utils'
+
+import tippy, { Instance, Props } from 'tippy.js'
+
 import './multi-mentions.css'
 
 type MentionType = 'location' | 'event' | 'character'
+
+export interface MentionAttributes {
+  id?: string | null
+  label?: string | null
+  type?: MentionType
+}
 
 interface MentionItem {
   id: string
@@ -73,43 +84,49 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
 
     const getTypeIcon = (type: MentionType) => {
       switch (type) {
-        case 'location': return '📍'
-        case 'event': return '📅'
-        case 'character': return '👤'
-        default: return '💬'
+        case 'location':
+          return '📍'
+        case 'event':
+          return '📅'
+        case 'character':
+          return '👤'
+        default:
+          return '💬'
       }
     }
 
     const getTypeLabel = (type: MentionType) => {
       switch (type) {
-        case 'location': return 'Location'
-        case 'event': return 'Event'
-        case 'character': return 'Character'
-        default: return 'Mention'
+        case 'location':
+          return 'Location'
+        case 'event':
+          return 'Event'
+        case 'character':
+          return 'Character'
+        default:
+          return 'Mention'
       }
     }
 
     if (items.length === 0) {
       return (
-        <div className="rounded-md border bg-popover p-3 text-sm text-muted-foreground shadow-md">
-          <div className="flex items-center gap-2 mb-2">
+        <div className="bg-popover text-muted-foreground rounded-md border p-3 text-sm shadow-md">
+          <div className="mb-2 flex items-center gap-2">
             <span className="text-lg">{getTypeIcon(type)}</span>
             <span className="font-medium">No {getTypeLabel(type).toLowerCase()}s found</span>
           </div>
-          <p className="text-xs">
-            Type a new {getTypeLabel(type).toLowerCase()} name to create it
-          </p>
+          <p className="text-xs">Type a new {getTypeLabel(type).toLowerCase()} name to create it</p>
         </div>
       )
     }
 
     return (
-      <div className="rounded-md border bg-popover shadow-md">
+      <div className="bg-popover rounded-md border shadow-md">
         {items.map((item, index) => (
           <button
             key={item.id}
             className={cn(
-              'flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground',
+              'hover:bg-accent hover:text-accent-foreground flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors',
               index === selectedIndex && 'bg-accent text-accent-foreground'
             )}
             onClick={() => selectItem(index)}
@@ -117,7 +134,7 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
             <span className="text-lg">{getTypeIcon(type)}</span>
             <div className="flex flex-col">
               <span className="font-medium">{item.name}</span>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-muted-foreground text-xs">
                 {getTypeLabel(type)} from document
               </span>
             </div>
@@ -132,28 +149,35 @@ MentionList.displayName = 'MentionList'
 
 // Function to extract existing mentions from the document
 const extractMentionsFromDocument = (editor: Editor, type: MentionType): MentionItem[] => {
-  const mentions: MentionItem[] = []
   const mentionMap = new Map<string, MentionItem>()
 
   // Get the document content as JSON
   const doc = editor.getJSON()
 
   // Recursively traverse the document to find mentions
-  const traverseNode = (node: any) => {
-    if (node.type === 'mention' || node.type === 'eventMention' || node.type === 'characterMention') {
-      const mentionType = node.attrs?.type || 
-        (node.type === 'eventMention' ? 'event' : 
-         node.type === 'characterMention' ? 'character' : 'location')
-      
+  const traverseNode = (node: JSONContent) => {
+    if (
+      node.type === 'mention' ||
+      node.type === 'eventMention' ||
+      node.type === 'characterMention'
+    ) {
+      const mentionType =
+        node.attrs?.type ||
+        (node.type === 'eventMention'
+          ? 'event'
+          : node.type === 'characterMention'
+            ? 'character'
+            : 'location')
+
       if (mentionType === type && node.attrs?.label) {
         const id = node.attrs.id || node.attrs.label
         const name = node.attrs.label
-        
+
         if (!mentionMap.has(id)) {
           mentionMap.set(id, {
             id,
             name,
-            type: mentionType as MentionType
+            type: mentionType as MentionType,
           })
         }
       }
@@ -178,20 +202,22 @@ const createDynamicMentionSuggestion = (type: MentionType) => {
     items: ({ query, editor }: { query: string; editor: Editor }) => {
       // Extract existing mentions from the document
       const existingMentions = extractMentionsFromDocument(editor, type)
-      
+
       // Filter based on query
       const filteredMentions = existingMentions.filter(item =>
         item.name.toLowerCase().includes(query.toLowerCase())
       )
 
-      // If query doesn't match any existing mentions but has content, 
+      // If query doesn't match any existing mentions but has content,
       // suggest creating a new one
       if (query.trim() && filteredMentions.length === 0) {
-        return [{
-          id: query.trim(),
-          name: query.trim(),
-          type
-        }]
+        return [
+          {
+            id: query.trim(),
+            name: query.trim(),
+            type,
+          },
+        ]
       }
 
       return filteredMentions.slice(0, 10) // Limit to 10 suggestions
@@ -202,7 +228,7 @@ const createDynamicMentionSuggestion = (type: MentionType) => {
       let popup: Instance<Props>[]
 
       return {
-        onStart: (props: any) => {
+        onStart: (props: SuggestionProps) => {
           component = new ReactRenderer(MentionList, {
             props: { ...props, type },
             editor: props.editor,
@@ -224,7 +250,7 @@ const createDynamicMentionSuggestion = (type: MentionType) => {
           })
         },
 
-        onUpdate(props: any) {
+        onUpdate(props: SuggestionProps) {
           component.updateProps({ ...props, type })
 
           if (!props.clientRect) {
@@ -236,7 +262,7 @@ const createDynamicMentionSuggestion = (type: MentionType) => {
           })
         },
 
-        onKeyDown(props: any) {
+        onKeyDown(props: SuggestionKeyDownProps) {
           if (props.event.key === 'Escape') {
             popup[0].hide()
             return true

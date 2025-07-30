@@ -1,18 +1,18 @@
 'use client'
 
+import type { TableOfContentDataItem } from '@tiptap/extension-table-of-contents'
 import type { Editor as TiptapEditor } from '@tiptap/react'
 
 import { CalendarIcon, ListIcon, MapPinIcon, StickyNoteIcon, UsersIcon } from 'lucide-react'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-import type { TableOfContentDataItem } from '@tiptap/extension-table-of-contents'
-import { Outline } from './outline'
 import { MentionsNav } from './mentions-nav'
+import { Outline } from './outline'
 
 interface DockProps {
-    editor: TiptapEditor
-    tocItems: TableOfContentDataItem[]
+  editor: TiptapEditor
+  tocItems: TableOfContentDataItem[]
 }
 
 export const Dock = ({ editor, tocItems }: DockProps) => {

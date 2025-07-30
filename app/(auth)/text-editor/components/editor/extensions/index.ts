@@ -1,4 +1,5 @@
 import { Blockquote } from '@tiptap/extension-blockquote'
+import CodeBlock from '@tiptap/extension-code-block'
 import { Document } from '@tiptap/extension-document'
 import { Heading } from '@tiptap/extension-heading'
 import { HorizontalRule } from '@tiptap/extension-horizontal-rule'
@@ -6,9 +7,13 @@ import { Mention } from '@tiptap/extension-mention'
 import { Paragraph } from '@tiptap/extension-paragraph'
 import { Text } from '@tiptap/extension-text'
 import { Placeholder, UndoRedo } from '@tiptap/extensions'
-import CodeBlock from '@tiptap/extension-code-block'
 
-import { dynamicLocationMentionSuggestion, dynamicEventMentionSuggestion, dynamicCharacterMentionSuggestion } from './dynamic-mentions'
+import {
+  type MentionAttributes,
+  dynamicCharacterMentionSuggestion,
+  dynamicEventMentionSuggestion,
+  dynamicLocationMentionSuggestion,
+} from './dynamic-mentions'
 
 export const extensions = [
   Document,
@@ -25,24 +30,24 @@ export const extensions = [
       return {
         id: {
           default: null,
-          parseHTML: (element: any) => element.getAttribute('data-id'),
-          renderHTML: (attributes: any) => {
+          parseHTML: (element: HTMLElement) => element.getAttribute('data-id'),
+          renderHTML: (attributes: MentionAttributes) => {
             if (!attributes.id) return {}
             return { 'data-id': attributes.id }
           },
         },
         label: {
           default: null,
-          parseHTML: (element: any) => element.getAttribute('data-label'),
-          renderHTML: (attributes: any) => {
+          parseHTML: (element: HTMLElement) => element.getAttribute('data-label'),
+          renderHTML: (attributes: MentionAttributes) => {
             if (!attributes.label) return {}
             return { 'data-label': attributes.label }
           },
         },
         type: {
           default: 'location',
-          parseHTML: (element: any) => element.getAttribute('data-type') || 'location',
-          renderHTML: (attributes: any) => {
+          parseHTML: (element: HTMLElement) => element.getAttribute('data-type') || 'location',
+          renderHTML: (attributes: MentionAttributes) => {
             return { 'data-type': attributes.type || 'location' }
           },
         },
@@ -65,24 +70,24 @@ export const extensions = [
       return {
         id: {
           default: null,
-          parseHTML: (element: any) => element.getAttribute('data-id'),
-          renderHTML: (attributes: any) => {
+          parseHTML: (element: HTMLElement) => element.getAttribute('data-id'),
+          renderHTML: (attributes: MentionAttributes) => {
             if (!attributes.id) return {}
             return { 'data-id': attributes.id }
           },
         },
         label: {
           default: null,
-          parseHTML: (element: any) => element.getAttribute('data-label'),
-          renderHTML: (attributes: any) => {
+          parseHTML: (element: HTMLElement) => element.getAttribute('data-label'),
+          renderHTML: (attributes: MentionAttributes) => {
             if (!attributes.label) return {}
             return { 'data-label': attributes.label }
           },
         },
         type: {
           default: 'event',
-          parseHTML: (element: any) => element.getAttribute('data-type') || 'event',
-          renderHTML: (attributes: any) => {
+          parseHTML: (element: HTMLElement) => element.getAttribute('data-type') || 'event',
+          renderHTML: (attributes: MentionAttributes) => {
             return { 'data-type': attributes.type || 'event' }
           },
         },
@@ -108,24 +113,24 @@ export const extensions = [
       return {
         id: {
           default: null,
-          parseHTML: (element: any) => element.getAttribute('data-id'),
-          renderHTML: (attributes: any) => {
+          parseHTML: (element: HTMLElement) => element.getAttribute('data-id'),
+          renderHTML: (attributes: MentionAttributes) => {
             if (!attributes.id) return {}
             return { 'data-id': attributes.id }
           },
         },
         label: {
           default: null,
-          parseHTML: (element: any) => element.getAttribute('data-label'),
-          renderHTML: (attributes: any) => {
+          parseHTML: (element: HTMLElement) => element.getAttribute('data-label'),
+          renderHTML: (attributes: MentionAttributes) => {
             if (!attributes.label) return {}
             return { 'data-label': attributes.label }
           },
         },
         type: {
           default: 'character',
-          parseHTML: (element: any) => element.getAttribute('data-type') || 'character',
-          renderHTML: (attributes: any) => {
+          parseHTML: (element: HTMLElement) => element.getAttribute('data-type') || 'character',
+          renderHTML: (attributes: MentionAttributes) => {
             return { 'data-type': attributes.type || 'character' }
           },
         },
@@ -148,5 +153,5 @@ export const extensions = [
     placeholder: 'Write something …',
   }),
   UndoRedo,
-  CodeBlock
+  CodeBlock,
 ]

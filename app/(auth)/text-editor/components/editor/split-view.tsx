@@ -1,3 +1,4 @@
+import { TableOfContentDataItem } from '@tiptap/extension-table-of-contents'
 import { Editor as TiptapEditor } from '@tiptap/react'
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
@@ -5,12 +6,10 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import { Dock } from './dock'
 import { Editor } from './editor'
 
-import { TableOfContentDataItem } from '@tiptap/extension-table-of-contents'
-
 interface SplitViewProps {
-    editor: TiptapEditor
-    id: string
-    tocItems: TableOfContentDataItem[]
+  editor: TiptapEditor
+  id: string
+  tocItems: TableOfContentDataItem[]
 }
 
 export const SplitView = ({ editor, id, tocItems }: SplitViewProps) => {

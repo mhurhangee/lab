@@ -1,9 +1,14 @@
 'use client'
 
 import { ReactRenderer } from '@tiptap/react'
-import tippy, { Instance, Props } from 'tippy.js'
+import { SuggestionKeyDownProps, SuggestionProps } from '@tiptap/suggestion'
+
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
+
 import { cn } from '@/lib/utils'
+
+import tippy, { Instance, Props } from 'tippy.js'
+
 import './multi-mentions.css'
 
 // Sample data for different mention types
@@ -32,7 +37,7 @@ const CHARACTERS = [
 ]
 
 type MentionType = 'location' | 'event' | 'character'
-type MentionItem = typeof LOCATIONS[0] | typeof EVENTS[0] | typeof CHARACTERS[0]
+type MentionItem = (typeof LOCATIONS)[0] | (typeof EVENTS)[0] | (typeof CHARACTERS)[0]
 
 interface MentionListProps {
   items: MentionItem[]
@@ -92,7 +97,7 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
 
     if (items.length === 0) {
       return (
-        <div className="rounded-md border bg-popover p-2 text-sm text-muted-foreground shadow-md">
+        <div className="bg-popover text-muted-foreground rounded-md border p-2 text-sm shadow-md">
           No {type}s found
         </div>
       )
@@ -100,29 +105,37 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
 
     const getTypeIcon = (type: MentionType) => {
       switch (type) {
-        case 'location': return '📍'
-        case 'event': return '📅'
-        case 'character': return '👤'
-        default: return '💬'
+        case 'location':
+          return '📍'
+        case 'event':
+          return '📅'
+        case 'character':
+          return '👤'
+        default:
+          return '💬'
       }
     }
 
     const getTypeColor = (type: MentionType) => {
       switch (type) {
-        case 'location': return 'text-green-600'
-        case 'event': return 'text-blue-600'
-        case 'character': return 'text-purple-600'
-        default: return 'text-gray-600'
+        case 'location':
+          return 'text-green-600'
+        case 'event':
+          return 'text-blue-600'
+        case 'character':
+          return 'text-purple-600'
+        default:
+          return 'text-gray-600'
       }
     }
 
     return (
-      <div className="rounded-md border bg-popover shadow-md">
+      <div className="bg-popover rounded-md border shadow-md">
         {items.map((item, index) => (
           <button
             key={item.id}
             className={cn(
-              'flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground',
+              'hover:bg-accent hover:text-accent-foreground flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors',
               index === selectedIndex && 'bg-accent text-accent-foreground'
             )}
             onClick={() => selectItem(index)}
@@ -130,9 +143,7 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
             <span className="text-lg">{getTypeIcon(type)}</span>
             <div className="flex flex-col">
               <span className="font-medium">{item.name}</span>
-              <span className={cn("text-xs", getTypeColor(type))}>
-                {item.description}
-              </span>
+              <span className={cn('text-xs', getTypeColor(type))}>{item.description}</span>
             </div>
           </button>
         ))}
@@ -147,10 +158,13 @@ MentionList.displayName = 'MentionList'
 const createMentionSuggestion = (type: MentionType, data: MentionItem[]) => {
   return {
     items: ({ query }: { query: string }) => {
-      return data.filter(item =>
-        item.name.toLowerCase().includes(query.toLowerCase()) ||
-        item.description.toLowerCase().includes(query.toLowerCase())
-      ).slice(0, 5)
+      return data
+        .filter(
+          item =>
+            item.name.toLowerCase().includes(query.toLowerCase()) ||
+            item.description.toLowerCase().includes(query.toLowerCase())
+        )
+        .slice(0, 5)
     },
 
     render: () => {
@@ -158,7 +172,7 @@ const createMentionSuggestion = (type: MentionType, data: MentionItem[]) => {
       let popup: Instance<Props>[]
 
       return {
-        onStart: (props: any) => {
+        onStart: (props: SuggestionProps) => {
           component = new ReactRenderer(MentionList, {
             props: { ...props, type },
             editor: props.editor,
@@ -180,7 +194,7 @@ const createMentionSuggestion = (type: MentionType, data: MentionItem[]) => {
           })
         },
 
-        onUpdate(props: any) {
+        onUpdate(props: SuggestionProps) {
           component.updateProps({ ...props, type })
 
           if (!props.clientRect) {
@@ -192,7 +206,7 @@ const createMentionSuggestion = (type: MentionType, data: MentionItem[]) => {
           })
         },
 
-        onKeyDown(props: any) {
+        onKeyDown(props: SuggestionKeyDownProps) {
           if (props.event.key === 'Escape') {
             popup[0].hide()
             return true

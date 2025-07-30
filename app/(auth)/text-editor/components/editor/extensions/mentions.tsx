@@ -1,9 +1,13 @@
 'use client'
 
 import { ReactRenderer } from '@tiptap/react'
-import tippy, { Instance, Props } from 'tippy.js'
+import { SuggestionKeyDownProps, SuggestionProps } from '@tiptap/suggestion'
+
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
+
 import { cn } from '@/lib/utils'
+
+import tippy, { Instance, Props } from 'tippy.js'
 
 // Sample users data - replace with your actual data source
 const USERS = [
@@ -23,90 +27,89 @@ interface MentionListRef {
   onKeyDown: (props: { event: KeyboardEvent }) => boolean
 }
 
-const MentionList = forwardRef<MentionListRef, MentionListProps>(
-  ({ items, command }, ref) => {
-    const [selectedIndex, setSelectedIndex] = useState(0)
+const MentionList = forwardRef<MentionListRef, MentionListProps>(({ items, command }, ref) => {
+  const [selectedIndex, setSelectedIndex] = useState(0)
 
-    const selectItem = (index: number) => {
-      const item = items[index]
-      if (item) {
-        command({ id: item.id, label: item.name })
+  const selectItem = (index: number) => {
+    const item = items[index]
+    if (item) {
+      command({ id: item.id, label: item.name })
+    }
+  }
+
+  const upHandler = () => {
+    setSelectedIndex((selectedIndex + items.length - 1) % items.length)
+  }
+
+  const downHandler = () => {
+    setSelectedIndex((selectedIndex + 1) % items.length)
+  }
+
+  const enterHandler = () => {
+    selectItem(selectedIndex)
+  }
+
+  useEffect(() => setSelectedIndex(0), [items])
+
+  useImperativeHandle(ref, () => ({
+    onKeyDown: ({ event }) => {
+      if (event.key === 'ArrowUp') {
+        upHandler()
+        return true
       }
-    }
 
-    const upHandler = () => {
-      setSelectedIndex((selectedIndex + items.length - 1) % items.length)
-    }
+      if (event.key === 'ArrowDown') {
+        downHandler()
+        return true
+      }
 
-    const downHandler = () => {
-      setSelectedIndex((selectedIndex + 1) % items.length)
-    }
+      if (event.key === 'Enter') {
+        enterHandler()
+        return true
+      }
 
-    const enterHandler = () => {
-      selectItem(selectedIndex)
-    }
+      return false
+    },
+  }))
 
-    useEffect(() => setSelectedIndex(0), [items])
-
-    useImperativeHandle(ref, () => ({
-      onKeyDown: ({ event }) => {
-        if (event.key === 'ArrowUp') {
-          upHandler()
-          return true
-        }
-
-        if (event.key === 'ArrowDown') {
-          downHandler()
-          return true
-        }
-
-        if (event.key === 'Enter') {
-          enterHandler()
-          return true
-        }
-
-        return false
-      },
-    }))
-
-    if (items.length === 0) {
-      return (
-        <div className="rounded-md border bg-popover p-2 text-sm text-muted-foreground shadow-md">
-          No users found
-        </div>
-      )
-    }
-
+  if (items.length === 0) {
     return (
-      <div className="rounded-md border bg-popover shadow-md">
-        {items.map((item, index) => (
-          <button
-            key={item.id}
-            className={cn(
-              'flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground',
-              index === selectedIndex && 'bg-accent text-accent-foreground'
-            )}
-            onClick={() => selectItem(index)}
-          >
-            <span className="text-lg">{item.avatar}</span>
-            <div className="flex flex-col">
-              <span className="font-medium">{item.name}</span>
-              <span className="text-xs text-muted-foreground">@{item.username}</span>
-            </div>
-          </button>
-        ))}
+      <div className="bg-popover text-muted-foreground rounded-md border p-2 text-sm shadow-md">
+        No users found
       </div>
     )
   }
-)
+
+  return (
+    <div className="bg-popover rounded-md border shadow-md">
+      {items.map((item, index) => (
+        <button
+          key={item.id}
+          className={cn(
+            'hover:bg-accent hover:text-accent-foreground flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors',
+            index === selectedIndex && 'bg-accent text-accent-foreground'
+          )}
+          onClick={() => selectItem(index)}
+        >
+          <span className="text-lg">{item.avatar}</span>
+          <div className="flex flex-col">
+            <span className="font-medium">{item.name}</span>
+            <span className="text-muted-foreground text-xs">@{item.username}</span>
+          </div>
+        </button>
+      ))}
+    </div>
+  )
+})
 
 MentionList.displayName = 'MentionList'
 
 export const mentionSuggestion = {
   items: ({ query }: { query: string }) => {
-    return USERS.filter(user =>
-      user.name.toLowerCase().includes(query.toLowerCase()) ||
-      user.username.toLowerCase().includes(query.toLowerCase())
+    return USERS.filter(
+      user =>
+        user.name.toLowerCase().includes(query.toLowerCase()) ||
+        user.username.toLowerCase().includes(query.toLowerCase())
     ).slice(0, 5)
   },
 
@@ -115,7 +118,7 @@ export const mentionSuggestion = {
     let popup: Instance<Props>[]
 
     return {
-      onStart: (props: any) => {
+      onStart: (props: SuggestionProps) => {
         component = new ReactRenderer(MentionList, {
           props,
           editor: props.editor,
@@ -136,7 +139,7 @@ export const mentionSuggestion = {
         })
       },
 
-      onUpdate(props: any) {
+      onUpdate(props: SuggestionProps) {
         component.updateProps(props)
 
         if (!props.clientRect) {
@@ -148,7 +151,7 @@ export const mentionSuggestion = {
         })
       },
 
-      onKeyDown(props: any) {
+      onKeyDown(props: SuggestionKeyDownProps) {
         if (props.event.key === 'Escape') {
           popup[0].hide()
           return true

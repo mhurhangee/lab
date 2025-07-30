@@ -10,8 +10,9 @@ import { Button } from '@/components/ui/button'
 
 import { handleErrorClient } from '@/lib/error/client'
 
-import { toast } from 'sonner'
 import { useProject } from '@/providers/project'
+
+import { toast } from 'sonner'
 
 interface SaveProps {
   editor: TiptapEditor
@@ -20,14 +21,18 @@ interface SaveProps {
 
 export function Save({ editor, id }: SaveProps) {
   const { selectedProject } = useProject()
-  
-  const handleSave = async () => {  
+
+  const handleSave = async () => {
     const json = editor.getJSON()
-    
+
     // Stringify the JSON to preserve complex nested objects with attrs
     const jsonString = JSON.stringify(json)
 
-    const { error } = await updateContextAction({ id, textDocument: jsonString, projectId: selectedProject?.id || '' })
+    const { error } = await updateContextAction({
+      id,
+      textDocument: jsonString,
+      projectId: selectedProject?.id || '',
+    })
     if (error) {
       handleErrorClient('Error saving document', error)
     } else {
