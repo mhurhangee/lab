@@ -2,8 +2,6 @@
 
 import {
   type TableOfContentDataItem,
-  TableOfContents,
-  getHierarchicalIndexes,
 } from '@tiptap/extension-table-of-contents'
 import { Editor as TiptapEditor, useEditor } from '@tiptap/react'
 
@@ -22,14 +20,7 @@ export function EditorApp({ context }: { context: ContextDB }) {
 
   const editor = useEditor({
     extensions: [
-      ...extensions,
-      TableOfContents.configure({
-        anchorTypes: ['heading', 'blockquote'],
-        getIndex: getHierarchicalIndexes,
-        onUpdate(content) {
-          setTocItems(content)
-        },
-      }),
+      ...extensions({ setTocItems, editorRef }),
     ],
     content: context.textDocument || '',
     immediatelyRender: false,
