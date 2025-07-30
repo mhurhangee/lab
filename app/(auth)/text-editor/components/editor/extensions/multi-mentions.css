@@ -1,0 +1,78 @@
+/* Base mention styling */
+.mention {
+  display: inline-block;
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+}
+
+/* Location mentions (@) - Green theme */
+.mention[data-type='location'] {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: rgb(34, 197, 94);
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+.mention[data-type='location']:hover {
+  background-color: rgba(34, 197, 94, 0.2);
+}
+
+/* Event mentions (!) - Blue theme */
+.mention[data-type='event'] {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: rgb(59, 130, 246);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.mention[data-type='event']:hover {
+  background-color: rgba(59, 130, 246, 0.2);
+}
+
+/* Character mentions (&) - Purple theme */
+.mention[data-type='character'] {
+  background-color: rgba(147, 51, 234, 0.1);
+  color: rgb(147, 51, 234);
+  border-color: rgba(147, 51, 234, 0.2);
+}
+
+.mention[data-type='character']:hover {
+  background-color: rgba(147, 51, 234, 0.2);
+}
+
+/* Fallback for regular mentions */
+.mention:not([data-type]) {
+  background-color: rgba(99, 102, 241, 0.1);
+  color: rgb(99, 102, 241);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.mention:not([data-type]):hover {
+  background-color: rgba(99, 102, 241, 0.2);
+}
+
+/* Tippy.js tooltip styling for mentions dropdown */
+.tippy-box[data-theme~='mentions'],
+.tippy-box[data-theme~='mentions-location'],
+.tippy-box[data-theme~='mentions-event'],
+.tippy-box[data-theme~='mentions-character'] {
+  border-radius: 0.375rem;
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--popover));
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  max-width: 20rem;
+}
+
+.tippy-box[data-theme~='mentions'] .tippy-content,
+.tippy-box[data-theme~='mentions-location'] .tippy-content,
+.tippy-box[data-theme~='mentions-event'] .tippy-content,
+.tippy-box[data-theme~='mentions-character'] .tippy-content {
+  padding: 0;
+}

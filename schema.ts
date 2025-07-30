@@ -21,6 +21,7 @@ export const contexts = pgTable('contexts', {
   openaiUploadId: varchar('openai_upload_id', { length: 255 }),
   projectId: varchar('project_id', { length: 12 }),
   parsedMarkdown: text('parsed_markdown'),
+  textDocument: jsonb('text_document'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 })

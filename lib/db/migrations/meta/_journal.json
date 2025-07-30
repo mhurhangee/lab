@@ -85,6 +85,13 @@
       "when": 1753619302581,
       "tag": "0011_medical_patch",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1753780562339,
+      "tag": "0012_exotic_paladin",
+      "breakpoints": true
     }
   ]
 }

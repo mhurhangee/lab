@@ -21,6 +21,7 @@ interface UpdateContextActionProps {
   projectId?: string | null
   file?: File
   markdown?: string
+  textDocument?: string | unknown
 }
 
 export const updateContextAction = async ({
@@ -29,6 +30,7 @@ export const updateContextAction = async ({
   projectId,
   file,
   markdown,
+  textDocument,
 }: UpdateContextActionProps) => {
   try {
     const userId = await getUserId()
@@ -124,6 +126,22 @@ export const updateContextAction = async ({
             updateData.openaiUploadId = openaiResult.fileId
           }
         }
+      }
+    }
+
+    // If updating the textDocument
+    if (textDocument) {
+      // If textDocument is a string, parse it back to JSON
+      if (typeof textDocument === 'string') {
+        try {
+          const parsedDocument = JSON.parse(textDocument)
+          updateData.textDocument = parsedDocument
+        } catch (error) {
+          handleErrorServer(error, 'Error parsing textDocument JSON')
+          updateData.textDocument = textDocument
+        }
+      } else {
+        updateData.textDocument = textDocument
       }
     }
 

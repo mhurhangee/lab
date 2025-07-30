@@ -57,6 +57,12 @@ export const createContextAction = async ({
       blobUrl = url
       fileSize = metadata.markdown?.length || 0
       fileType = 'text/markdown'
+    } else if (type === 'text-editor') {
+      // Handle text editor
+      fileName = 'Untitled'
+      blobUrl = ''
+      fileSize = 0
+      fileType = 'text/plain'
     } else {
       throw new Error('Either file or url with metadata must be provided')
     }

@@ -1,0 +1,1 @@
+ALTER TABLE "contexts" ADD COLUMN "text_document" jsonb;
