@@ -23,10 +23,12 @@ import {
   dynamicEventMentionSuggestion,
   dynamicLocationMentionSuggestion,
 } from './multi-mentions/dynamic-mentions'
+import { createAIPromptSlashSuggestion } from './ai-prompt-slash'
 
 interface ExtensionsOptions {
   setTocItems: (content: TableOfContentDataItem[]) => void
   editorRef: React.RefObject<TiptapEditor | null>
+  onTriggerAIPrompt?: (position: { x: number; y: number }) => void
 }
 
 const defaultExtensions = [
@@ -45,7 +47,7 @@ const defaultExtensions = [
   CodeBlock,
 ]
 
-export const extensions = ({ setTocItems, editorRef }: ExtensionsOptions) => [
+export const extensions = ({ setTocItems, editorRef, onTriggerAIPrompt }: ExtensionsOptions) => [
   ...defaultExtensions,
   AIGhostText,
   InlineAISuggestion.configure({
@@ -58,6 +60,10 @@ export const extensions = ({ setTocItems, editorRef }: ExtensionsOptions) => [
       setTocItems(content)
     },
   }),
+  // AI Slash Commands
+  ...(onTriggerAIPrompt ? [
+    createAIPromptSlashSuggestion(onTriggerAIPrompt)
+  ] : []),
   // Location mentions (@)
   Mention.extend({
     addAttributes() {
