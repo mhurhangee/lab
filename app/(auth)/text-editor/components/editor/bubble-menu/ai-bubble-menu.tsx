@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 
 interface AISelectionDetectorProps {
   editor: Editor
-  onSelectionDetected: (position: { x: number; y: number }, selectedText: string) => void
+  onSelectionDetected: (position: { x: number; y: number }, selectedText: string, selection: { from: number; to: number; empty: boolean }) => void
 }
 
 export const AISelectionDetector = ({ editor, onSelectionDetected }: AISelectionDetectorProps) => {
@@ -36,7 +36,8 @@ export const AISelectionDetector = ({ editor, onSelectionDetected }: AISelection
               if (coords) {
                 onSelectionDetected(
                   { x: coords.left, y: coords.bottom },
-                  selectedText.trim()
+                  selectedText.trim(),
+                  { from, to, empty }
                 )
               }
             } catch (error) {

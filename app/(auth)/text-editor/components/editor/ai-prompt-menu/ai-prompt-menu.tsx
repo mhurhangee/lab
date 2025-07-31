@@ -4,8 +4,9 @@ import { useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import { Button } from '@/components/ui/button'
-import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Loader } from '@/components/ui/loader'
 
 type AIPromptState = 'prompt-input' | 'loading' | 'ai-response'
@@ -72,87 +73,140 @@ const PromptInputState = ({
   onCustomPrompt: (prompt: string) => void
   selectedText?: string
 }) => {
-  const [customPrompt, setCustomPrompt] = useState('')
-  const [showCustomInput, setShowCustomInput] = useState(false)
+  const [searchValue, setSearchValue] = useState('')
 
-  const handleCustomSubmit = () => {
-    if (customPrompt.trim()) {
-      onCustomPrompt(customPrompt.trim())
-    }
-  }
+  // Filter examples based on search
+  const filteredExamples = PROMPT_EXAMPLES.filter(example =>
+    example.label.toLowerCase().includes(searchValue.toLowerCase()) ||
+    example.description?.toLowerCase().includes(searchValue.toLowerCase())
+  )
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter') {
+      // Allow Shift+Enter for new lines in textarea
+      if (e.shiftKey && isLongText) {
+        return // Let the textarea handle it
+      }
+      
       e.preventDefault()
-      handleCustomSubmit()
+      
+      // If there's a search value and no matching examples, send as custom prompt
+      if (searchValue.trim() && filteredExamples.length === 0) {
+        onCustomPrompt(searchValue.trim())
+      } 
+      // If there's exactly one filtered example, use that
+      else if (filteredExamples.length === 1) {
+        onSelectPrompt(filteredExamples[0].prompt)
+      }
+      // If search value exactly matches an example label, use that
+      else {
+        const exactMatch = filteredExamples.find(
+          example => example.label.toLowerCase() === searchValue.toLowerCase()
+        )
+        if (exactMatch) {
+          onSelectPrompt(exactMatch.prompt)
+        } else if (searchValue.trim()) {
+          // Send as custom prompt if no exact match
+          onCustomPrompt(searchValue.trim())
+        }
+      }
     }
   }
+
+  const handleSendCustom = () => {
+    if (searchValue.trim()) {
+      onCustomPrompt(searchValue.trim())
+    }
+  }
+
+  const isLongText = searchValue.length > 60 || searchValue.includes('\n')
 
   return (
     <Command className="w-80">
-      <CommandList>
-        <CommandGroup heading="AI Prompts">
-          {PROMPT_EXAMPLES.map((example) => (
-            <CommandItem
-              key={example.id}
-              className="flex items-center gap-3 cursor-pointer"
-              onSelect={() => onSelectPrompt(example.prompt)}
+      <div className="border-b">
+        <div className="flex items-start p-3 gap-2">
+          {isLongText ? (
+            <Textarea
+              placeholder="Ask AI to edit or generate..."
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className="flex-1 min-h-[60px] max-h-[120px] resize-none border-none shadow-none focus-visible:ring-0 p-0"
+              rows={Math.min(4, Math.max(2, searchValue.split('\n').length))}
+            />
+          ) : (
+            <input
+              type="text"
+              placeholder="Ask AI to edit or generate..."
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className="flex-1 border-none outline-none bg-transparent text-sm placeholder:text-muted-foreground"
+            />
+          )}
+          {searchValue.trim() && (
+            <Button
+              size="sm"
+              onClick={handleSendCustom}
+              className="shrink-0 h-8"
             >
-              <span className="text-lg">{example.icon}</span>
+              Send
+            </Button>
+          )}
+        </div>
+      </div>
+      <CommandList>
+        {filteredExamples.length > 0 && (
+          <CommandGroup heading="Edit or review selection">
+            {filteredExamples.map((example) => (
+              <CommandItem
+                key={example.id}
+                className="flex items-center gap-3 cursor-pointer"
+                onSelect={() => onSelectPrompt(example.prompt)}
+              >
+                <span className="text-lg">{example.icon}</span>
+                <div className="flex flex-col">
+                  <span className="font-medium">{example.label}</span>
+                  {example.description && (
+                    <span className="text-muted-foreground text-xs">
+                      {example.description}
+                    </span>
+                  )}
+                </div>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        )}
+        
+        {searchValue.trim() && filteredExamples.length === 0 && (
+          <CommandGroup heading="Use AI to do more">
+            <CommandItem
+              className="flex items-center gap-3 cursor-pointer"
+              onSelect={() => onCustomPrompt(searchValue.trim())}
+            >
+              <span className="text-lg">✨</span>
               <div className="flex flex-col">
-                <span className="font-medium">{example.label}</span>
-                {example.description && (
-                  <span className="text-muted-foreground text-xs">
-                    {example.description}
-                  </span>
-                )}
+                <span className="font-medium">Custom: "{searchValue}"</span>
+                <span className="text-muted-foreground text-xs">
+                  Send this as a custom prompt
+                </span>
               </div>
             </CommandItem>
-          ))}
-          
-          <CommandItem
-            className="flex items-center gap-3 cursor-pointer"
-            onSelect={() => setShowCustomInput(true)}
-          >
-            <span className="text-lg">💬</span>
-            <div className="flex flex-col">
-              <span className="font-medium">Custom prompt</span>
-              <span className="text-muted-foreground text-xs">
-                Write your own AI instruction
-              </span>
-            </div>
-          </CommandItem>
-        </CommandGroup>
+          </CommandGroup>
+        )}
 
-        {showCustomInput && (
-          <div className="border-t p-3">
-            <div className="space-y-2">
-              <Input
-                placeholder="Enter your custom prompt..."
-                value={customPrompt}
-                onChange={(e) => setCustomPrompt(e.target.value)}
-                onKeyDown={handleKeyDown}
-                autoFocus
-                className="min-h-[60px] resize-none"
-              />
-              <div className="flex gap-2 justify-end">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowCustomInput(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={handleCustomSubmit}
-                  disabled={!customPrompt.trim()}
-                >
-                  Send
-                </Button>
+        {!searchValue.trim() && filteredExamples.length === 0 && (
+          <CommandEmpty>
+            <div className="flex items-center gap-2 p-2">
+              <span className="text-lg">🤖</span>
+              <div>
+                <p className="font-medium">No commands found</p>
+                <p className="text-muted-foreground text-xs">
+                  Type to search or create custom prompt
+                </p>
               </div>
             </div>
-          </div>
+          </CommandEmpty>
         )}
 
         {selectedText && (
@@ -267,7 +321,7 @@ export const AIPromptMenu = ({
     setCurrentPrompt('')
   }, [])
 
-  // Handle escape key
+  // Handle dismissal on escape or click outside
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -275,8 +329,21 @@ export const AIPromptMenu = ({
       }
     }
 
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      // Check if click is outside the menu
+      if (!target.closest('[data-ai-prompt-menu]')) {
+        onClose()
+      }
+    }
+
     document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
+    document.addEventListener('mousedown', handleClickOutside)
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
   }, [onClose])
 
   if (!position) return null
@@ -309,10 +376,18 @@ export const AIPromptMenu = ({
 
   return createPortal(
     <div 
+      data-ai-prompt-menu
       className="fixed z-50 rounded-md border bg-popover shadow-md"
       style={{
         left: position.x,
         top: position.y + 4,
+      }}
+      onMouseDown={(e) => {
+        // Only prevent focus loss if clicking on non-interactive elements
+        const target = e.target as HTMLElement
+        if (!target.closest('input, textarea, button, [role="option"]')) {
+          e.preventDefault()
+        }
       }}
     >
       {renderCurrentState()}

@@ -27,7 +27,7 @@ export const AIPromptIntegration = ({ editor }: AIPromptIntegrationProps) => {
   const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null)
   const [selectedText, setSelectedText] = useState<string>()
   
-  const { handleAISubmit, insertAIResponse } = useAIPrompt({ editor })
+  const { handleAISubmit, insertAIResponse } = useAIPrompt({ editor, preservedSelection: null })
 
   // Global AI prompt trigger function that can be called from anywhere
   // This function can be exported and used by slash commands or other triggers

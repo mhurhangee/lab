@@ -12,8 +12,8 @@ export const AIPromptSlash = Extension.create({
       Suggestion({
         editor: this.editor,
         char: '/',
-        command: ({ editor, range, props }) => {
-          // Remove the slash and trigger AI menu
+        command: ({ editor, range }) => {
+          // Remove the slash and trigger AI menu immediately
           editor.chain().focus().deleteRange(range).run()
           
           if (onTriggerAIPrompt) {
@@ -24,83 +24,22 @@ export const AIPromptSlash = Extension.create({
             onTriggerAIPrompt({ x: coords.left, y: coords.bottom })
           }
         },
-        items: ({ query }) => {
-          // Only show AI command when query starts with "ai" or is empty
-          if (query && !query.toLowerCase().startsWith('ai')) {
-            return []
-          }
-          
-          return [{ 
-            title: 'AI Prompt',
-            description: 'Open AI menu to generate or edit text',
-            icon: '🤖' 
-          }]
+        items: () => {
+          // Always return one item to trigger the command immediately
+          return [{ title: 'AI Prompt' }]
         },
         render: () => {
-          // Simple render - just show the AI option
-          let popup: HTMLElement | null = null
-          let commandFn: any = null
-
+          // No UI needed - we trigger immediately
           return {
             onStart: (props) => {
-              if (!props.items.length) return
-              
-              commandFn = props.command
-
-              popup = document.createElement('div')
-              popup.className = 'fixed z-50 rounded-md border bg-popover p-2 shadow-md'
-              popup.innerHTML = `
-                <div class="flex items-center gap-2 cursor-pointer hover:bg-accent rounded p-2">
-                  <span class="text-lg">🤖</span>
-                  <div>
-                    <div class="font-medium">AI Prompt</div>
-                    <div class="text-xs text-muted-foreground">Open AI menu</div>
-                  </div>
-                </div>
-              `
-              
-              const rect = props.clientRect?.()
-              if (rect) {
-                popup.style.left = `${rect.left}px`
-                popup.style.top = `${rect.bottom + 4}px`
-              }
-
-              popup.addEventListener('click', () => {
-                commandFn({ title: 'AI Prompt' })
-              })
-
-              document.body.appendChild(popup)
+              // Immediately trigger the command when slash is typed
+              setTimeout(() => {
+                props.command({ title: 'AI Prompt' })
+              }, 0)
             },
-
-            onUpdate: (props) => {
-              if (!popup || !props.items.length) return
-              
-              commandFn = props.command
-              
-              const rect = props.clientRect?.()
-              if (rect) {
-                popup.style.left = `${rect.left}px`
-                popup.style.top = `${rect.bottom + 4}px`
-              }
-            },
-
-            onKeyDown: (props) => {
-              if (props.event.key === 'Enter') {
-                commandFn({ title: 'AI Prompt' })
-                return true
-              }
-              if (props.event.key === 'Escape') {
-                return true
-              }
-              return false
-            },
-
-            onExit: () => {
-              if (popup) {
-                popup.remove()
-                popup = null
-              }
-            },
+            onUpdate: () => {},
+            onKeyDown: () => false,
+            onExit: () => {},
           }
         },
       }),

@@ -20,16 +20,24 @@ export function EditorApp({ context }: { context: ContextDB }) {
   const [showAIMenu, setShowAIMenu] = useState(false)
   const [aiMenuPosition, setAIMenuPosition] = useState<{ x: number; y: number } | null>(null)
   const [selectedText, setSelectedText] = useState<string>()
+  const [preservedSelection, setPreservedSelection] = useState<{ from: number; to: number; empty: boolean } | null>(null)
 
   // AI prompt trigger function for slash commands
   const handleTriggerAIPrompt = (position: { x: number; y: number }) => {
+    // Store current selection for slash commands
+    if (editor) {
+      const { selection } = editor.state
+      setPreservedSelection({ from: selection.from, to: selection.to, empty: selection.empty })
+    }
     setAIMenuPosition(position)
     setSelectedText(undefined) // No selected text from slash commands
     setShowAIMenu(true)
   }
 
   // Handle text selection detection
-  const handleSelectionDetected = (position: { x: number; y: number }, text: string) => {
+  const handleSelectionDetected = (position: { x: number; y: number }, text: string, selection: { from: number; to: number; empty: boolean }) => {
+    // Store the selection that was detected
+    setPreservedSelection(selection)
     setAIMenuPosition(position)
     setSelectedText(text)
     setShowAIMenu(true)
@@ -39,7 +47,10 @@ export function EditorApp({ context }: { context: ContextDB }) {
     setShowAIMenu(false)
     setAIMenuPosition(null)
     setSelectedText(undefined)
+    setPreservedSelection(null)
   }
+
+
 
   const editor = useEditor({
     extensions: [...extensions({ 
@@ -60,7 +71,8 @@ export function EditorApp({ context }: { context: ContextDB }) {
   })
 
   const { handleAISubmit, insertAIResponse } = useAIPrompt({ 
-    editor: editor! 
+    editor: editor!,
+    preservedSelection
   })
 
   const handleAISubmitAndClose = async (prompt: string) => {

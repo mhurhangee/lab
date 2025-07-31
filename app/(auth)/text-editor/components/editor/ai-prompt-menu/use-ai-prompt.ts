@@ -3,12 +3,13 @@ import { Editor } from '@tiptap/react'
 
 interface UseAIPromptOptions {
   editor: Editor
+  preservedSelection?: { from: number; to: number; empty: boolean } | null
 }
 
-export const useAIPrompt = ({ editor }: UseAIPromptOptions) => {
+export const useAIPrompt = ({ editor, preservedSelection }: UseAIPromptOptions) => {
   const handleAISubmit = useCallback(async (prompt: string): Promise<string> => {
-    // Get selected text or text around cursor
-    const { selection } = editor.state
+    // Use preserved selection if available, otherwise current selection
+    const selection = preservedSelection || editor.state.selection
     const { from, to, empty } = selection
     
     let contextText = ''
@@ -47,10 +48,11 @@ export const useAIPrompt = ({ editor }: UseAIPromptOptions) => {
       console.error('AI prompt error:', error)
       throw new Error('Failed to get AI response')
     }
-  }, [editor])
+  }, [editor, preservedSelection])
 
   const insertAIResponse = useCallback((response: string) => {
-    const { selection } = editor.state
+    // Use preserved selection if available, otherwise current selection
+    const selection = preservedSelection || editor.state.selection
     const { from, to, empty } = selection
 
     if (empty) {
@@ -65,7 +67,7 @@ export const useAIPrompt = ({ editor }: UseAIPromptOptions) => {
         .insertContent(response)
         .run()
     }
-  }, [editor])
+  }, [editor, preservedSelection])
 
   return {
     handleAISubmit,
