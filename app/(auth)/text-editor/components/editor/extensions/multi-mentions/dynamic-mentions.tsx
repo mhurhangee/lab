@@ -7,8 +7,8 @@ import type { SuggestionKeyDownProps, SuggestionProps } from '@tiptap/suggestion
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
 import { cn } from '@/lib/utils'
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command'
 
-import { autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom'
 
 import './multi-mentions.css'
 
@@ -47,34 +47,22 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
       }
     }
 
-    const upHandler = () => {
-      setSelectedIndex((selectedIndex + items.length - 1) % items.length)
-    }
-
-    const downHandler = () => {
-      setSelectedIndex((selectedIndex + 1) % items.length)
-    }
-
-    const enterHandler = () => {
-      selectItem(selectedIndex)
-    }
-
     useEffect(() => setSelectedIndex(0), [items])
 
     useImperativeHandle(ref, () => ({
       onKeyDown: ({ event }) => {
         if (event.key === 'ArrowUp') {
-          upHandler()
+          setSelectedIndex((selectedIndex + items.length - 1) % items.length)
           return true
         }
 
         if (event.key === 'ArrowDown') {
-          downHandler()
+          setSelectedIndex((selectedIndex + 1) % items.length)
           return true
         }
 
         if (event.key === 'Enter') {
-          enterHandler()
+          selectItem(selectedIndex)
           return true
         }
 
@@ -108,39 +96,40 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
       }
     }
 
-    if (items.length === 0) {
-      return (
-        <div className="bg-popover text-muted-foreground rounded-md border p-3 text-sm shadow-md">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="text-lg">{getTypeIcon(type)}</span>
-            <span className="font-medium">No {getTypeLabel(type).toLowerCase()}s found</span>
-          </div>
-          <p className="text-xs">Type a new {getTypeLabel(type).toLowerCase()} name to create it</p>
-        </div>
-      )
-    }
-
     return (
-      <div className="bg-popover rounded-md border shadow-md">
-        {items.map((item, index) => (
-          <button
-            key={item.id}
-            className={cn(
-              'hover:bg-accent hover:text-accent-foreground flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors',
-              index === selectedIndex && 'bg-accent text-accent-foreground'
-            )}
-            onClick={() => selectItem(index)}
-          >
-            <span className="text-lg">{getTypeIcon(type)}</span>
-            <div className="flex flex-col">
-              <span className="font-medium">{item.name}</span>
-              <span className="text-muted-foreground text-xs">
-                {getTypeLabel(type)} from document
-              </span>
-            </div>
-          </button>
-        ))}
-      </div>
+      <Command className="w-80">
+        <CommandList>
+          {items.length === 0 ? (
+            <CommandEmpty className="flex items-center gap-2 p-2">
+                <span className="text-lg">{getTypeIcon(type)}</span>
+                <div>
+                  <p className="font-medium">No {getTypeLabel(type).toLowerCase()}s found</p>
+                  <p className="text-muted-foreground text-xs">
+                    Type a new {getTypeLabel(type).toLowerCase()} name to create it
+                  </p>
+                </div>
+            </CommandEmpty>
+          ) : (
+            <CommandGroup>
+              {items.map((item, index) => (
+                <CommandItem
+                  key={item.id}
+                  className={cn(
+                    'flex items-center gap-2 cursor-pointer',
+                    index === selectedIndex && 'bg-accent'
+                  )}
+                  onSelect={() => selectItem(index)}
+                >
+                  <span className="text-lg">{getTypeIcon(type)}</span>
+                  <div className="flex flex-col">
+                    <span className="font-medium">{item.name}</span>
+                  </div>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
+        </CommandList>
+      </Command>
     )
   }
 )
@@ -226,7 +215,6 @@ const createDynamicMentionSuggestion = (type: MentionType) => {
     render: () => {
       let component: ReactRenderer
       let popup: HTMLDivElement
-      let cleanup: (() => void) | null = null
 
       return {
         onStart: (props: SuggestionProps) => {
@@ -239,44 +227,18 @@ const createDynamicMentionSuggestion = (type: MentionType) => {
             return
           }
 
-          // Create popup element
+          // Create and position popup with shadcn styling
           popup = document.createElement('div')
-          popup.style.position = 'absolute'
-          popup.style.top = '0'
-          popup.style.left = '0'
-          popup.style.zIndex = '1000'
-          popup.style.pointerEvents = 'auto'
+          popup.className = 'fixed z-50 rounded-md border bg-popover shadow-md'
           popup.appendChild(component.element)
           document.body.appendChild(popup)
 
-          // Create virtual reference element for positioning
-          const virtualElement = {
-            getBoundingClientRect: props.clientRect as () => DOMRect,
+          // Simple positioning
+          const rect = props.clientRect()
+          if (rect) {
+            popup.style.left = `${rect.left}px`
+            popup.style.top = `${rect.bottom + 4}px`
           }
-
-          // Setup floating-ui positioning
-          const updatePosition = () => {
-            if (!popup || !props.clientRect) return
-
-            computePosition(virtualElement, popup, {
-              placement: 'bottom-start',
-              middleware: [
-                offset(4),
-                flip({
-                  fallbackPlacements: ['top-start', 'bottom-start'],
-                }),
-                shift({ padding: 8 }),
-              ],
-            }).then(({ x, y }) => {
-              popup.style.left = `${x}px`
-              popup.style.top = `${y}px`
-            })
-          }
-
-          updatePosition()
-
-          // Setup auto-update for position changes
-          cleanup = autoUpdate(virtualElement, popup, updatePosition)
         },
 
         onUpdate(props: SuggestionProps) {
@@ -286,25 +248,12 @@ const createDynamicMentionSuggestion = (type: MentionType) => {
             return
           }
 
-          // Update the virtual element's getBoundingClientRect function
-          const virtualElement = {
-            getBoundingClientRect: props.clientRect as () => DOMRect,
-          }
-
           // Update position
-          computePosition(virtualElement, popup, {
-            placement: 'bottom-start',
-            middleware: [
-              offset(4),
-              flip({
-                fallbackPlacements: ['top-start', 'bottom-start'],
-              }),
-              shift({ padding: 8 }),
-            ],
-          }).then(({ x, y }) => {
-            popup.style.left = `${x}px`
-            popup.style.top = `${y}px`
-          })
+          const rect = props.clientRect()
+          if (rect) {
+            popup.style.left = `${rect.left}px`
+            popup.style.top = `${rect.bottom + 4}px`
+          }
         },
 
         onKeyDown(props: SuggestionKeyDownProps) {
@@ -319,10 +268,6 @@ const createDynamicMentionSuggestion = (type: MentionType) => {
         },
 
         onExit() {
-          if (cleanup) {
-            cleanup()
-            cleanup = null
-          }
           if (popup && popup.parentNode) {
             popup.parentNode.removeChild(popup)
           }
