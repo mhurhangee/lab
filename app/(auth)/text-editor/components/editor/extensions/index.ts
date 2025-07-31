@@ -94,7 +94,7 @@ export const extensions = ({ setTocItems, editorRef }: ExtensionsOptions) => [
     },
     suggestion: dynamicLocationMentionSuggestion,
     renderLabel({ node }) {
-      return `@${node.attrs.label || node.attrs.id}`
+      return `${node.attrs.label || node.attrs.id}`
     },
   }),
   // Event mentions (!)
@@ -137,7 +137,7 @@ export const extensions = ({ setTocItems, editorRef }: ExtensionsOptions) => [
       char: '!',
     },
     renderLabel({ node }) {
-      return `!${node.attrs.label || node.attrs.id}`
+      return `${node.attrs.label || node.attrs.id}`
     },
   }),
   // Character mentions (&)
@@ -180,7 +180,7 @@ export const extensions = ({ setTocItems, editorRef }: ExtensionsOptions) => [
       char: '&',
     },
     renderLabel({ node }) {
-      return `&${node.attrs.label || node.attrs.id}`
+      return `${node.attrs.label || node.attrs.id}`
     },
   }),
 ]
