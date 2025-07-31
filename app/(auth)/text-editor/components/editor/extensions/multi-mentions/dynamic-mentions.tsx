@@ -4,7 +4,8 @@ import { JSONContent, ReactRenderer } from '@tiptap/react'
 import { Editor } from '@tiptap/react'
 import type { SuggestionKeyDownProps, SuggestionProps } from '@tiptap/suggestion'
 
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 import { cn } from '@/lib/utils'
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command'
@@ -34,6 +35,118 @@ interface MentionListProps {
 
 interface MentionListRef {
   onKeyDown: (props: { event: KeyboardEvent }) => boolean
+}
+
+// Simple positioned wrapper component
+const PositionedMentionList = ({ 
+  items, 
+  command, 
+  type, 
+  position
+}: MentionListProps & { 
+  position: { x: number; y: number } | null
+}) => {
+  const [selectedIndex, setSelectedIndex] = useState(0)
+
+  const selectItem = useCallback((index: number) => {
+    const item = items[index]
+    if (item) {
+      command({ id: item.id, label: item.name, type })
+    }
+  }, [items, command, type])
+
+  useEffect(() => setSelectedIndex(0), [items])
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowUp') {
+        event.preventDefault()
+        setSelectedIndex((selectedIndex + items.length - 1) % items.length)
+      } else if (event.key === 'ArrowDown') {
+        event.preventDefault()
+        setSelectedIndex((selectedIndex + 1) % items.length)
+      } else if (event.key === 'Enter') {
+        event.preventDefault()
+        selectItem(selectedIndex)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [selectedIndex, items, selectItem])
+
+  const getTypeIcon = (type: MentionType) => {
+    switch (type) {
+      case 'location':
+        return '📍'
+      case 'event':
+        return '📅'
+      case 'character':
+        return '👤'
+      default:
+        return '💬'
+    }
+  }
+
+  const getTypeLabel = (type: MentionType) => {
+    switch (type) {
+      case 'location':
+        return 'Location'
+      case 'event':
+        return 'Event'
+      case 'character':
+        return 'Character'
+      default:
+        return 'Mention'
+    }
+  }
+
+  if (!position) return null
+
+  return createPortal(
+    <div 
+      className="fixed z-50 rounded-md border bg-popover shadow-md"
+      style={{
+        left: position.x,
+        top: position.y + 4,
+      }}
+    >
+      <Command className="w-80">
+        <CommandList>
+          {items.length === 0 ? (
+            <CommandEmpty className="flex items-center gap-2 p-2">
+              <span className="text-lg">{getTypeIcon(type)}</span>
+              <div>
+                <p className="font-medium">No {getTypeLabel(type).toLowerCase()}s found</p>
+                <p className="text-muted-foreground text-xs">
+                  Type a new {getTypeLabel(type).toLowerCase()} name to create it
+                </p>
+              </div>
+            </CommandEmpty>
+          ) : (
+            <CommandGroup>
+              {items.map((item, index) => (
+                <CommandItem
+                  key={item.id}
+                  className={cn(
+                    'flex items-center gap-2 cursor-pointer',
+                    index === selectedIndex && 'bg-accent'
+                  )}
+                  onSelect={() => selectItem(index)}
+                >
+                  <span className="text-lg">{getTypeIcon(type)}</span>
+                  <div className="flex flex-col">
+                    <span className="font-medium">{item.name}</span>
+                  </div>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
+        </CommandList>
+      </Command>
+    </div>,
+    document.body
+  )
 }
 
 const MentionList = forwardRef<MentionListRef, MentionListProps>(
@@ -70,67 +183,8 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
       },
     }))
 
-    const getTypeIcon = (type: MentionType) => {
-      switch (type) {
-        case 'location':
-          return '📍'
-        case 'event':
-          return '📅'
-        case 'character':
-          return '👤'
-        default:
-          return '💬'
-      }
-    }
-
-    const getTypeLabel = (type: MentionType) => {
-      switch (type) {
-        case 'location':
-          return 'Location'
-        case 'event':
-          return 'Event'
-        case 'character':
-          return 'Character'
-        default:
-          return 'Mention'
-      }
-    }
-
-    return (
-      <Command className="w-80">
-        <CommandList>
-          {items.length === 0 ? (
-            <CommandEmpty className="flex items-center gap-2 p-2">
-                <span className="text-lg">{getTypeIcon(type)}</span>
-                <div>
-                  <p className="font-medium">No {getTypeLabel(type).toLowerCase()}s found</p>
-                  <p className="text-muted-foreground text-xs">
-                    Type a new {getTypeLabel(type).toLowerCase()} name to create it
-                  </p>
-                </div>
-            </CommandEmpty>
-          ) : (
-            <CommandGroup>
-              {items.map((item, index) => (
-                <CommandItem
-                  key={item.id}
-                  className={cn(
-                    'flex items-center gap-2 cursor-pointer',
-                    index === selectedIndex && 'bg-accent'
-                  )}
-                  onSelect={() => selectItem(index)}
-                >
-                  <span className="text-lg">{getTypeIcon(type)}</span>
-                  <div className="flex flex-col">
-                    <span className="font-medium">{item.name}</span>
-                  </div>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          )}
-        </CommandList>
-      </Command>
-    )
+    // This component is just for the ref interface - actual rendering happens in PositionedMentionList
+    return null
   }
 )
 
@@ -214,63 +268,47 @@ const createDynamicMentionSuggestion = (type: MentionType) => {
 
     render: () => {
       let component: ReactRenderer
-      let popup: HTMLDivElement
+      let currentPosition: { x: number; y: number } | null = null
 
       return {
         onStart: (props: SuggestionProps) => {
-          component = new ReactRenderer(MentionList, {
-            props: { ...props, type },
+          const rect = props.clientRect?.()
+          if (rect) {
+            currentPosition = { x: rect.left, y: rect.bottom }
+          }
+
+          component = new ReactRenderer(PositionedMentionList, {
+            props: { 
+              ...props, 
+              type,
+              position: currentPosition
+            },
             editor: props.editor,
           })
-
-          if (!props.clientRect) {
-            return
-          }
-
-          // Create and position popup with shadcn styling
-          popup = document.createElement('div')
-          popup.className = 'fixed z-50 rounded-md border bg-popover shadow-md'
-          popup.appendChild(component.element)
-          document.body.appendChild(popup)
-
-          // Simple positioning
-          const rect = props.clientRect()
-          if (rect) {
-            popup.style.left = `${rect.left}px`
-            popup.style.top = `${rect.bottom + 4}px`
-          }
         },
 
         onUpdate(props: SuggestionProps) {
-          component.updateProps({ ...props, type })
-
-          if (!props.clientRect || !popup) {
-            return
-          }
-
-          // Update position
-          const rect = props.clientRect()
+          const rect = props.clientRect?.()
           if (rect) {
-            popup.style.left = `${rect.left}px`
-            popup.style.top = `${rect.bottom + 4}px`
+            currentPosition = { x: rect.left, y: rect.bottom }
           }
+
+          component.updateProps({ 
+            ...props, 
+            type,
+            position: currentPosition
+          })
         },
 
         onKeyDown(props: SuggestionKeyDownProps) {
           if (props.event.key === 'Escape') {
-            if (popup) {
-              popup.style.display = 'none'
-            }
             return true
           }
-
-          return (component.ref as MentionListRef)?.onKeyDown(props) || false
+          // Let the component handle other keys
+          return false
         },
 
         onExit() {
-          if (popup && popup.parentNode) {
-            popup.parentNode.removeChild(popup)
-          }
           component.destroy()
         },
       }
