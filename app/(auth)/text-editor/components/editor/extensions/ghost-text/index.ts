@@ -77,30 +77,6 @@ export const AIGhostText = Extension.create({
         }
         return false // Let default Tab behavior happen
       },
-      Enter: ({ editor }) => {
-        const state = editor.state
-        const pluginState = ghostTextPluginKey.getState(state)
-        if (pluginState?.ghostText && !pluginState.loading) {
-          // Use setTimeout to avoid transaction conflicts
-          setTimeout(() => {
-            editor.commands.acceptGhostText()
-          }, 0)
-          return true // Prevent default Enter behavior
-        }
-        return false // Let default Enter behavior happen
-      },
-      Escape: ({ editor }) => {
-        const state = editor.state
-        const pluginState = ghostTextPluginKey.getState(state)
-        if (pluginState?.ghostText || pluginState?.loading) {
-          // Use setTimeout to avoid transaction conflicts
-          setTimeout(() => {
-            editor.commands.clearGhostText()
-          }, 0)
-          return true
-        }
-        return false
-      },
     }
   },
 
@@ -121,6 +97,32 @@ export const AIGhostText = Extension.create({
           },
         },
         props: {
+          handleKeyDown: (view, event) => {
+            const pluginState = ghostTextPluginKey.getState(view.state)
+
+            // If there's ghost text or loading state, handle key presses
+            if (pluginState?.ghostText || pluginState?.loading) {
+              // Allow Tab to be handled by keyboard shortcuts (to accept ghost text)
+              if (event.key === 'Tab') {
+                return false
+              }
+
+              // For any other key, dismiss the ghost text
+              setTimeout(() => {
+                const tr = view.state.tr.setMeta(ghostTextPluginKey, {
+                  ghostText: '',
+                  from: 0,
+                  loading: false,
+                })
+                view.dispatch(tr)
+              }, 0)
+
+              // Don't prevent the key event - let it proceed normally
+              return false
+            }
+
+            return false
+          },
           decorations: (state: EditorState) => {
             const pluginState = ghostTextPluginKey.getState(state)
             if (!pluginState) return DecorationSet.empty
