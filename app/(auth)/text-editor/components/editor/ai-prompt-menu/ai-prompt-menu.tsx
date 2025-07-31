@@ -4,10 +4,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import { Button } from '@/components/ui/button'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import { Input } from '@/components/ui/input'
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command'
 import { Textarea } from '@/components/ui/textarea'
 import { Loader } from '@/components/ui/loader'
+import { SendIcon } from 'lucide-react'
 
 type AIPromptState = 'prompt-input' | 'loading' | 'ai-response'
 
@@ -15,6 +15,7 @@ export interface AIPromptMenuProps {
   position: { x: number; y: number } | null
   onClose: () => void
   onSubmit: (prompt: string) => Promise<string>
+  onAccept?: (response: string) => void
   selectedText?: string
 }
 
@@ -122,9 +123,9 @@ const PromptInputState = ({
   const isLongText = searchValue.length > 60 || searchValue.includes('\n')
 
   return (
-    <Command className="w-80">
+    <Command className="w-120">
       <div className="border-b">
-        <div className="flex items-start p-3 gap-2">
+        <div className="flex items-start min-h-9">
           {isLongText ? (
             <Textarea
               placeholder="Ask AI to edit or generate..."
@@ -143,16 +144,15 @@ const PromptInputState = ({
               onChange={(e) => setSearchValue(e.target.value)}
               onKeyDown={handleKeyDown}
               autoFocus
-              className="flex-1 border-none outline-none bg-transparent text-sm placeholder:text-muted-foreground"
+              className="flex-1 border-none outline-none bg-transparent text-sm placeholder:text-muted-foreground h-9 ml-2"
             />
           )}
           {searchValue.trim() && (
             <Button
-              size="sm"
+              size="icon"
               onClick={handleSendCustom}
-              className="shrink-0 h-8"
             >
-              Send
+              <SendIcon className="w-4 h-4 m-0" />
             </Button>
           )}
         </div>
@@ -285,7 +285,8 @@ const AIResponseState = ({
 export const AIPromptMenu = ({ 
   position, 
   onClose, 
-  onSubmit, 
+  onSubmit,
+  onAccept, 
   selectedText 
 }: AIPromptMenuProps) => {
   const [state, setState] = useState<AIPromptState>('prompt-input')
@@ -308,10 +309,14 @@ export const AIPromptMenu = ({
   }, [onSubmit])
 
   const handleAccept = useCallback(() => {
-    // Insert the AI response into the editor
-    // This will be handled by the parent component
-    onClose()
-  }, [onClose])
+    // Pass the AI response to parent for insertion
+    if (onAccept && aiResponse) {
+      onAccept(aiResponse)
+    } else {
+      // Fallback - just close if no onAccept handler
+      onClose()
+    }
+  }, [onAccept, aiResponse, onClose])
 
   const handleReject = useCallback(() => {
     onClose()

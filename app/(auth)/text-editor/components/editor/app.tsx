@@ -79,15 +79,14 @@ export function EditorApp({ context }: { context: ContextDB }) {
   })
 
   const handleAISubmitAndClose = async (prompt: string) => {
-    try {
-      const response = await handleAISubmit(prompt)
-      insertAIResponse(response)
-      handleCloseAIMenu()
-      return response
-    } catch (error) {
-      console.error('AI prompt failed:', error)
-      throw error
-    }
+    // Just return the AI response - let the AI menu handle the suggestion flow
+    return await handleAISubmit(prompt)
+  }
+
+  const handleAIAccept = (response: string) => {
+    // Only insert response when user explicitly accepts
+    insertAIResponse(response)
+    handleCloseAIMenu()
   }
 
   if (!editor) return null
@@ -108,6 +107,7 @@ export function EditorApp({ context }: { context: ContextDB }) {
           position={aiMenuPosition}
           onClose={handleCloseAIMenu}
           onSubmit={handleAISubmitAndClose}
+          onAccept={handleAIAccept}
           selectedText={selectedText}
         />
       )}
