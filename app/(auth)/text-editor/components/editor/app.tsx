@@ -7,7 +7,7 @@ import { useRef, useState } from 'react'
 import React from 'react'
 
 import { ContextDB } from '@/types/database'
-import { AISelectionDetector } from './bubble-menu/ai-bubble-menu'
+import { AIBubbleMenu } from './bubble-menu/ai-bubble-menu'
 import { AIPromptMenu, useAIPrompt } from './ai-prompt-menu'
 
 import { extensions } from './extensions'
@@ -34,10 +34,13 @@ export function EditorApp({ context }: { context: ContextDB }) {
     setShowAIMenu(true)
   }
 
-  // Handle text selection detection
-  const handleSelectionDetected = (position: { x: number; y: number }, text: string, selection: { from: number; to: number; empty: boolean }) => {
-    // Store the selection that was detected
-    setPreservedSelection(selection)
+  // Handle bubble menu AI trigger
+  const handleBubbleMenuAI = (position: { x: number; y: number }, text: string) => {
+    // Get current selection when bubble menu triggers
+    if (editor) {
+      const { selection } = editor.state
+      setPreservedSelection({ from: selection.from, to: selection.to, empty: selection.empty })
+    }
     setAIMenuPosition(position)
     setSelectedText(text)
     setShowAIMenu(true)
@@ -94,10 +97,10 @@ export function EditorApp({ context }: { context: ContextDB }) {
       <SplitView editor={editor} id={context.id} tocItems={tocItems} />
       
       {/* AI Selection Detector */}
-      <AISelectionDetector
-        editor={editor}
-        onSelectionDetected={handleSelectionDetected}
-      />
+              <AIBubbleMenu
+          editor={editor}
+          onOpenAIMenu={handleBubbleMenuAI}
+        />
 
       {/* Global AI Prompt Menu */}
       {showAIMenu && (

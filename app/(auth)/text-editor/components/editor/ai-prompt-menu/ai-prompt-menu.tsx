@@ -131,6 +131,7 @@ const PromptInputState = ({
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               onKeyDown={handleKeyDown}
+              autoFocus
               className="flex-1 min-h-[60px] max-h-[120px] resize-none border-none shadow-none focus-visible:ring-0 p-0"
               rows={Math.min(4, Math.max(2, searchValue.split('\n').length))}
             />
@@ -141,6 +142,7 @@ const PromptInputState = ({
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               onKeyDown={handleKeyDown}
+              autoFocus
               className="flex-1 border-none outline-none bg-transparent text-sm placeholder:text-muted-foreground"
             />
           )}

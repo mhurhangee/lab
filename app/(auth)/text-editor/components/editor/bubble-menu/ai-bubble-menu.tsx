@@ -1,66 +1,61 @@
 'use client'
 
+import { BubbleMenu } from '@tiptap/react/menus'
 import { Editor } from '@tiptap/react'
-import { useEffect } from 'react'
 
-interface AISelectionDetectorProps {
+import { Button } from '@/components/ui/button'
+
+interface AIBubbleMenuProps {
   editor: Editor
-  onSelectionDetected: (position: { x: number; y: number }, selectedText: string, selection: { from: number; to: number; empty: boolean }) => void
+  onOpenAIMenu: (position: { x: number; y: number }, selectedText: string) => void
 }
 
-export const AISelectionDetector = ({ editor, onSelectionDetected }: AISelectionDetectorProps) => {
-  useEffect(() => {
-    let selectionTimeout: NodeJS.Timeout
+export const AIBubbleMenu = ({ editor, onOpenAIMenu }: AIBubbleMenuProps) => {
+  const handleOpenAI = () => {
+    const { selection } = editor.state
+    const { from, to } = selection
+    
+    // Get selected text
+    const selectedText = editor.state.doc.textBetween(from, to)
+    
+    // Get position for menu
+    const coords = editor.view.coordsAtPos(to)
+    
+    onOpenAIMenu(
+      { x: coords.left, y: coords.bottom },
+      selectedText.trim()
+    )
+  }
 
-    const handleSelectionChange = () => {
-      // Clear any existing timeout
-      if (selectionTimeout) {
-        clearTimeout(selectionTimeout)
-      }
-
-      // Debounce selection changes to avoid too many triggers
-      selectionTimeout = setTimeout(() => {
-        const { selection } = editor.state
+  return (
+    <BubbleMenu
+      editor={editor}
+      shouldShow={({ editor, state }) => {
+        const { selection } = state
         const { from, to, empty } = selection
-
-        // Only trigger if there's actual text selected (not just cursor position)
-        if (!empty) {
-          const selectedText = editor.state.doc.textBetween(from, to)
-          
-          // Only show for meaningful text selections (more than just whitespace)
-          if (selectedText.trim().length > 0) {
-            try {
-              // Get DOM coordinates for the selection end
-              const coords = editor.view.coordsAtPos(to)
-              
-              if (coords) {
-                onSelectionDetected(
-                  { x: coords.left, y: coords.bottom },
-                  selectedText.trim(),
-                  { from, to, empty }
-                )
-              }
-            } catch (error) {
-              // Silently ignore coordinate errors
-              console.debug('Could not get selection coordinates:', error)
-            }
-          }
-        }
-      }, 150) // Small debounce to avoid excessive triggers
-    }
-
-    // Listen to editor selection updates
-    editor.on('selectionUpdate', handleSelectionChange)
-
-    return () => {
-      if (selectionTimeout) {
-        clearTimeout(selectionTimeout)
-      }
-      // Remove the event listener
-      editor.off('selectionUpdate', handleSelectionChange)
-    }
-  }, [editor, onSelectionDetected])
-
-  // This component doesn't render anything - it's just a selection detector
-  return null
+        
+        // Only show when there's actual text selected
+        if (empty) return false
+        
+        const selectedText = state.doc.textBetween(from, to)
+        return selectedText.trim().length > 0
+      }}
+      options={{
+        placement: 'bottom-start',
+        offset: 6
+      }}
+    >
+      <div className="bg-background border rounded-lg shadow-lg p-1">
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={handleOpenAI}
+          className="h-8 px-2 text-xs"
+        >
+          <span className="mr-1">🤖</span>
+          Ask AI
+        </Button>
+      </div>
+    </BubbleMenu>
+  )
 }
