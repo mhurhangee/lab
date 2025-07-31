@@ -8,7 +8,7 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
 import { cn } from '@/lib/utils'
 
-import tippy, { Instance, Props } from 'tippy.js'
+import { autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom'
 
 import './multi-mentions.css'
 
@@ -225,7 +225,8 @@ const createDynamicMentionSuggestion = (type: MentionType) => {
 
     render: () => {
       let component: ReactRenderer
-      let popup: Instance<Props>[]
+      let popup: HTMLDivElement
+      let cleanup: (() => void) | null = null
 
       return {
         onStart: (props: SuggestionProps) => {
@@ -238,33 +239,79 @@ const createDynamicMentionSuggestion = (type: MentionType) => {
             return
           }
 
-          popup = tippy('body', {
-            getReferenceClientRect: props.clientRect as () => DOMRect,
-            appendTo: () => document.body,
-            content: component.element,
-            showOnCreate: true,
-            interactive: true,
-            trigger: 'manual',
-            placement: 'bottom-start',
-            theme: `mentions-${type}`,
-          })
+          // Create popup element
+          popup = document.createElement('div')
+          popup.style.position = 'absolute'
+          popup.style.top = '0'
+          popup.style.left = '0'
+          popup.style.zIndex = '1000'
+          popup.style.pointerEvents = 'auto'
+          popup.appendChild(component.element)
+          document.body.appendChild(popup)
+
+          // Create virtual reference element for positioning
+          const virtualElement = {
+            getBoundingClientRect: props.clientRect as () => DOMRect,
+          }
+
+          // Setup floating-ui positioning
+          const updatePosition = () => {
+            if (!popup || !props.clientRect) return
+
+            computePosition(virtualElement, popup, {
+              placement: 'bottom-start',
+              middleware: [
+                offset(4),
+                flip({
+                  fallbackPlacements: ['top-start', 'bottom-start'],
+                }),
+                shift({ padding: 8 }),
+              ],
+            }).then(({ x, y }) => {
+              popup.style.left = `${x}px`
+              popup.style.top = `${y}px`
+            })
+          }
+
+          updatePosition()
+
+          // Setup auto-update for position changes
+          cleanup = autoUpdate(virtualElement, popup, updatePosition)
         },
 
         onUpdate(props: SuggestionProps) {
           component.updateProps({ ...props, type })
 
-          if (!props.clientRect) {
+          if (!props.clientRect || !popup) {
             return
           }
 
-          popup[0].setProps({
-            getReferenceClientRect: props.clientRect as () => DOMRect,
+          // Update the virtual element's getBoundingClientRect function
+          const virtualElement = {
+            getBoundingClientRect: props.clientRect as () => DOMRect,
+          }
+
+          // Update position
+          computePosition(virtualElement, popup, {
+            placement: 'bottom-start',
+            middleware: [
+              offset(4),
+              flip({
+                fallbackPlacements: ['top-start', 'bottom-start'],
+              }),
+              shift({ padding: 8 }),
+            ],
+          }).then(({ x, y }) => {
+            popup.style.left = `${x}px`
+            popup.style.top = `${y}px`
           })
         },
 
         onKeyDown(props: SuggestionKeyDownProps) {
           if (props.event.key === 'Escape') {
-            popup[0].hide()
+            if (popup) {
+              popup.style.display = 'none'
+            }
             return true
           }
 
@@ -272,7 +319,13 @@ const createDynamicMentionSuggestion = (type: MentionType) => {
         },
 
         onExit() {
-          popup[0].destroy()
+          if (cleanup) {
+            cleanup()
+            cleanup = null
+          }
+          if (popup && popup.parentNode) {
+            popup.parentNode.removeChild(popup)
+          }
           component.destroy()
         },
       }

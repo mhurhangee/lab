@@ -45,3 +45,4 @@ next-env.d.ts
 .content-collections
 # clerk configuration (can include secrets)
 /.clerk/
+.cursor/rules/lab.mdc
