@@ -5,11 +5,18 @@ import { Editor } from '@tiptap/react'
 import type { SuggestionKeyDownProps, SuggestionProps } from '@tiptap/suggestion'
 
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from 'react'
-import { createPortal } from 'react-dom'
+
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command'
 
 import { cn } from '@/lib/utils'
-import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command'
 
+import { createPortal } from 'react-dom'
 
 import './multi-mentions.css'
 
@@ -38,22 +45,25 @@ interface MentionListRef {
 }
 
 // Simple positioned wrapper component
-const PositionedMentionList = ({ 
-  items, 
-  command, 
-  type, 
-  position
-}: MentionListProps & { 
+const PositionedMentionList = ({
+  items,
+  command,
+  type,
+  position,
+}: MentionListProps & {
   position: { x: number; y: number } | null
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(0)
 
-  const selectItem = useCallback((index: number) => {
-    const item = items[index]
-    if (item) {
-      command({ id: item.id, label: item.name, type })
-    }
-  }, [items, command, type])
+  const selectItem = useCallback(
+    (index: number) => {
+      const item = items[index]
+      if (item) {
+        command({ id: item.id, label: item.name, type })
+      }
+    },
+    [items, command, type]
+  )
 
   useEffect(() => setSelectedIndex(0), [items])
 
@@ -104,8 +114,8 @@ const PositionedMentionList = ({
   if (!position) return null
 
   return createPortal(
-    <div 
-      className="fixed z-50 rounded-md border bg-popover shadow-md"
+    <div
+      className="bg-popover fixed z-50 rounded-md border shadow-md"
       style={{
         left: position.x,
         top: position.y + 4,
@@ -129,7 +139,7 @@ const PositionedMentionList = ({
                 <CommandItem
                   key={item.id}
                   className={cn(
-                    'flex items-center gap-2 cursor-pointer',
+                    'flex cursor-pointer items-center gap-2',
                     index === selectedIndex && 'bg-accent'
                   )}
                   onSelect={() => selectItem(index)}
@@ -278,10 +288,10 @@ const createDynamicMentionSuggestion = (type: MentionType) => {
           }
 
           component = new ReactRenderer(PositionedMentionList, {
-            props: { 
-              ...props, 
+            props: {
+              ...props,
               type,
-              position: currentPosition
+              position: currentPosition,
             },
             editor: props.editor,
           })
@@ -293,10 +303,10 @@ const createDynamicMentionSuggestion = (type: MentionType) => {
             currentPosition = { x: rect.left, y: rect.bottom }
           }
 
-          component.updateProps({ 
-            ...props, 
+          component.updateProps({
+            ...props,
             type,
-            position: currentPosition
+            position: currentPosition,
           })
         },
 

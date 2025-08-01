@@ -14,6 +14,7 @@ import { Text } from '@tiptap/extension-text'
 import { Placeholder, UndoRedo } from '@tiptap/extensions'
 import type { Editor as TiptapEditor } from '@tiptap/react'
 
+import { createAIPromptSlashSuggestion } from './ai-prompt-slash'
 import { AIGhostText } from './ghost-text'
 import { InlineAISuggestion } from './inline-ai-suggestion'
 import { fetchSuggestion } from './inline-ai-suggestion/utils'
@@ -23,7 +24,6 @@ import {
   dynamicEventMentionSuggestion,
   dynamicLocationMentionSuggestion,
 } from './multi-mentions/dynamic-mentions'
-import { createAIPromptSlashSuggestion } from './ai-prompt-slash'
 
 interface ExtensionsOptions {
   setTocItems: (content: TableOfContentDataItem[]) => void
@@ -61,9 +61,7 @@ export const extensions = ({ setTocItems, editorRef, onTriggerAIPrompt }: Extens
     },
   }),
   // AI Slash Commands
-  ...(onTriggerAIPrompt ? [
-    createAIPromptSlashSuggestion(onTriggerAIPrompt)
-  ] : []),
+  ...(onTriggerAIPrompt ? [createAIPromptSlashSuggestion(onTriggerAIPrompt)] : []),
   // Location mentions (@)
   Mention.extend({
     addAttributes() {

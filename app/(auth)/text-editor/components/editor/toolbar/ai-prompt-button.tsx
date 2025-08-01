@@ -1,9 +1,11 @@
 'use client'
 
 import { Editor } from '@tiptap/react'
+
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+
 import { AIPromptMenu } from '../ai-prompt-menu'
 
 interface AIPromptButtonProps {
@@ -19,10 +21,10 @@ export const AIPromptButton = ({ editor, onSubmit }: AIPromptButtonProps) => {
     // Get cursor position or default to end of editor
     const { selection } = editor.state
     const { $from } = selection
-    
+
     // Get the DOM position of the cursor
     const domPos = editor.view.coordsAtPos($from.pos)
-    
+
     if (domPos) {
       setMenuPosition({ x: domPos.left, y: domPos.bottom })
       setShowMenu(true)
@@ -33,13 +35,6 @@ export const AIPromptButton = ({ editor, onSubmit }: AIPromptButtonProps) => {
     setShowMenu(false)
     setMenuPosition(null)
   }
-
-  const selectedText = editor.state.selection.empty 
-    ? undefined 
-    : editor.state.doc.textBetween(
-        editor.state.selection.from, 
-        editor.state.selection.to
-      )
 
   return (
     <>
@@ -59,7 +54,6 @@ export const AIPromptButton = ({ editor, onSubmit }: AIPromptButtonProps) => {
           position={menuPosition}
           onClose={handleClose}
           onSubmit={onSubmit}
-          selectedText={selectedText}
         />
       )}
     </>

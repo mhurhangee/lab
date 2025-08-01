@@ -1,73 +1,90 @@
-import { useCallback } from 'react'
 import { Editor } from '@tiptap/react'
+
+import { useCallback } from 'react'
 
 interface UseAIPromptOptions {
   editor: Editor
-  preservedSelection?: { from: number; to: number; empty: boolean } | null
 }
 
-export const useAIPrompt = ({ editor, preservedSelection }: UseAIPromptOptions) => {
-  const handleAISubmit = useCallback(async (prompt: string): Promise<string> => {
-    // Use preserved selection if available, otherwise current selection
-    const selection = preservedSelection || editor.state.selection
-    const { from, to, empty } = selection
-    
-    let contextText = ''
-    if (!empty) {
-      // Use selected text
-      contextText = editor.state.doc.textBetween(from, to)
-    } else {
-      // Get surrounding context (e.g., current paragraph or nearby text)
-      const $pos = editor.state.doc.resolve(from)
-      const start = $pos.start($pos.depth)
-      const end = $pos.end($pos.depth)
-      contextText = editor.state.doc.textBetween(start, end)
-    }
+export const useAIPrompt = ({ editor }: UseAIPromptOptions) => {
+  const handleAISubmit = useCallback(
+    async (prompt: string): Promise<string> => {
+      // Use preserved selection if available, otherwise current selection
+      const selection = editor.state.selection
+      const { from, to, empty } = selection
 
-    try {
-      // Make API call to your AI service
-      const response = await fetch('/api/ai-prompt', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          prompt,
-          context: contextText,
-          selection: { from, to, empty }
-        }),
-      })
+      let contextText = ''
+      if (!empty) {
+        contextText = editor.state.doc.textBetween(from, to)
+      } else {
+        // Get surrounding context (e.g., current paragraph or nearby text)
+        // TODO: Get more context, handle headings, summaries, etc.
+        const $pos = editor.state.doc.resolve(from)
 
-      if (!response.ok) {
-        throw new Error('AI request failed')
+        function getNodeText(idx: number) {
+          if (idx >= 0 && idx < parent.childCount) {
+            return parent.child(idx).textContent || ''
+          }
+          return ''
+        }
+
+        const parent = $pos.node($pos.depth)
+        const index = $pos.index($pos.depth)
+        const contextTexts = [
+          getNodeText(index - 2),
+          getNodeText(index - 1),
+          getNodeText(index),
+          getNodeText(index + 1),
+          getNodeText(index + 2),
+        ]
+        
+        contextText = contextTexts.join(' ')
       }
 
-      const data = await response.json()
-      return data.result || 'AI response not available'
-    } catch (error) {
-      console.error('AI prompt error:', error)
-      throw new Error('Failed to get AI response')
-    }
-  }, [editor, preservedSelection])
+      try {
+        // Make API call to your AI service
+        const response = await fetch('/api/ai-prompt', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt,
+            context: contextText,
+            selection: { from, to, empty },
+          }),
+        })
 
-  const insertAIResponse = useCallback((response: string) => {
-    // Use preserved selection if available, otherwise current selection
-    const selection = preservedSelection || editor.state.selection
-    const { from, to, empty } = selection
+        if (!response.ok) {
+          throw new Error('AI request failed')
+        }
 
-    if (empty) {
-      // Insert at cursor position
-      editor.chain().focus().insertContent(response).run()
-    } else {
-      // Replace selected text
-      editor
-        .chain()
-        .focus()
-        .deleteRange({ from, to })
-        .insertContent(response)
-        .run()
-    }
-  }, [editor, preservedSelection])
+        const data = await response.json()
+        return data || 'AI response not available'
+      } catch (error) {
+        console.error('AI prompt error:', error)
+        throw new Error('Failed to get AI response')
+      }
+    },
+    [editor]
+  )
+
+  const insertAIResponse = useCallback(
+    (response: string) => {
+      // Use preserved selection if available, otherwise current selection
+      const selection = editor.state.selection
+      const { from, to, empty } = selection
+
+      if (empty) {
+        // Insert at cursor position
+        editor.chain().focus().insertContent(response).run()
+      } else {
+        // Replace selected text
+        editor.chain().focus().deleteRange({ from, to }).insertContent(response).run()
+      }
+    },
+    [editor]
+  )
 
   return {
     handleAISubmit,
