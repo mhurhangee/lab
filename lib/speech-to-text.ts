@@ -262,37 +262,3 @@ export class SpeechToTextRecorder {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`
   }
 }
-
-// Quick transcribe utility for simple use cases
-export async function quickTranscribe(
-  file: File,
-  options?: {
-    model?: string
-    language?: string
-    prompt?: string
-  }
-): Promise<TranscriptResult> {
-  const formData = new FormData()
-  formData.append('audio', file)
-  formData.append('model', options?.model || 'whisper-1')
-
-  if (options?.language && options.language !== 'auto') {
-    formData.append('language', options.language)
-  }
-
-  if (options?.prompt?.trim()) {
-    formData.append('prompt', options.prompt.trim())
-  }
-
-  const response = await fetch('/api/speech-to-text', {
-    method: 'POST',
-    body: formData,
-  })
-
-  if (!response.ok) {
-    const errorData = await response.json()
-    throw new Error(errorData.error || 'Failed to transcribe audio')
-  }
-
-  return response.json()
-}
