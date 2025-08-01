@@ -87,10 +87,10 @@ export const sidebarItems: SidebarItem[] = [
       },
       {
         name: 'Text Editor',
-        href: '/text-editor',
+        href: '/docs',
         icon: <TypeOutlineIcon className="h-4 w-4" />,
         loggedIn: true,
-        newButton: '/text-editor/new',
+        newButton: '/docs/new',
       },
       {
         name: 'Text-to-Speech',

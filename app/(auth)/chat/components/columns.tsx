@@ -4,8 +4,9 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import Link from 'next/link'
 
-import { ArrowUpDown } from 'lucide-react'
+import { ArrowUpDown, FolderIcon } from 'lucide-react'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 
 import { caseInsensitiveSort } from '@/lib/column-sort'
@@ -40,6 +41,45 @@ export const columnsChats: ColumnDef<ChatDB>[] = [
       return (
         <div className="font-medium">
           <Link href={`/chat/${row.original.id}`}>{title as string}</Link>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'projectTitle',
+    sortingFn: caseInsensitiveSort,
+    header: ({ column }) => {
+      return (
+        <div className="flex items-center gap-1">
+          Project
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            <ArrowUpDown />
+          </Button>
+        </div>
+      )
+    },
+    cell: ({ row }) => {
+      const projectTitle = row.getValue('projectTitle')
+      const projectId = row.original.projectId
+      return (
+        <div className="max-w-[200px] truncate">
+          {projectId ? (
+            <Link href={`/projects/${projectId}`}>
+              <Badge variant="outline">
+                <FolderIcon />
+                {projectTitle ? (projectTitle as string) : '-'}
+              </Badge>
+            </Link>
+          ) : (
+            <Badge variant="outline">
+              <FolderIcon />
+              {projectTitle ? (projectTitle as string) : '-'}
+            </Badge>
+          )}
         </div>
       )
     },

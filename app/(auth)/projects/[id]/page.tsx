@@ -8,6 +8,7 @@ import { getProjectAction } from '@/app/actions/projects/get'
 import { Button } from '@/components/ui/button'
 import { EntityCard } from '@/components/ui/entity-card'
 
+import { ChatWidget } from '@/components/chat-widget'
 import { GenericWidget } from '@/components/generic-widget'
 import { LabLayout } from '@/components/lab-layout'
 
@@ -72,6 +73,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       <div className="grid gap-6 md:grid-cols-2">
         <GenericWidget type="pdfs" limit={3} icon="file" projectId={project.id} />
         <GenericWidget type="urls" limit={3} icon="link" projectId={project.id} />
+        <GenericWidget type="docs" limit={3} icon="file-text" projectId={project.id} />
+        <ChatWidget limit={3} projectId={project.id} />
       </div>
     </LabLayout>
   )

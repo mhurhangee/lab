@@ -1,7 +1,7 @@
 import { Editor as TiptapEditor } from '@tiptap/react'
 import { renderToMarkdown } from '@tiptap/static-renderer/pm/markdown'
 
-import { defaultExtensions } from '@/app/(auth)/text-editor/components/editor/extensions'
+import { defaultExtensions } from '@/app/(auth)/docs/components/editor/extensions'
 
 export const tiptapToHtml = (tiptap: TiptapEditor) => {
   let html = tiptap.getHTML()

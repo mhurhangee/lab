@@ -9,6 +9,7 @@ import { updateContextAction } from '@/app/actions/contexts/update'
 import { Button } from '@/components/ui/button'
 
 import { handleErrorClient } from '@/lib/error/client'
+import { tiptapToMarkdown } from '@/lib/tiptap-to-formats'
 
 import { useProject } from '@/providers/project'
 
@@ -24,6 +25,7 @@ export function Save({ editor, id }: SaveProps) {
 
   const handleSave = async () => {
     const json = editor.getJSON()
+    const markdown = tiptapToMarkdown(editor)
 
     // Stringify the JSON to preserve complex nested objects with attrs
     const jsonString = JSON.stringify(json)
@@ -32,6 +34,7 @@ export function Save({ editor, id }: SaveProps) {
       id,
       textDocument: jsonString,
       projectId: selectedProject?.id || '',
+      markdown,
     })
     if (error) {
       handleErrorClient('Error saving document', error)

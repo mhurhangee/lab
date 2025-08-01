@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 
 import { LabLayout } from '@/components/lab-layout'
 
+import { ChatsWidget } from './components/chats-widget'
 import { ContextsWidget } from './components/contexts-widget'
 import { ProjectsWidget } from './components/projects-widget'
 
@@ -29,9 +30,10 @@ export default function DashboardPage() {
         </div>
       }
     >
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
         <ProjectsWidget />
         <ContextsWidget />
+        <ChatsWidget />
       </div>
     </LabLayout>
   )

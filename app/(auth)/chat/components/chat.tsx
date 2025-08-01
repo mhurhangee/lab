@@ -23,6 +23,8 @@ import {
   VolumeX,
 } from 'lucide-react'
 
+import { createChatAction } from '@/app/actions/chats/create'
+import { getChatAction } from '@/app/actions/chats/get'
 import { updateChatAction } from '@/app/actions/chats/update'
 
 import { Badge } from '@/components/ui/badge'
@@ -61,9 +63,15 @@ import { DefaultChatTransport } from 'ai'
 import { toast } from 'sonner'
 import { useStickToBottom } from 'use-stick-to-bottom'
 
-export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
+interface ChatProps {
+  savedChat: ChatDB
+  setSavedChat?: (chat: ChatDB) => void
+  textEditorView?: boolean
+}
+
+export const Chat = ({ savedChat, setSavedChat, textEditorView }: ChatProps) => {
   const { selectedProject } = useProject()
-  // State
+
   const [input, setInput] = useState('')
   const [error, setError] = useState<string | null>(null)
 
@@ -195,7 +203,14 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
     if (input.trim()) {
       void sendMessage(
         { text: input },
-        { body: { toolWeb, model, projectVectorStoreId: selectedProject?.vectorStoreId } }
+        {
+          body: {
+            toolWeb,
+            model,
+            projectVectorStoreId: selectedProject?.vectorStoreId,
+            projectId: selectedProject?.id,
+          },
+        }
       )
       setInput('')
       setSuggestions([])
@@ -237,8 +252,38 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
     }
   }
 
+  const handleStartNewChat = async () => {
+    const result = await createChatAction({ title: 'Untitled Chat' })
+    setMessages([])
+    setInput('')
+    setSuggestions([])
+    setImproving(false)
+    setToolWeb(false)
+    setModel(models[0].label)
+
+    if ('error' in result) {
+      handleErrorClient('Failed to create chat', result.error)
+      throw new Error(result.error)
+    }
+
+    const { chat, error } = await getChatAction({ id: result.id })
+
+    if (error) {
+      handleErrorClient('Failed to get chat', error)
+      throw new Error(error)
+    }
+
+    setSavedChat?.(chat as ChatDB)
+    toast.success('New chat started')
+  }
+
   return (
-    <div className="flex h-[calc(100vh-6rem)] flex-col gap-4">
+    <div
+      className={cn(
+        'flex h-[calc(100vh-6rem)] flex-col gap-4',
+        textEditorView && 'h-[calc(100vh-4rem)]'
+      )}
+    >
       <div ref={scrollRef} className="shadcn-scrollbar h-[calc(100vh-8rem)] overflow-y-auto">
         <div ref={contentRef} className="p-3">
           {error ? (
@@ -409,32 +454,48 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
           <div className="flex items-center justify-between p-0">
             <div className="flex items-center justify-start gap-2 p-1">
               {/* New chat button */}
-              <ButtonTT size="icon" variant="ghost" tooltip="New chat">
-                <Link href="/chat/new">
+              {!textEditorView && (
+                <ButtonTT size="icon" variant="ghost" tooltip="New chat">
+                  <Link href="/chat/new">
+                    <PlusIcon />
+                  </Link>
+                </ButtonTT>
+              )}
+              {textEditorView && (
+                <ButtonTT
+                  size="icon"
+                  variant="ghost"
+                  tooltip="New chat"
+                  onClick={handleStartNewChat}
+                >
                   <PlusIcon />
-                </Link>
-              </ButtonTT>
+                </ButtonTT>
+              )}
               {/* Project selector */}
-              <ProjectSelector
-                placeholder="Select project"
-                variant="ghost"
-                size="sm"
-                showRefresh={true}
-              />
+              {!textEditorView && (
+                <ProjectSelector
+                  placeholder="Select project"
+                  variant="ghost"
+                  size="sm"
+                  showRefresh={true}
+                />
+              )}
 
               {/* Model selector */}
-              <Select value={model} onValueChange={setModel}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a model" />
-                </SelectTrigger>
-                <SelectContent>
-                  {models.map((model, index) => (
-                    <SelectItem key={index} value={model.label}>
-                      {model.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {!textEditorView && (
+                <Select value={model} onValueChange={setModel}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a model" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {models.map((model, index) => (
+                      <SelectItem key={index} value={model.label}>
+                        {model.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
 
               {/* Web tools toggle */}
               <Toggle pressed={toolWeb} onPressedChange={setToolWeb} className="z-10 rounded-full">
@@ -445,9 +506,11 @@ export const Chat = ({ savedChat }: { savedChat: ChatDB }) => {
             {/* Right bottom buttons  */}
             <div className="flex items-center justify-end gap-2 p-2">
               {/* Input length */}
-              <span className="text-muted-foreground text-xs">
-                {input.length > 0 ? `${input.length} characters` : ''}
-              </span>
+              {!textEditorView && (
+                <span className="text-muted-foreground text-xs">
+                  {input.length > 0 ? `${input.length} characters` : ''}
+                </span>
+              )}
               <ButtonTT
                 variant="ghost"
                 size="icon"

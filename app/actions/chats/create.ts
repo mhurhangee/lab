@@ -30,7 +30,7 @@ export const createChatAction = async ({ title }: CreateChatActionProps) => {
 
     return { id: chat[0].id }
   } catch (error) {
-    const errorMessage = handleErrorServer(error, 'Failed to create project')
+    const errorMessage = handleErrorServer(error, 'Failed to create chat')
     return { error: errorMessage }
   }
 }
