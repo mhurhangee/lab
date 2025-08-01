@@ -26,15 +26,11 @@ export async function POST(request: NextRequest) {
     ${selection ? `<SELECTION>${JSON.stringify(selection)}</SELECTION>` : ''}
     `
 
-    console.log('fullPrompt', fullPrompt)
-
     const result = await generateText({
       model: models[0].model,
       system: system,
       prompt: fullPrompt,
     })
-
-    console.log('result.text', result.text)
 
     return NextResponse.json(result.text)
   } catch (error) {

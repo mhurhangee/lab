@@ -1,8 +1,4 @@
-import { openai } from '@ai-sdk/openai'
-
 import { NextRequest, NextResponse } from 'next/server'
-
-import { TranscriptionModel, experimental_transcribe as transcribe } from 'ai'
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,50 +12,54 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Audio file is required' }, { status: 400 })
     }
 
-    // Convert file to buffer
-    const audioBuffer = Buffer.from(await audioFile.arrayBuffer())
+    // Create FormData for OpenAI API
+    const openaiFormData = new FormData()
+    openaiFormData.append('file', audioFile)
+    openaiFormData.append('model', model)
 
-    const transcriptOptions: {
-      model: TranscriptionModel
-      audio: Buffer
-      providerOptions?: {
-        openai?: { language?: string; prompt?: string; timestampGranularities?: string[] }
-      }
-    } = {
-      model: openai.transcription(model),
-      audio: audioBuffer,
-    }
-
-    // Add optional parameters if provided
-    const providerOptions: {
-      language?: string
-      prompt?: string
-      timestampGranularities?: string[]
-    } = {}
-
-    if (language && language.trim()) {
-      providerOptions.language = language.trim()
+    // Add optional parameters
+    if (language && language.trim() && language !== 'auto') {
+      openaiFormData.append('language', language.trim())
     }
 
     if (prompt && prompt.trim()) {
-      providerOptions.prompt = prompt.trim()
+      openaiFormData.append('prompt', prompt.trim())
     }
 
-    // Add timestamp granularities for better results
-    providerOptions.timestampGranularities = ['segment']
+    // Add response format and timestamp granularities
+    openaiFormData.append('response_format', 'verbose_json')
+    openaiFormData.append('timestamp_granularities[]', 'segment')
 
-    if (Object.keys(providerOptions).length > 0) {
-      transcriptOptions.providerOptions = { openai: providerOptions }
+    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: openaiFormData,
+    })
+
+    if (!response.ok) {
+      const errorData = await response.text()
+      console.error('OpenAI API error:', errorData)
+
+      if (response.status === 400) {
+        return NextResponse.json(
+          { error: 'Invalid audio file format or corrupted file.' },
+          { status: 400 }
+        )
+      }
+
+      throw new Error(`OpenAI API error: ${response.status} ${errorData}`)
     }
 
-    const result = await transcribe(transcriptOptions)
+    const result = await response.json()
 
     return NextResponse.json({
       text: result.text,
       language: result.language,
-      duration: result.durationInSeconds,
+      duration: result.duration,
       segments: result.segments,
-      warnings: result.warnings,
+      warnings: result.warnings || [],
     })
   } catch (error) {
     console.error('Speech-to-text error:', error)

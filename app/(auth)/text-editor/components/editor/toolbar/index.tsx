@@ -6,6 +6,7 @@ import { useAIPrompt } from '../ai-prompt-menu'
 import { AIPromptButton } from './ai-prompt-button'
 import { NodeSelector } from './node-selector'
 import { Save } from './save'
+import { TranscriptionButton } from './transcription-button'
 import { UndoRedo } from './undo-redo'
 
 export const Toolbar = ({ editor, id }: { editor: TiptapEditor; id: string }) => {
@@ -18,6 +19,7 @@ export const Toolbar = ({ editor, id }: { editor: TiptapEditor; id: string }) =>
           <div className="flex flex-shrink-0 items-center gap-2">
             <NodeSelector editor={editor} />
             <AIPromptButton editor={editor} onSubmit={handleAISubmit} />
+            <TranscriptionButton editor={editor} />
           </div>
           <div className="flex-shrink-0">
             <UndoRedo editor={editor} />
