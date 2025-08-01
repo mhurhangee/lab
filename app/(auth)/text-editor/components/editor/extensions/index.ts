@@ -14,6 +14,7 @@ import { Text } from '@tiptap/extension-text'
 import { Placeholder, UndoRedo } from '@tiptap/extensions'
 import type { Editor as TiptapEditor } from '@tiptap/react'
 
+import { createAIPromptSlashSuggestion } from './ai-prompt-slash'
 import { AIGhostText } from './ghost-text'
 import { InlineAISuggestion } from './inline-ai-suggestion'
 import { fetchSuggestion } from './inline-ai-suggestion/utils'
@@ -27,6 +28,7 @@ import {
 interface ExtensionsOptions {
   setTocItems: (content: TableOfContentDataItem[]) => void
   editorRef: React.RefObject<TiptapEditor | null>
+  onTriggerAIPrompt?: (position: { x: number; y: number }) => void
 }
 
 const defaultExtensions = [
@@ -45,7 +47,7 @@ const defaultExtensions = [
   CodeBlock,
 ]
 
-export const extensions = ({ setTocItems, editorRef }: ExtensionsOptions) => [
+export const extensions = ({ setTocItems, editorRef, onTriggerAIPrompt }: ExtensionsOptions) => [
   ...defaultExtensions,
   AIGhostText,
   InlineAISuggestion.configure({
@@ -58,6 +60,8 @@ export const extensions = ({ setTocItems, editorRef }: ExtensionsOptions) => [
       setTocItems(content)
     },
   }),
+  // AI Slash Commands
+  ...(onTriggerAIPrompt ? [createAIPromptSlashSuggestion(onTriggerAIPrompt)] : []),
   // Location mentions (@)
   Mention.extend({
     addAttributes() {

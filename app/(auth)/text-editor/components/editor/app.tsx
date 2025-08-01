@@ -6,8 +6,12 @@ import { Editor as TiptapEditor, useEditor } from '@tiptap/react'
 import { useRef, useState } from 'react'
 import React from 'react'
 
+import { Skeleton } from '@/components/ui/skeleton'
+
 import { ContextDB } from '@/types/database'
 
+import { AIPromptMenu, useAIPrompt } from './ai-prompt-menu'
+import { AIBubbleMenu } from './bubble-menu/ai-bubble-menu'
 import { extensions } from './extensions'
 import { SplitView } from './split-view'
 
@@ -15,9 +19,34 @@ export function EditorApp({ context }: { context: ContextDB }) {
   const editorRef = useRef<TiptapEditor | null>(null)
 
   const [tocItems, setTocItems] = useState<TableOfContentDataItem[]>([])
+  const [showAIMenu, setShowAIMenu] = useState(false)
+  const [aiMenuPosition, setAIMenuPosition] = useState<{ x: number; y: number } | null>(null)
+
+  // AI prompt trigger function for slash commands
+  const handleTriggerAIPrompt = (position: { x: number; y: number }) => {
+    setAIMenuPosition(position)
+    setShowAIMenu(true)
+  }
+
+  // Handle bubble menu AI trigger
+  const handleBubbleMenuAI = (position: { x: number; y: number }) => {
+    setAIMenuPosition(position)
+    setShowAIMenu(true)
+  }
+
+  const handleCloseAIMenu = () => {
+    setShowAIMenu(false)
+    setAIMenuPosition(null)
+  }
 
   const editor = useEditor({
-    extensions: [...extensions({ setTocItems, editorRef })],
+    extensions: [
+      ...extensions({
+        setTocItems,
+        editorRef,
+        onTriggerAIPrompt: handleTriggerAIPrompt,
+      }),
+    ],
     content: context.textDocument || '',
     immediatelyRender: false,
     editorProps: {
@@ -30,7 +59,33 @@ export function EditorApp({ context }: { context: ContextDB }) {
     },
   })
 
-  if (!editor) return null
+  const { handleAISubmit, insertAIResponse } = useAIPrompt({
+    editor: editor!,
+  })
 
-  return <SplitView editor={editor} id={context.id} tocItems={tocItems} />
+  const handleAIAccept = (response: string) => {
+    insertAIResponse(response)
+    handleCloseAIMenu()
+  }
+
+  if (!editor) return <Skeleton className="h-full w-full p-4" />
+
+  return (
+    <>
+      <SplitView editor={editor} id={context.id} tocItems={tocItems} />
+
+      {/* AI Selection Detector */}
+      <AIBubbleMenu editor={editor} onOpenAIMenu={handleBubbleMenuAI} />
+
+      {/* Global AI Prompt Menu */}
+      {showAIMenu && (
+        <AIPromptMenu
+          position={aiMenuPosition}
+          onClose={handleCloseAIMenu}
+          onSubmit={handleAISubmit}
+          onAccept={handleAIAccept}
+        />
+      )}
+    </>
+  )
 }
