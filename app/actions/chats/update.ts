@@ -13,6 +13,7 @@ interface UpdateChatActionProps {
   id: string
   title?: string
   messages?: UIMessage[]
+  projectId?: string
 }
 
 type UpdateChatResult = { id: string; error?: never } | { error: string; id?: never }
@@ -21,6 +22,7 @@ export const updateChatAction = async ({
   id,
   title,
   messages,
+  projectId,
 }: UpdateChatActionProps): Promise<UpdateChatResult> => {
   try {
     const userId = await getUserId()
@@ -36,6 +38,10 @@ export const updateChatAction = async ({
 
     if (messages !== undefined) {
       updateData.messages = messages
+    }
+
+    if (projectId !== undefined) {
+      updateData.projectId = projectId
     }
 
     const result = await db

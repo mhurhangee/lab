@@ -2,15 +2,25 @@
 
 import { Editor as TiptapEditor } from '@tiptap/react'
 
+import { ProjectSelector } from '@/components/project-selector'
+
 import { useAIPrompt } from '../ai-prompt-menu'
 import { AIPromptButton } from './ai-prompt-button'
+import { DocNameDialog } from './doc-name-dialog'
 import { ExportDialog } from './export-button'
 import { NodeSelector } from './node-selector'
 import { Save } from './save'
 import { TranscriptionButton } from './transcription-button'
 import { UndoRedo } from './undo-redo'
 
-export const Toolbar = ({ editor, id }: { editor: TiptapEditor; id: string }) => {
+interface ToolbarProps {
+  editor: TiptapEditor
+  id: string
+  name: string
+  setName: (name: string) => void
+}
+
+export const Toolbar = ({ editor, id, name, setName }: ToolbarProps) => {
   const { handleAISubmit } = useAIPrompt({ editor })
 
   return (
@@ -21,6 +31,10 @@ export const Toolbar = ({ editor, id }: { editor: TiptapEditor; id: string }) =>
             <NodeSelector editor={editor} />
             <AIPromptButton editor={editor} onSubmit={handleAISubmit} />
             <TranscriptionButton editor={editor} />
+          </div>
+          <div className="flex flex-shrink-0 items-center gap-2">
+            <DocNameDialog name={name} id={id} setName={setName} />
+            <ProjectSelector size="sm" variant="ghost" />
           </div>
           <div className="flex-shrink-0">
             <UndoRedo editor={editor} />

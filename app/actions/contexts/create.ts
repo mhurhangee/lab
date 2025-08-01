@@ -57,7 +57,7 @@ export const createContextAction = async ({
       blobUrl = url
       fileSize = metadata.markdown?.length || 0
       fileType = 'text/markdown'
-    } else if (type === 'text-editor') {
+    } else if (type === 'docs') {
       // Handle text editor
       fileName = 'Untitled'
       blobUrl = ''

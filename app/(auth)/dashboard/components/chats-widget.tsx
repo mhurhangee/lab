@@ -1,0 +1,152 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+
+import Link from 'next/link'
+
+import { BotIcon, ClockIcon } from 'lucide-react'
+
+import { listChatsAction } from '@/app/actions/chats/list'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ErrorAlert } from '@/components/ui/error-alert'
+
+import { formatDate } from '@/lib/date'
+import { handleErrorClient } from '@/lib/error/client'
+
+import type { ChatDB } from '@/types/database'
+
+import { UIMessage } from 'ai'
+
+export function ChatsWidget() {
+  const [chats, setChats] = useState<ChatDB[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchChats = async () => {
+      try {
+        const result = await listChatsAction()
+        if (result.error) {
+          setError(result.error)
+          handleErrorClient(result.error, 'Failed to load files')
+        } else {
+          const filterChats = result.chats?.filter(
+            chat => (chat.messages as UIMessage[]).length > 0
+          )
+          // Show only the 3 most recent chats
+          setChats(filterChats?.slice(0, 3) || [])
+        }
+      } catch (err) {
+        setError('Failed to load files')
+        handleErrorClient('Failed to load files', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    void fetchChats()
+  }, [])
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="flex items-center gap-2 text-sm font-medium">
+            <BotIcon className="h-4 w-4" />
+            Recent Chats
+          </CardTitle>
+          <Link href="/chat">
+            <Button variant="ghost" size="sm">
+              View All
+            </Button>
+          </Link>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="animate-pulse">
+                <div className="bg-muted mb-2 h-4 w-3/4 rounded" />
+                <div className="bg-muted h-3 w-1/2 rounded" />
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="flex items-center gap-2 text-sm font-medium">
+            <BotIcon className="h-4 w-4" />
+            Recent Chats
+          </CardTitle>
+          <Link href="/chat">
+            <Button variant="ghost" size="sm">
+              View All
+            </Button>
+          </Link>
+        </CardHeader>
+        <CardContent>
+          <ErrorAlert error={error} />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle className="flex items-center gap-2">
+          <BotIcon className="h-4 w-4" />
+          Recent Chats
+        </CardTitle>
+        <Link href="/chat">
+          <Button variant="ghost" size="sm">
+            View All
+          </Button>
+        </Link>
+      </CardHeader>
+      <CardContent>
+        {chats.length === 0 ? (
+          <div className="text-muted-foreground text-sm">
+            No chats yet. Start a new chat to get started.
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {chats.map(chat => (
+              <Link key={chat.id} href={`/chat/${chat.id}`}>
+                <div className="group hover:bg-muted/50 cursor-pointer rounded-lg p-2 transition-colors">
+                  <div className="flex items-start justify-between">
+                    <div className="flex min-w-0 flex-1 items-start gap-3">
+                      <BotIcon className="text-muted-foreground mt-0.5 h-4 w-4 flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <h4 className="group-hover:text-primary truncate text-sm font-medium">
+                          {chat.title}
+                        </h4>
+                        <div className="mt-1 flex items-center gap-2">
+                          <Badge variant="default" className="text-xs">
+                            {(chat.messages as UIMessage[]).length} messages
+                          </Badge>
+                          <Badge variant="secondary" className="text-xs">
+                            <ClockIcon className="mr-1 h-3 w-3" />
+                            {formatDate(chat.updatedAt)}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+}

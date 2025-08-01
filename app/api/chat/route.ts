@@ -24,10 +24,11 @@ interface Body {
   toolWeb: boolean
   model: string
   projectVectorStoreId: string | null
+  projectId: string | null
 }
 
 export async function POST(req: NextRequest) {
-  const { messages, chatId, toolWeb, model, projectVectorStoreId }: Body =
+  const { messages, chatId, toolWeb, model, projectVectorStoreId, projectId }: Body =
     (await req.json()) as Body
 
   const vectorStoreId = projectVectorStoreId || null
@@ -75,7 +76,12 @@ export async function POST(req: NextRequest) {
             }
 
             // Update db
-            void updateChatAction({ id: chatId, messages, title: title || undefined })
+            void updateChatAction({
+              id: chatId,
+              messages,
+              title: title || undefined,
+              projectId: projectId || undefined,
+            })
           },
         })
       )

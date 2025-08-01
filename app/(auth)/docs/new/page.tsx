@@ -8,12 +8,12 @@ import { handleErrorServer } from '@/lib/error/server'
 export const dynamic = 'force-dynamic'
 
 export default async function NewChatPage() {
-  const result = await createContextAction({ type: 'text-editor' })
+  const result = await createContextAction({ type: 'docs' })
 
   if ('error' in result) {
     handleErrorServer('Failed to create text editor', result.error)
     throw new Error(result.error)
   }
 
-  redirect(`/text-editor/${result.id}`)
+  redirect(`/docs/${result.id}`)
 }

@@ -12,17 +12,17 @@ import { LabLayout } from '@/components/lab-layout'
 import { TextEditorDataTable } from './components/data-table'
 
 export default async function TextEditorPage() {
-  const { contexts, error } = await listContextsByTypeWithProjectsAction({ type: 'text-editor' })
+  const { contexts, error } = await listContextsByTypeWithProjectsAction({ type: 'docs' })
 
   return (
     <LabLayout
       title="Text Editor"
       pageTitle="Text Editor"
       icon="type-outline"
-      breadcrumb={[{ href: '/text-editor', label: 'Text Editor' }]}
+      breadcrumb={[{ href: '/docs', label: 'Text Editor' }]}
       backTo={{ href: '/dashboard', label: 'Dashboard' }}
       actions={
-        <Link href="/text-editor/new">
+        <Link href="/docs/new">
           <Button size="sm">
             <PlusIcon className="h-4 w-4" />
             New Document

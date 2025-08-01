@@ -143,6 +143,10 @@ export const updateContextAction = async ({
       } else {
         updateData.textDocument = textDocument
       }
+
+      if (markdown) {
+        updateData.parsedMarkdown = markdown
+      }
     }
 
     // If updating the name only

@@ -3,10 +3,11 @@
 import type { TableOfContentDataItem } from '@tiptap/extension-table-of-contents'
 import type { Editor as TiptapEditor } from '@tiptap/react'
 
-import { CalendarIcon, ListIcon, MapPinIcon, StickyNoteIcon, UsersIcon } from 'lucide-react'
+import { BotIcon, CalendarIcon, ListIcon, MapPinIcon, UsersIcon } from 'lucide-react'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
+import { ChatTab } from './chat-tab'
 import { MentionsNav } from './mentions-nav'
 import { Outline } from './outline'
 
@@ -17,7 +18,7 @@ interface DockProps {
 
 export const Dock = ({ editor, tocItems }: DockProps) => {
   return (
-    <Tabs defaultValue="outline" className="w-full">
+    <Tabs defaultValue="outline" className="h-full w-full">
       <TabsList className="bg-background w-full">
         <TabsTrigger value="outline">
           <ListIcon />
@@ -31,8 +32,8 @@ export const Dock = ({ editor, tocItems }: DockProps) => {
         <TabsTrigger value="events">
           <CalendarIcon />
         </TabsTrigger>
-        <TabsTrigger value="notes">
-          <StickyNoteIcon />
+        <TabsTrigger value="chat">
+          <BotIcon />
         </TabsTrigger>
       </TabsList>
       <TabsContent value="outline">
@@ -47,7 +48,9 @@ export const Dock = ({ editor, tocItems }: DockProps) => {
       <TabsContent value="events">
         <MentionsNav editor={editor} type="event" />
       </TabsContent>
-      <TabsContent value="notes">notes</TabsContent>
+      <TabsContent value="chat">
+        <ChatTab />
+      </TabsContent>
     </Tabs>
   )
 }

@@ -21,6 +21,7 @@ export function EditorApp({ context }: { context: ContextDB }) {
   const [tocItems, setTocItems] = useState<TableOfContentDataItem[]>([])
   const [showAIMenu, setShowAIMenu] = useState(false)
   const [aiMenuPosition, setAIMenuPosition] = useState<{ x: number; y: number } | null>(null)
+  const [name, setName] = useState(context.name)
 
   // AI prompt trigger function for slash commands
   const handleTriggerAIPrompt = (position: { x: number; y: number }) => {
@@ -72,7 +73,13 @@ export function EditorApp({ context }: { context: ContextDB }) {
 
   return (
     <>
-      <SplitView editor={editor} id={context.id} tocItems={tocItems} />
+      <SplitView
+        editor={editor}
+        id={context.id}
+        name={name}
+        tocItems={tocItems}
+        setName={setName}
+      />
 
       {/* AI Selection Detector */}
       <AIBubbleMenu editor={editor} onOpenAIMenu={handleBubbleMenuAI} />

@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import Link from 'next/link'
 
-import { ArrowUpDown, CheckCircleIcon, FolderIcon } from 'lucide-react'
+import { ArrowUpDown, FolderIcon } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -38,7 +38,7 @@ export const columnsTextEditor: ColumnDef<ContextDB>[] = [
       const name = row.getValue('name')
       return (
         <div className="font-medium">
-          <Link href={`/text-editor/${row.original.id}`}>{name as string}</Link>
+          <Link href={`/docs/${row.original.id}`}>{name as string}</Link>
         </div>
       )
     },
@@ -82,7 +82,7 @@ export const columnsTextEditor: ColumnDef<ContextDB>[] = [
     cell: ({ row }) => {
       return (
         <div className="max-w-[300px] truncate">
-          <Link href={`/text-editor/${row.original.id}`}>Document</Link>
+          <Link href={`/docs/${row.original.id}`}>Document</Link>
         </div>
       )
     },
@@ -108,22 +108,20 @@ export const columnsTextEditor: ColumnDef<ContextDB>[] = [
       const formatted = formatDate(updatedAt as string | Date) || '-'
       return (
         <div>
-          <Link href={`/text-editor/${row.original.id}`}>{formatted}</Link>
+          <Link href={`/docs/${row.original.id}`}>{formatted}</Link>
         </div>
       )
     },
   },
   {
     accessorKey: 'parsedMarkdown',
-    header: 'Parsed',
+    header: 'Preview',
     cell: ({ row }) => {
       const parsed = row.getValue('parsedMarkdown')
       return (
-        <div className="flex max-w-[50px] items-center justify-center truncate">
-          {parsed ? (
-            <Link href={`/text-editor/${row.original.id}`}>
-              <CheckCircleIcon className="h-4 w-4 text-green-600" />
-            </Link>
+        <div className="flex max-w-[250px] items-center justify-start truncate">
+          {parsed && typeof parsed === 'string' ? (
+            <div className="max-w-[250px] truncate">{parsed.slice(0, 100)}...</div>
           ) : (
             <span className="text-muted-foreground">-</span>
           )}
