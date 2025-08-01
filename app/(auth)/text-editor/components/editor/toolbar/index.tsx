@@ -4,6 +4,7 @@ import { Editor as TiptapEditor } from '@tiptap/react'
 
 import { useAIPrompt } from '../ai-prompt-menu'
 import { AIPromptButton } from './ai-prompt-button'
+import { ExportDialog } from './export-button'
 import { NodeSelector } from './node-selector'
 import { Save } from './save'
 import { TranscriptionButton } from './transcription-button'
@@ -24,6 +25,7 @@ export const Toolbar = ({ editor, id }: { editor: TiptapEditor; id: string }) =>
           <div className="flex-shrink-0">
             <UndoRedo editor={editor} />
             <Save editor={editor} id={id} />
+            <ExportDialog editor={editor} />
           </div>
         </div>
       </div>
