@@ -3,6 +3,8 @@
 import { Editor } from '@tiptap/react'
 import { BubbleMenu } from '@tiptap/react/menus'
 
+import { Wand2Icon } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 
 interface AIBubbleMenuProps {
@@ -44,7 +46,7 @@ export const AIBubbleMenu = ({ editor, onOpenAIMenu }: AIBubbleMenuProps) => {
     >
       <div className="bg-background rounded-lg border p-1 shadow-lg">
         <Button size="sm" variant="ghost" onClick={handleOpenAI} className="h-8 px-2 text-xs">
-          <span className="mr-1">🤖</span>
+          <Wand2Icon className="mr-1" />
           Ask AI
         </Button>
       </div>

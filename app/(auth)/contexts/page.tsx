@@ -2,9 +2,8 @@ import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
 
+import { GenericWidget } from '@/components/generic-widget'
 import { LabLayout } from '@/components/lab-layout'
-
-import { GenericWidget } from '../../../components/generic-widget'
 
 export default function ContextsPage() {
   return (

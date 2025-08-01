@@ -37,7 +37,7 @@ export const useAIPrompt = ({ editor }: UseAIPromptOptions) => {
           getNodeText(index + 1),
           getNodeText(index + 2),
         ]
-        
+
         contextText = contextTexts.join(' ')
       }
 

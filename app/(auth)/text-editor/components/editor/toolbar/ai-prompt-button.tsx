@@ -4,6 +4,8 @@ import { Editor } from '@tiptap/react'
 
 import { useState } from 'react'
 
+import { Wand2Icon } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 
 import { AIPromptMenu } from '../ai-prompt-menu'
@@ -39,22 +41,18 @@ export const AIPromptButton = ({ editor, onSubmit }: AIPromptButtonProps) => {
   return (
     <>
       <Button
-        variant="outline"
+        variant="ghost"
         size="sm"
         onClick={handleClick}
         className="flex items-center gap-2"
         disabled={!editor.isEditable}
       >
-        <span>🤖</span>
-        AI Prompt
+        <Wand2Icon />
+        Ask AI
       </Button>
 
       {showMenu && (
-        <AIPromptMenu
-          position={menuPosition}
-          onClose={handleClose}
-          onSubmit={onSubmit}
-        />
+        <AIPromptMenu position={menuPosition} onClose={handleClose} onSubmit={onSubmit} />
       )}
     </>
   )
