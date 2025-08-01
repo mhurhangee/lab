@@ -52,6 +52,7 @@
     "@tiptap/extensions": "^3.0.7",
     "@tiptap/pm": "^3.0.7",
     "@tiptap/react": "^3.0.7",
+    "@tiptap/static-renderer": "^3.0.8",
     "@tiptap/suggestion": "^3.0.7",
     "@vercel/analytics": "^1.5.0",
     "@vercel/blob": "^1.1.1",

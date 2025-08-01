@@ -31,7 +31,7 @@ interface ExtensionsOptions {
   onTriggerAIPrompt?: (position: { x: number; y: number }) => void
 }
 
-const defaultExtensions = [
+export const defaultExtensions = [
   Document,
   Paragraph,
   Text,
