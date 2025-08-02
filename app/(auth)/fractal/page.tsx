@@ -9,30 +9,29 @@ import { ErrorAlert } from '@/components/ui/error-alert'
 
 import { LabLayout } from '@/components/lab-layout'
 
-import { TextEditorDataTable } from './components/data-table'
+import { FractalDataTable } from './components/data-table'
 
 export const dynamic = 'force-dynamic'
 
-export default async function DocsPage() {
-  const { contexts, error } = await listContextsByTypeWithProjectsAction({ type: 'docs' })
-
+export default async function Fractal() {
+  const { contexts, error } = await listContextsByTypeWithProjectsAction({ type: 'fractals' })
   return (
     <LabLayout
-      title="Text Editor"
-      pageTitle="Text Editor"
-      icon="type-outline"
-      breadcrumb={[{ href: '/docs', label: 'Text Editor' }]}
+      title="Fractal"
+      pageTitle="Fractal"
+      icon="pyramid"
+      breadcrumb={[{ href: '/fractal', label: 'Fractal' }]}
       backTo={{ href: '/dashboard', label: 'Dashboard' }}
       actions={
-        <Link href="/docs/new">
+        <Link href="/fractal/new">
           <Button size="sm">
             <PlusIcon className="h-4 w-4" />
-            New Document
+            New Fractal
           </Button>
         </Link>
       }
     >
-      {error ? <ErrorAlert error={error} /> : <TextEditorDataTable data={contexts || []} />}
+      {error ? <ErrorAlert error={error} /> : <FractalDataTable data={contexts || []} />}
     </LabLayout>
   )
 }

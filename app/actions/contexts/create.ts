@@ -14,6 +14,8 @@ import { ContextsTypes } from '@/types/contexts'
 
 import { and, eq } from 'drizzle-orm'
 
+import { createEmptyFractal } from '@/app/(auth)/fractal/lib/fractal-structure'
+
 interface CreateContextActionProps {
   file?: File
   url?: string
@@ -40,6 +42,7 @@ export const createContextAction = async ({
     let fileName: string
     let fileSize: number
     let fileType: string
+    let textDocument: Record<string, unknown> | null = null
 
     if (file) {
       // Handle file upload (PDFs)
@@ -63,6 +66,20 @@ export const createContextAction = async ({
       blobUrl = ''
       fileSize = 0
       fileType = 'text/plain'
+    } else if (type === 'brainstorms') {
+      // Handle brainstorms
+      fileName = 'Untitled Brainstorm'
+      blobUrl = ''
+      fileSize = 0
+      fileType = 'text/plain'
+    } else if (type === 'fractals') {
+      const fractal = createEmptyFractal() as unknown as Record<string, unknown>
+      // Handle fractals
+      fileName = 'Untitled Fractal'
+      blobUrl = ''
+      fileSize = 0
+      fileType = 'text/plain'
+      textDocument = fractal
     } else {
       throw new Error('Either file or url with metadata must be provided')
     }
@@ -123,6 +140,7 @@ export const createContextAction = async ({
         fileType: fileType,
         projectId,
         openaiUploadId: openaiFileId,
+        textDocument: textDocument ? textDocument : null,
         // Store parsed markdown for URLs
         parsedMarkdown: metadata?.markdown,
       })
