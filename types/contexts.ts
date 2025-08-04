@@ -1,1 +1,1 @@
-export type ContextsTypes = 'pdfs' | 'urls' | 'docs'
+export type ContextsTypes = 'pdfs' | 'urls' | 'docs' | 'brainstorms' | 'fractals'
