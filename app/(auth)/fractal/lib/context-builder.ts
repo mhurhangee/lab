@@ -1,17 +1,17 @@
 import { APP_CONFIG } from './constants'
-import type { AIContextNode, FractalNode, FractalProject } from './types'
+import type { AIContextNode, Fractal, FractalNode } from './types'
 
 /**
  * Enhanced context builder that creates rich, hierarchical context
  * for AI assistance by analyzing relationships between nodes
  */
-export class ContextBuilder {
-  private project: FractalProject
+class ContextBuilder {
+  private fractal: Fractal
   private targetPath: string[]
   private contextNodes: AIContextNode[] = []
 
-  constructor(project: FractalProject, targetPath: string[]) {
-    this.project = project
+  constructor(fractal: Fractal, targetPath: string[]) {
+    this.fractal = fractal
     this.targetPath = targetPath
     this.buildContextNodes()
   }
@@ -21,7 +21,7 @@ export class ContextBuilder {
    */
   public buildContext(): string {
     const sections = [
-      this.buildProjectHeader(),
+      this.buildFractalHeader(),
       this.buildHierarchicalContext(),
       this.buildRelationalContext(),
       this.buildStructuralContext(),
@@ -44,7 +44,7 @@ export class ContextBuilder {
    */
   public buildChildGenerationContext(childLevelName: string): string {
     const baseContext = this.buildContext()
-    const targetNode = this.findNodeByPath(this.project.rootNode, this.targetPath)
+    const targetNode = this.findNodeByPath(this.fractal.rootNode, this.targetPath)
 
     if (!targetNode) return baseContext
 
@@ -63,7 +63,7 @@ export class ContextBuilder {
   }
 
   private buildContextNodes(): void {
-    const targetNode = this.findNodeByPath(this.project.rootNode, this.targetPath)
+    const targetNode = this.findNodeByPath(this.fractal.rootNode, this.targetPath)
     if (!targetNode) return
 
     // Build hierarchical path
@@ -80,7 +80,7 @@ export class ContextBuilder {
   }
 
   private addHierarchicalNodes(): void {
-    let currentNode = this.project.rootNode
+    let currentNode = this.fractal.rootNode
     const pathNodes: AIContextNode[] = [
       {
         node: currentNode,
@@ -120,7 +120,7 @@ export class ContextBuilder {
     if (this.targetPath.length === 0) return // Root has no siblings
 
     const parentPath = this.targetPath.slice(0, -1)
-    const parentNode = this.findNodeByPath(this.project.rootNode, parentPath)
+    const parentNode = this.findNodeByPath(this.fractal.rootNode, parentPath)
     const targetId = this.targetPath[this.targetPath.length - 1]
 
     if (parentNode) {
@@ -153,7 +153,7 @@ export class ContextBuilder {
 
     const grandparentPath = this.targetPath.slice(0, -2)
     const parentId = this.targetPath[this.targetPath.length - 2]
-    const grandparentNode = this.findNodeByPath(this.project.rootNode, grandparentPath)
+    const grandparentNode = this.findNodeByPath(this.fractal.rootNode, grandparentPath)
 
     if (grandparentNode) {
       const uncles = grandparentNode.children.filter(child => child.id !== parentId)
@@ -171,10 +171,10 @@ export class ContextBuilder {
     }
   }
 
-  private buildProjectHeader(): string {
+  private buildFractalHeader(): string {
     return [
-      `PROJECT: "${this.project.title}"`,
-      `Project Summary: ${this.project.summary}`,
+      `FRACTAL: "${this.fractal.title}"`,
+      `Fractal Summary: ${this.fractal.summary}`,
       `Structure Depth: ${this.calculateMaxDepth()} levels`,
     ].join('\n')
   }
@@ -290,19 +290,19 @@ export class ContextBuilder {
       return Math.max(...node.children.map(child => calculateDepth(child, depth + 1)))
     }
 
-    return calculateDepth(this.project.rootNode)
+    return calculateDepth(this.fractal.rootNode)
   }
 }
 
 // Convenience functions for backward compatibility
-export function buildSmartContext(project: FractalProject, targetPath: string[]): string {
-  return new ContextBuilder(project, targetPath).buildContext()
+export function buildSmartContext(fractal: Fractal, targetPath: string[]): string {
+  return new ContextBuilder(fractal, targetPath).buildContext()
 }
 
 export function buildChildGenerationContext(
-  project: FractalProject,
+  fractal: Fractal,
   targetPath: string[],
   childLevelName: string
 ): string {
-  return new ContextBuilder(project, targetPath).buildChildGenerationContext(childLevelName)
+  return new ContextBuilder(fractal, targetPath).buildChildGenerationContext(childLevelName)
 }

@@ -14,7 +14,7 @@ export interface FractalNode {
   }
 }
 
-export interface FractalProject {
+export interface Fractal {
   title: string
   summary: string
   rootNode: FractalNode
@@ -27,15 +27,6 @@ export interface FractalProject {
   }
 }
 
-export interface ProjectTemplate {
-  name: string
-  description: string
-  levels: string[]
-  icon: string
-  color: string
-  generator: () => FractalProject
-}
-
 export interface AIContextNode {
   node: FractalNode
   depth: number
@@ -43,24 +34,7 @@ export interface AIContextNode {
   path: string[]
 }
 
-export interface AIGenerationRequest {
-  context: string
-  level: string
-  customPrompt?: string
-}
-
-export interface AIContentSuggestion {
-  title: string
-  summary: string
-}
-
-export interface AIChildSuggestion {
-  title: string
-  summary: string
-  levelName: string
-}
-
-export interface ProjectStats {
+export interface FractalStats {
   totalNodes: number
   completeNodes: number
   inProgressNodes: number

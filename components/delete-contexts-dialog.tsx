@@ -34,6 +34,7 @@ interface DeleteContextsDialogProps {
   className?: string
   type: ContextsTypes
   action: (id: string) => Promise<{ error?: string; success?: boolean }>
+  url?: string
 }
 
 export function DeleteContextsDialog({
@@ -43,6 +44,7 @@ export function DeleteContextsDialog({
   className = '',
   type,
   action,
+  url,
 }: DeleteContextsDialogProps) {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
@@ -61,7 +63,7 @@ export function DeleteContextsDialog({
         toast.success(`${type} deleted`, {
           description: `${type} has been successfully deleted.`,
         })
-        router.push(`/${type}`)
+        router.push(url || `/${type}`)
         router.refresh()
       }
     } catch (error) {

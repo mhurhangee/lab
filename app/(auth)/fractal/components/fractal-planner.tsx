@@ -5,6 +5,8 @@ import { useState } from 'react'
 
 import { Download, Edit3, Eye, Save, Sparkles } from 'lucide-react'
 
+import { updateContextAction } from '@/app/actions/contexts/update'
+
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
@@ -14,37 +16,31 @@ import { ContextDB } from '@/types/database'
 
 import { toast } from 'sonner'
 
-import {
-  type FractalProject,
-  PROJECT_TEMPLATES,
-  exportToMarkdown,
-  serializeProject,
-} from '../lib/fractal-structure'
+import { exportToMarkdown, serializeFractal } from '../lib/fractal-structure'
+import { Fractal } from '../lib/types'
 import { ErrorBoundary } from './error-boundary'
 import { FractalOutline } from './fractal-outline'
 import { FractalOverview } from './fractal-overview'
-import { ProjectTemplates } from './project-templates'
+import { PROJECT_TEMPLATES, ProjectTemplates } from './project-templates'
 
 interface FractalPlannerProps {
   savedFractal: ContextDB
 }
 
 export function FractalPlanner({ savedFractal }: FractalPlannerProps) {
-  const [project, setProject] = useState<FractalProject>(
-    savedFractal.textDocument as FractalProject
-  )
+  const [fractal, setFractal] = useState<Fractal>(savedFractal.textDocument as Fractal)
   const [activeTab, setActiveTab] = useState('templates')
   const [isLoading, setIsLoading] = useState(false)
 
-  const updateProject = (updatedProject: FractalProject) => {
-    setProject(updatedProject)
+  const updateFractal = (updatedFractal: Fractal) => {
+    setFractal(updatedFractal)
   }
 
   const loadTemplate = (templateName: keyof typeof PROJECT_TEMPLATES) => {
     try {
       setIsLoading(true)
-      const newProject = PROJECT_TEMPLATES[templateName]()
-      setProject(newProject)
+      const newFractal = PROJECT_TEMPLATES[templateName].create()
+      setFractal(newFractal)
       setActiveTab('outline')
 
       toast.success(`${templateName} template has been loaded successfully.`)
@@ -58,20 +54,19 @@ export function FractalPlanner({ savedFractal }: FractalPlannerProps) {
   const handleSave = async () => {
     try {
       setIsLoading(true)
-      const serialized = serializeProject(project)
-      const blob = new Blob([serialized], { type: 'application/json' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `${project.title || 'untitled-project'}.json`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
+      const { error } = await updateContextAction({
+        id: savedFractal.id,
+        name: fractal.title,
+        textDocument: serializeFractal(fractal),
+      })
 
-      toast.success('Your project has been saved as a JSON file.')
+      if (error) {
+        throw error
+      }
+
+      toast.success('Your fractal has been saved to the database.')
     } catch (error) {
-      handleErrorClient('Failed to save the project. Please try again.', error)
+      handleErrorClient('Failed to save the fractal. Please try again.', error)
     } finally {
       setIsLoading(false)
     }
@@ -80,20 +75,20 @@ export function FractalPlanner({ savedFractal }: FractalPlannerProps) {
   const handleExportMarkdown = async () => {
     try {
       setIsLoading(true)
-      const markdown = exportToMarkdown(project)
+      const markdown = exportToMarkdown(fractal)
       const blob = new Blob([markdown], { type: 'text/markdown' })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `${project.title || 'untitled-project'}.md`
+      a.download = `${fractal.title || 'untitled-fractal'}.md`
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
 
-      toast.success('Your project outline has been exported as a Markdown file.')
+      toast.success('Your fractal outline has been exported as a Markdown file.')
     } catch (error) {
-      handleErrorClient('Failed to export the project. Please try again.', error)
+      handleErrorClient('Failed to export the fractal. Please try again.', error)
     } finally {
       setIsLoading(false)
     }
@@ -146,13 +141,13 @@ export function FractalPlanner({ savedFractal }: FractalPlannerProps) {
 
           <TabsContent value="outline">
             <ErrorBoundary>
-              <FractalOutline project={project} onUpdate={updateProject} />
+              <FractalOutline fractal={fractal} onUpdate={updateFractal} />
             </ErrorBoundary>
           </TabsContent>
 
           <TabsContent value="overview">
             <ErrorBoundary>
-              <FractalOverview project={project} />
+              <FractalOverview fractal={fractal} />
             </ErrorBoundary>
           </TabsContent>
         </Tabs>

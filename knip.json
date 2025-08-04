@@ -6,6 +6,8 @@
     "tailwindcss",
     "tw-animate-css",
     "eslint-plugin-import",
-    "@typescript-eslint/eslint-plugin"
+    "@typescript-eslint/eslint-plugin",
+    "@floating-ui/dom",
+    "@tiptap/extension-bubble-menu"
   ]
 }

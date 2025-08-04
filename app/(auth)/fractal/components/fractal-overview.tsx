@@ -7,32 +7,33 @@ import { AlertCircle, CheckCircle, Clock, FolderTree, Target } from 'lucide-reac
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 
-import type { FractalNode, FractalProject } from '../lib/fractal-structure'
-import { calculateProjectStats } from '../lib/fractal-structure'
+import { calculateFractalStats } from '../lib/fractal-structure'
+import type { FractalNode } from '../lib/types'
+import { Fractal } from '../lib/types'
 
 interface FractalOverviewProps {
-  project: FractalProject
+  fractal: Fractal
 }
 
-export function FractalOverview({ project }: FractalOverviewProps) {
-  const stats = calculateProjectStats(project)
+export function FractalOverview({ fractal }: FractalOverviewProps) {
+  const stats = calculateFractalStats(fractal)
 
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="mb-2 text-2xl font-bold">Project Overview</h2>
-        <p className="text-muted-foreground">Complete project structure and progress at a glance</p>
+        <h2 className="mb-2 text-2xl font-bold">Fractal Overview</h2>
+        <p className="text-muted-foreground">Complete fractal structure and progress at a glance</p>
       </div>
 
       {/* Project Summary */}
       <Card className="p-6">
         <div className="mb-4 flex items-center gap-3">
           <FolderTree className="h-6 w-6" />
-          <Badge className="bg-blue-600">{project.rootNode.levelName}</Badge>
+          <Badge className="bg-blue-600">{fractal.rootNode.levelName}</Badge>
         </div>
-        <h3 className="mb-2 text-xl font-bold">{project.rootNode.title || 'Untitled Project'}</h3>
+        <h3 className="mb-2 text-xl font-bold">{fractal.rootNode.title || 'Untitled Fractal'}</h3>
         <p className="text-muted-foreground leading-relaxed">
-          {project.rootNode.summary || 'No summary yet...'}
+          {fractal.rootNode.summary || 'No summary yet...'}
         </p>
       </Card>
 
@@ -40,7 +41,7 @@ export function FractalOverview({ project }: FractalOverviewProps) {
       <Card className="p-6">
         <h3 className="mb-4 flex items-center gap-2 font-semibold">
           <Target className="h-5 w-5" />
-          Project Statistics
+          Fractal Statistics
         </h3>
         <div className="grid grid-cols-2 gap-4 text-center md:grid-cols-5">
           <div className="bg-muted rounded-lg p-4">
@@ -114,7 +115,7 @@ export function FractalOverview({ project }: FractalOverviewProps) {
       <Card className="p-6">
         <h3 className="mb-4 font-semibold">Project Structure</h3>
         <div className="max-h-96 space-y-2 overflow-y-auto">
-          <NodeTreeView node={project.rootNode} depth={0} />
+          <NodeTreeView node={fractal.rootNode} depth={0} />
         </div>
       </Card>
     </div>

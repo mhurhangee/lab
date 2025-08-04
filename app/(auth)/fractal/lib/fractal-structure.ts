@@ -1,8 +1,7 @@
-import { APP_CONFIG, STATUS_CONFIG } from './constants'
-import type { FractalNode, FractalProject, NodeStatus, ProjectStats } from './types'
+import { generateId } from '@/lib/id'
 
-// Re-export types for backward compatibility
-export type { FractalNode, FractalProject, NodeStatus }
+import { APP_CONFIG, STATUS_CONFIG } from './constants'
+import type { Fractal, FractalNode, FractalStats, NodeStatus } from './types'
 
 // Status management functions
 export function getAutoStatus(
@@ -52,12 +51,12 @@ export function createEmptyNode(levelName: string, id?: string): FractalNode {
   }
 }
 
-export function generateNodeId(): string {
-  return `node_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+function generateNodeId(): string {
+  return `node_${generateId()}`
 }
 
 // Project creation functions
-export function createEmptyFractal(): FractalProject {
+export function createEmptyFractal(): Fractal {
   const now = new Date().toISOString()
   return {
     title: '',
@@ -73,124 +72,92 @@ export function createEmptyFractal(): FractalProject {
   }
 }
 
-export function createBookPlannerProject(): FractalProject {
-  const project = createEmptyFractal()
-  project.rootNode.levelName = 'Series'
-
-  // Create initial book structure
-  const book1 = createEmptyNode('Book')
-  book1.children = Array(3)
-    .fill(null)
-    .map(() => {
-      const act = createEmptyNode('Act')
-      act.children = Array(3)
-        .fill(null)
-        .map(() => {
-          const sequence = createEmptyNode('Sequence')
-          sequence.children = Array(3)
-            .fill(null)
-            .map(() => {
-              const chapter = createEmptyNode('Chapter')
-              chapter.children = Array(3)
-                .fill(null)
-                .map(() => createEmptyNode('Scene'))
-              return chapter
-            })
-          return sequence
-        })
-      return act
-    })
-
-  project.rootNode.children = [book1]
-  return project
-}
-
-// Project management functions with better error handling
+// Fractal management functions with better error handling
 export function addSibling(
-  project: FractalProject,
+  fractal: Fractal,
   nodePath: string[],
   siblingLevelName: string
-): FractalProject {
+): Fractal {
   try {
-    const newProject = structuredClone(project)
+    const newFractal = structuredClone(fractal)
     const parentPath = nodePath.slice(0, -1)
-    const parent = findNodeByPath(newProject.rootNode, parentPath)
+    const parent = findNodeByPath(newFractal.rootNode, parentPath)
 
-    if (parent && parent.children.length < project.maxSiblings) {
+    if (parent && parent.children.length < fractal.maxSiblings) {
       const newNode = createEmptyNode(siblingLevelName)
       parent.children.push(newNode)
-      updateProjectModified(newProject)
+      updateFractalModified(newFractal)
     }
 
-    return newProject
+    return newFractal
   } catch (error) {
     console.error('Error adding sibling:', error)
-    return project
+    return fractal
   }
 }
 
 export function addChildLevel(
-  project: FractalProject,
+  fractal: Fractal,
   nodePath: string[],
   childLevelName: string
-): FractalProject {
+): Fractal {
   try {
-    const newProject = structuredClone(project)
-    const node = findNodeByPath(newProject.rootNode, nodePath)
+    const newFractal = structuredClone(fractal)
+    const node = findNodeByPath(newFractal.rootNode, nodePath)
 
-    if (node && getNodeDepth(nodePath) < project.maxDepth) {
+    if (node && getNodeDepth(nodePath) < fractal.maxDepth) {
       const newChild = createEmptyNode(childLevelName)
       node.children.push(newChild)
-      updateProjectModified(newProject)
+      updateFractalModified(newFractal)
     }
 
-    return newProject
+    return newFractal
   } catch (error) {
     console.error('Error adding child:', error)
-    return project
+    return fractal
   }
 }
 
-export function deleteNode(project: FractalProject, nodePath: string[]): FractalProject {
-  if (nodePath.length === 0) return project // Can't delete root
+export function deleteNode(fractal: Fractal, nodePath: string[]): Fractal {
+  if (nodePath.length === 0) return fractal // Can't delete root
 
   try {
-    const newProject = structuredClone(project)
+    const newFractal = structuredClone(fractal)
     const parentPath = nodePath.slice(0, -1)
     const nodeId = nodePath[nodePath.length - 1]
-    const parent = findNodeByPath(newProject.rootNode, parentPath)
+    const parent = findNodeByPath(newFractal.rootNode, parentPath)
 
     if (parent) {
       parent.children = parent.children.filter(child => child.id !== nodeId)
-      updateProjectModified(newProject)
+      updateFractalModified(newFractal)
     }
 
-    return newProject
+    return newFractal
   } catch (error) {
     console.error('Error deleting node:', error)
-    return project
+    return fractal
   }
 }
 
 export function updateNodeLevelName(
-  project: FractalProject,
+  fractal: Fractal,
   nodePath: string[],
   newLevelName: string
-): FractalProject {
+): Fractal {
   try {
-    const newProject = structuredClone(project)
-    const node = findNodeByPath(newProject.rootNode, nodePath)
+    const newFractal = structuredClone(fractal)
+    const node = findNodeByPath(newFractal.rootNode, nodePath)
 
     if (node) {
       node.levelName = newLevelName.trim()
       node.metadata.modified = new Date().toISOString()
-      updateProjectModified(newProject)
+      updateFractalModified(newFractal)
     }
 
-    return newProject
+    return newFractal
   } catch (error) {
     console.error('Error updating level name:', error)
-    return project
+    return fractal
   }
 }
 
@@ -208,28 +175,13 @@ export function findNodeByPath(rootNode: FractalNode, path: string[]): FractalNo
   return current
 }
 
-export function getNodeDepth(path: string[]): number {
+function getNodeDepth(path: string[]): number {
   return path.length
 }
 
-export function getNodePath(rootNode: FractalNode, targetId: string): string[] | null {
-  function search(node: FractalNode, currentPath: string[]): string[] | null {
-    if (node.id === targetId) return currentPath
-
-    for (const child of node.children) {
-      const result = search(child, [...currentPath, child.id])
-      if (result) return result
-    }
-
-    return null
-  }
-
-  return search(rootNode, [])
-}
-
 // Statistics calculation
-export function calculateProjectStats(project: FractalProject): ProjectStats {
-  const stats: ProjectStats = {
+export function calculateFractalStats(fractal: Fractal): FractalStats {
+  const stats: FractalStats = {
     totalNodes: 0,
     completeNodes: 0,
     inProgressNodes: 0,
@@ -263,7 +215,7 @@ export function calculateProjectStats(project: FractalProject): ProjectStats {
     node.children.forEach(child => traverse(child, depth + 1))
   }
 
-  traverse(project.rootNode, 0)
+  traverse(fractal.rootNode, 0)
 
   stats.completionPercentage =
     stats.totalNodes > 0 ? Math.round((stats.completeNodes / stats.totalNodes) * 100) : 0
@@ -273,17 +225,17 @@ export function calculateProjectStats(project: FractalProject): ProjectStats {
 
 // Child generation helper
 export function handleGenerateChildren(
-  project: FractalProject,
+  fractal: Fractal,
   nodePath: string[],
   children: Array<{ title: string; summary: string; levelName: string }>
-): FractalProject {
-  let updatedProject = structuredClone(project)
+): Fractal {
+  let updatedFractal = structuredClone(fractal)
 
   children.forEach(child => {
-    updatedProject = addChildLevel(updatedProject, nodePath, child.levelName)
+    updatedFractal = addChildLevel(updatedFractal, nodePath, child.levelName)
 
     // Find the newly added child and update its content
-    const parentNode = findNodeByPath(updatedProject.rootNode, nodePath)
+    const parentNode = findNodeByPath(updatedFractal.rootNode, nodePath)
     if (parentNode && parentNode.children.length > 0) {
       const newChild = parentNode.children[parentNode.children.length - 1]
       newChild.title = child.title
@@ -293,67 +245,25 @@ export function handleGenerateChildren(
     }
   })
 
-  return updatedProject
+  return updatedFractal
 }
 
 // Serialization functions with better error handling
-export function serializeProject(project: FractalProject): string {
+export function serializeFractal(fractal: Fractal): string {
   try {
-    const updatedProject = structuredClone(project)
-    updateProjectModified(updatedProject)
-    return JSON.stringify(updatedProject, null, 2)
+    const updatedFractal = structuredClone(fractal)
+    updateFractalModified(updatedFractal)
+    return JSON.stringify(updatedFractal, null, 2)
   } catch (error) {
     console.error('Error serializing project:', error)
     throw new Error('Failed to serialize project')
   }
 }
 
-export function deserializeProject(jsonString: string): FractalProject {
-  try {
-    const parsed = JSON.parse(jsonString)
-
-    // Validate basic structure
-    if (!parsed.rootNode || typeof parsed.title !== 'string') {
-      throw new Error('Invalid project format')
-    }
-
-    // Add default status and metadata if missing (backward compatibility)
-    const addDefaults = (node: FractalNode): FractalNode => {
-      const now = new Date().toISOString()
-      return {
-        ...node,
-        status: node.status || getAutoStatus(node.title || '', node.summary || ''),
-        metadata: {
-          created: node.metadata?.created || now,
-          modified: node.metadata?.modified || now,
-        },
-        children: Array.isArray(node.children) ? node.children.map(addDefaults) : [],
-      }
-    }
-
-    return {
-      ...parsed,
-      rootNode: addDefaults(parsed.rootNode),
-      maxDepth: parsed.maxDepth || APP_CONFIG.DEFAULT_MAX_DEPTH,
-      maxSiblings: parsed.maxSiblings || APP_CONFIG.DEFAULT_MAX_SIBLINGS,
-      metadata: {
-        created: parsed.metadata?.created || new Date().toISOString(),
-        modified: new Date().toISOString(),
-        version: parsed.metadata?.version || APP_CONFIG.VERSION,
-      },
-    } as FractalProject
-  } catch (error) {
-    console.error('Error deserializing project:', error)
-    throw new Error(
-      `Failed to parse project: ${error instanceof Error ? error.message : 'Unknown error'}`
-    )
-  }
-}
-
 // Export functions
-export function exportToMarkdown(project: FractalProject): string {
-  let markdown = `# ${project.title}\n\n`
-  markdown += `${project.summary}\n\n`
+export function exportToMarkdown(fractal: Fractal): string {
+  let markdown = `# ${fractal.title}\n\n`
+  markdown += `${fractal.summary}\n\n`
 
   function nodeToMarkdown(node: FractalNode, depth = 1): string {
     let result = ''
@@ -373,48 +283,11 @@ export function exportToMarkdown(project: FractalProject): string {
     return result
   }
 
-  markdown += nodeToMarkdown(project.rootNode)
+  markdown += nodeToMarkdown(fractal.rootNode)
   return markdown
 }
 
-// Project templates
-export const PROJECT_TEMPLATES: Record<string, () => FractalProject> = {
-  'Book Series': createBookPlannerProject,
-  'Software Project': () => {
-    const project = createEmptyFractal()
-    project.rootNode.levelName = 'Project'
-
-    const frontendModule = createEmptyNode('Frontend Module')
-    frontendModule.children = [
-      createEmptyNode('Component'),
-      createEmptyNode('Page'),
-      createEmptyNode('Hook'),
-    ]
-
-    const backendModule = createEmptyNode('Backend Module')
-    backendModule.children = [
-      createEmptyNode('API Endpoint'),
-      createEmptyNode('Database Model'),
-      createEmptyNode('Service'),
-    ]
-
-    project.rootNode.children = [frontendModule, backendModule]
-    return project
-  },
-  'Research Project': () => {
-    const project = createEmptyFractal()
-    project.rootNode.levelName = 'Research'
-    return project
-  },
-  'Business Plan': () => {
-    const project = createEmptyFractal()
-    project.rootNode.levelName = 'Business'
-    return project
-  },
-  'Empty Project': createEmptyFractal,
-}
-
 // Helper functions
-function updateProjectModified(project: FractalProject): void {
-  project.metadata.modified = new Date().toISOString()
+function updateFractalModified(fractal: Fractal): void {
+  fractal.metadata.modified = new Date().toISOString()
 }

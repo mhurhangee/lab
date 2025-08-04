@@ -28,6 +28,7 @@ export function ActionsCell({ row }: { row: Row<ContextDB> }) {
         contextsId={context.id}
         size="icon"
         type="fractals"
+        url={`/fractal`}
         action={deleteContextsAction}
       />
     </div>

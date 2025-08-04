@@ -10,7 +10,6 @@ import { EditableText } from '@/components/ui/editable-text'
 import { Input } from '@/components/ui/input'
 
 import { buildChildGenerationContext, buildSmartContext } from '../lib/context-builder'
-import type { FractalNode, FractalProject, NodeStatus } from '../lib/fractal-structure'
 import {
   addChildLevel,
   addSibling,
@@ -22,14 +21,16 @@ import {
   handleGenerateChildren,
   updateNodeLevelName,
 } from '../lib/fractal-structure'
+import type { FractalNode, NodeStatus } from '../lib/types'
+import { Fractal } from '../lib/types'
 import { AIAssistant } from './ai-assistant'
 
 interface FractalOutlineProps {
-  project: FractalProject
-  onUpdate: (project: FractalProject) => void
+  fractal: Fractal
+  onUpdate: (fractal: Fractal) => void
 }
 
-export function FractalOutline({ project, onUpdate }: FractalOutlineProps) {
+export function FractalOutline({ fractal, onUpdate }: FractalOutlineProps) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['root']))
   const [showAI, setShowAI] = useState<string | null>(null)
   const [editingLevelName, setEditingLevelName] = useState<string | null>(null)
@@ -47,7 +48,7 @@ export function FractalOutline({ project, onUpdate }: FractalOutlineProps) {
   }
 
   const updateNode = (nodePath: string[], updates: Partial<FractalNode>) => {
-    const updatedProject = { ...project }
+    const updatedFractal = { ...fractal }
 
     function updateNodeRecursive(node: FractalNode, path: string[]): FractalNode {
       if (path.length === 0) {
@@ -72,36 +73,36 @@ export function FractalOutline({ project, onUpdate }: FractalOutlineProps) {
 
     if (nodePath.length === 0) {
       // Updating root node
-      updatedProject.rootNode = {
-        ...updatedProject.rootNode,
+      updatedFractal.rootNode = {
+        ...updatedFractal.rootNode,
         ...updates,
         metadata: {
-          ...updatedProject.rootNode.metadata,
+          ...updatedFractal.rootNode.metadata,
           modified: new Date().toISOString(),
         },
       }
     } else {
-      updatedProject.rootNode = updateNodeRecursive(updatedProject.rootNode, nodePath)
+      updatedFractal.rootNode = updateNodeRecursive(updatedFractal.rootNode, nodePath)
     }
 
     // Update project metadata
-    updatedProject.metadata.modified = new Date().toISOString()
-    onUpdate(updatedProject)
+    updatedFractal.metadata.modified = new Date().toISOString()
+    onUpdate(updatedFractal)
   }
 
   const handleAddSibling = (nodePath: string[]) => {
     if (nodePath.length === 0) return // Can't add sibling to root
 
-    const currentNode = findNodeByPath(project.rootNode, nodePath)
+    const currentNode = findNodeByPath(fractal.rootNode, nodePath)
     if (currentNode) {
-      const updatedProject = addSibling(project, nodePath, currentNode.levelName)
-      onUpdate(updatedProject)
+      const updatedFractal = addSibling(fractal, nodePath, currentNode.levelName)
+      onUpdate(updatedFractal)
     }
   }
 
   const handleAddChild = (nodePath: string[], childLevelName: string) => {
-    const updatedProject = addChildLevel(project, nodePath, childLevelName)
-    onUpdate(updatedProject)
+    const updatedFractal = addChildLevel(fractal, nodePath, childLevelName)
+    onUpdate(updatedFractal)
     setShowAddChild(null)
     setNewChildLevelName('')
   }
@@ -110,14 +111,14 @@ export function FractalOutline({ project, onUpdate }: FractalOutlineProps) {
     if (nodePath.length === 0) return // Can't delete root
 
     if (confirm('Are you sure you want to delete this node and all its children?')) {
-      const updatedProject = deleteNode(project, nodePath)
-      onUpdate(updatedProject)
+      const updatedFractal = deleteNode(fractal, nodePath)
+      onUpdate(updatedFractal)
     }
   }
 
   const handleUpdateLevelName = (nodePath: string[], newLevelName: string) => {
-    const updatedProject = updateNodeLevelName(project, nodePath, newLevelName)
-    onUpdate(updatedProject)
+    const updatedFractal = updateNodeLevelName(fractal, nodePath, newLevelName)
+    onUpdate(updatedFractal)
     setEditingLevelName(null)
   }
 
@@ -125,16 +126,16 @@ export function FractalOutline({ project, onUpdate }: FractalOutlineProps) {
     nodePath: string[],
     children: Array<{ title: string; summary: string; levelName: string }>
   ) => {
-    const updatedProject = handleGenerateChildren(project, nodePath, children)
-    onUpdate(updatedProject)
+    const updatedFractal = handleGenerateChildren(fractal, nodePath, children)
+    onUpdate(updatedFractal)
   }
 
   return (
     <div className="space-y-4">
       <NodeSection
-        node={project.rootNode}
+        node={fractal.rootNode}
         nodePath={[]}
-        project={project}
+        fractal={fractal}
         expandedSections={expandedSections}
         toggleExpanded={toggleExpanded}
         onUpdateNode={updateNode}
@@ -160,7 +161,7 @@ export function FractalOutline({ project, onUpdate }: FractalOutlineProps) {
 interface NodeSectionProps {
   node: FractalNode
   nodePath: string[]
-  project: FractalProject
+  fractal: Fractal
   expandedSections: Set<string>
   toggleExpanded: (nodeId: string) => void
   onUpdateNode: (nodePath: string[], updates: Partial<FractalNode>) => void
@@ -186,7 +187,7 @@ interface NodeSectionProps {
 function NodeSection({
   node,
   nodePath,
-  project,
+  fractal,
   expandedSections,
   toggleExpanded,
   onUpdateNode,
@@ -482,7 +483,7 @@ function NodeSection({
           {/* AI Assistants */}
           {showAI === aiId && (
             <AIAssistant
-              context={buildSmartContext(project, nodePath)}
+              context={buildSmartContext(fractal, nodePath)}
               level={node.levelName}
               mode="content"
               onSuggestion={suggestion => {
@@ -498,7 +499,7 @@ function NodeSection({
 
           {showAI === `${aiId}-children` && (
             <AIAssistant
-              context={buildChildGenerationContext(project, nodePath, 'Child')}
+              context={buildChildGenerationContext(fractal, nodePath, 'Child')}
               level={node.levelName}
               mode="children"
               childLevelName="Child"
@@ -524,7 +525,7 @@ function NodeSection({
                   key={child.id}
                   node={child}
                   nodePath={[...nodePath, child.id]}
-                  project={project}
+                  fractal={fractal}
                   expandedSections={expandedSections}
                   toggleExpanded={toggleExpanded}
                   onUpdateNode={onUpdateNode}
